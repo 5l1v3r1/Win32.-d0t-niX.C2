@@ -51,10 +51,10 @@ bool NTImportDLLFUNC() {
 	return TRUE;
 }
 
-bool NTSetProcessIsCritical() {
+bool NTSetProcessIsCritical(BOOLEAN blIscritical) {
 	BOOLEAN bl;
 	if (!RtlAdjustPrivilege(SE_DEBUG_PRIVILEGE, TRUE, FALSE, &bl)) {
-		if (!RtlSetProcessIsCritical(TRUE, NULL, FALSE)) {
+		if (!RtlSetProcessIsCritical(blIscritical, NULL, FALSE)) {
 			return TRUE;
 		} else {
 #ifdef DEBUG

