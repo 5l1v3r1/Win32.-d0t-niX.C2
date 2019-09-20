@@ -1,6 +1,6 @@
 #include "../HeaderFiles/N0TiLLerka.h"
 
-const wchar_t CharSet[] = {
+const WCHAR CharSet[] = {
 	L"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	L"abcdefghijklmnopqrstuvwxyz"
 	L"1234567890"

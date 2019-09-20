@@ -1,6 +1,6 @@
 #include "../../../HeaderFiles/N0TiLLerka.h"
 
-bool CheckSemaphoreW(LPCWSTR lpName) {
+BOOL CheckSemaphoreW(LPCWSTR lpName) {
 
 
 	return FALSE;

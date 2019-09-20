@@ -1,6 +1,6 @@
 #include "../../../HeaderFiles/N0TiLLerka.h"
 
-bool CheckRegistryKeyW(LPCWSTR lpSubKey, LPCWSTR lpValueName, DWORD edwType, BYTE ebValue) {
+BOOL CheckRegistryKeyW(LPCWSTR lpSubKey, LPCWSTR lpValueName, DWORD edwType, BYTE ebValue) {
 	HKEY hKey;
 	DWORD dwType;
 	BYTE bValue;

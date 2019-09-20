@@ -1,7 +1,7 @@
 #include "../../../HeaderFiles/N0TiLLerka.h"
 
-bool CreateRegistryKeyW(LPCWSTR lpSubKey, LPCWSTR lpValueName, DWORD dwType, DWORD dwValue) {
-	bool returnvalHKLM, returnvalHKCU;
+BOOL CreateRegistryKeyW(LPCWSTR lpSubKey, LPCWSTR lpValueName, DWORD dwType, DWORD dwValue) {
+	BOOL returnvalHKLM, returnvalHKCU;
 
 	HKEY hKey;
 	if (!RegCreateKeyEx(HKEY_LOCAL_MACHINE, lpSubKey, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS | KEY_WOW64_32KEY, NULL, &hKey, NULL)) {

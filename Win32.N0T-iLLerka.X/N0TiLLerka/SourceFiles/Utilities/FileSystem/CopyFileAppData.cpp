@@ -1,6 +1,6 @@
 #include "../../../HeaderFiles/N0TiLLerka.h"
 
-bool CopyFileAppDataW(LPCWSTR lpAdpn, LPCWSTR lpAdfn, wchar_t mfn[]) {
+BOOL CopyFileAppDataW(LPCWSTR lpAdpn, LPCWSTR lpAdfn, WCHAR mfn[]) {
 	if (CreateDirectory(lpAdpn, NULL)) {
 		if (CopyFile(mfn, lpAdfn, FALSE)) {
 			return TRUE;

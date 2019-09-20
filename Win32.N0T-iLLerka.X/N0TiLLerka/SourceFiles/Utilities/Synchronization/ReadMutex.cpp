@@ -1,7 +1,7 @@
 #include "../../../HeaderFiles/N0TiLLerka.h"
 
 
-bool CheckMutexW(LPCWSTR lpName) {
+BOOL CheckMutexW(LPCWSTR lpName) {
 	if (!OpenMutex(SYNCHRONIZE, NULL, lpName)) {
 		if (GetLastError() == ERROR_FILE_NOT_FOUND) {
 #ifdef DEBUG
