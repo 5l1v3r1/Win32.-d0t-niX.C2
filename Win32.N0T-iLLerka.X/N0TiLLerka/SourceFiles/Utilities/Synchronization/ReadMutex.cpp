@@ -1,17 +1,17 @@
 #include "../../../HeaderFiles/N0TiLLerka.h"
-
+#ifndef DISABLE_MUTEX
 
 BOOL CheckMutexW(LPCWSTR lpName) {
 	if (!OpenMutex(SYNCHRONIZE, NULL, lpName)) {
 		if (GetLastError() == ERROR_FILE_NOT_FOUND) {
-#ifdef DEBUG
+#ifdef DEBUG_MSG
 			MessageBox(NULL, L"Mutex doesn't exist", L"OpenMutexW", MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
-#endif
+#endif // DEBUG_MSG
 			return FALSE;
 		} else {
-#ifdef DEBUG
+#ifdef DEBUG_MSG
 			MessageBox(NULL, L"Couldn't Open Mutex", L"OpenMutexW", MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
-#endif
+#endif // DEBUG_MSG
 			return FALSE;
 		}
 	} else {
@@ -20,3 +20,4 @@ BOOL CheckMutexW(LPCWSTR lpName) {
 
 	return FALSE;
 }
+#endif // !DISABLE_MUTEX

@@ -8,15 +8,15 @@ BOOL CreateRegistryKeyW(LPCWSTR lpSubKey, LPCWSTR lpValueName, DWORD dwType, DWO
 		if (!RegSetValueEx(hKey, lpValueName, 0, dwType, (BYTE*)& dwValue, sizeof(DWORD))) {
 			returnvalHKLM = TRUE;
 		} else {
-#ifdef DEBUG
+#ifdef DEBUG_MSG
 			MessageBox(NULL, L"Couldn't set Registry Type/Value", L"RegSetValueExW", MB_OK | MB_SYSTEMMODAL | MB_ICONWARNING);
-#endif
+#endif // DEBUG_MSG
 			returnvalHKLM = FALSE;
 		}
 	} else {
-#ifdef DEBUG
+#ifdef DEBUG_MSG
 		MessageBox(NULL, L"Couldn't create Registry Key", L"RegCreateKeyExW", MB_OK | MB_SYSTEMMODAL | MB_ICONWARNING);
-#endif
+#endif // DEBUG_MSG
 		returnvalHKLM = FALSE;
 	}
 
@@ -25,15 +25,15 @@ BOOL CreateRegistryKeyW(LPCWSTR lpSubKey, LPCWSTR lpValueName, DWORD dwType, DWO
 		if (!RegSetValueEx(hKey, lpValueName, 0, dwType, (BYTE*)& dwValue, sizeof(DWORD))) {
 			returnvalHKCU = TRUE;
 		} else {
-#ifdef DEBUG
+#ifdef DEBUG_MSG
 			MessageBox(NULL, L"Couldn't set Registry Type/Value", L"RegSetValueExW", MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
-#endif
+#endif // DEBUG_MSG
 			returnvalHKCU = FALSE;
 		}
 	} else {
-#ifdef DEBUG
+#ifdef DEBUG_MSG
 		MessageBox(NULL, L"Couldn't create Registry Key", L"RegCreateKeyExW", MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
-#endif
+#endif // DEBUG_MSG
 		returnvalHKCU = FALSE;
 	}
 

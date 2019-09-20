@@ -11,13 +11,14 @@ BOOL DirectoryIeteratorW(std::wstring wsDir, std::wstring wsMask, std::vector<st
 				if (wcscmp(w32Fd.cFileName, L".") != 0 && wcscmp(w32Fd.cFileName, L"..") != 0) {
 					vwsDir.push_back(wsDir + L"\\" + w32Fd.cFileName);
 				}
-			}
-			else {
+			} else {
 				vwsFile.push_back(wsDir + L"\\" + w32Fd.cFileName);
 			}
 		} while (FindNextFile(hFind, &w32Fd));
-	}
-	else {
+	} else {
+#ifdef DEBUG_MSG
+		MessageBox(NULL, L"Handle to FindFirstFile is invalid", MALWR_NAME, MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
+#endif // DEBUG_MSG
 		FindClose(hFind);
 		return FALSE;
 	}

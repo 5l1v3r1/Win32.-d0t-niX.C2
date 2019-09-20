@@ -12,19 +12,19 @@ BOOL CheckRegistryKeyW(LPCWSTR lpSubKey, LPCWSTR lpValueName, DWORD edwType, BYT
 				RegCloseKey(hKey);
 				return TRUE;
 			} else {
-#ifdef DEBUG
-				MessageBox(NULL, L"Registry Key/Type/Value doesn't match expacted Values", L"Illerka.X HKLM", MB_OK | MB_SYSTEMMODAL | MB_ICONWARNING);
-#endif
+#ifdef DEBUG_MSG
+				MessageBox(NULL, L"Registry Key/Type/Value doesn't match expacted Values (HKLM)", MALWR_NAME, MB_OK | MB_SYSTEMMODAL | MB_ICONWARNING);
+#endif // DEBUG_MSG
 			}
 		} else {
-#ifdef DEBUG
+#ifdef DEBUG_MSG
 			MessageBox(NULL, L"Couldn't Enumerate Registry Type/Value", L"RegQueryValueExW HKLM", MB_OK | MB_SYSTEMMODAL | MB_ICONWARNING);
-#endif
+#endif // DEBUG_MSG
 		}
 	} else {
-#ifdef DEBUG
+#ifdef DEBUG_MSG
 		MessageBox(NULL, L"Couldn't Open Registry Key", L"RegOpenKeyExW HKLM", MB_OK | MB_SYSTEMMODAL | MB_ICONWARNING);
-#endif
+#endif // DEBUG_MSG
 	}
 
 	// If HKLM can't be read try HKCU
@@ -35,19 +35,19 @@ BOOL CheckRegistryKeyW(LPCWSTR lpSubKey, LPCWSTR lpValueName, DWORD edwType, BYT
 				RegCloseKey(hKey);
 				return TRUE;
 			} else {
-#ifdef DEBUG
-				MessageBox(NULL, L"Registry Key/Type/Value doesn't match expacted Values", L"Illerka.X HKCU", MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
-#endif
+#ifdef DEBUG_MSG
+				MessageBox(NULL, L"Registry Key/Type/Value doesn't match expacted Values (HKCU)", MALWR_NAME, MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
+#endif // DEBUG_MSG
 			}
 		} else {
-#ifdef DEBUG
+#ifdef DEBUG_MSG
 			MessageBox(NULL, L"Couldn't Enumerate Registry Type/Value", L"RegQueryValueExW HKCU", MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
-#endif
+#endif // DEBUG_MSG
 		}
 	} else {
-#ifdef DEBUG
+#ifdef DEBUG_MSG
 		MessageBox(NULL, L"Couldn't Open Registry Key", L"RegOpenKeyExW HKCU", MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
-#endif
+#endif // DEBUG_MSG
 	}
 
 	RegCloseKey(hKey);

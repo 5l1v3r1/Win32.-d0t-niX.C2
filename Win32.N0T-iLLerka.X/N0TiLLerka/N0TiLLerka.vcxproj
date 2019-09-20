@@ -132,6 +132,7 @@
     <ClCompile Include="SourceFiles\Utilities\FileSystem\CopyFileAppData.cpp" />
     <ClCompile Include="SourceFiles\Utilities\FileSystem\DirectoryIterator.cpp" />
     <ClCompile Include="SourceFiles\Utilities\FileSystem\DriveEnumerator.cpp" />
+    <ClCompile Include="SourceFiles\Utilities\FileSystem\KillMBR.cpp" />
     <ClCompile Include="SourceFiles\Utilities\GenRandom.cpp" />
     <ClCompile Include="SourceFiles\Utilities\NTUtilities.cpp" />
     <ClCompile Include="SourceFiles\Utilities\RegEdit\ReadRegistry.cpp" />

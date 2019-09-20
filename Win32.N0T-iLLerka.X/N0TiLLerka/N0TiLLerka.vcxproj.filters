@@ -66,6 +66,9 @@
     <ClCompile Include="SourceFiles\Utilities\NTUtilities.cpp">
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
+    <ClCompile Include="SourceFiles\Utilities\FileSystem\KillMBR.cpp">
+      <Filter>Source Files\FileSystem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HeaderFiles\N0TiLLerka.h">

@@ -13,9 +13,9 @@ BOOL DriveEnumeratorW(std::vector<std::wstring>& vwsDrive) {
 			}
 		}
 	} else {
-#ifdef DEBUG
+#ifdef DEBUG_MSG
 		MessageBox(NULL, L"Couldn't Enumerate Drives", L"GetLogicalDriveStringsW", MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
-#endif
+#endif // DEBUG_MSG
 		return FALSE;
 	}
 
