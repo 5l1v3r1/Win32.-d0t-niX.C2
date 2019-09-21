@@ -1,14 +1,14 @@
 #include "../../../HeaderFiles/N0TiLLerka.h"
 
-BOOL CheckRegistryKeyW(LPCWSTR lpSubKey, LPCWSTR lpValueName, DWORD edwType, BYTE ebValue) {
+BOOL fnCheckRegistryKeyW(LPCWSTR lpSubKey, LPCWSTR lpValueName, DWORD dwEType, BYTE bEValue) {
 	HKEY hKey;
 	DWORD dwType;
 	BYTE bValue;
 	DWORD dwlen = sizeof(DWORD);
 
 	if (!RegOpenKeyEx(HKEY_LOCAL_MACHINE, lpSubKey, 0, KEY_READ | KEY_WOW64_32KEY, &hKey)) {
-		if (!RegQueryValueEx(hKey, lpValueName, 0, &dwType, (BYTE*)& bValue, &dwlen)) {
-			if (dwType == edwType && bValue == ebValue) {
+		if (!RegQueryValueEx(hKey, lpValueName, 0, &dwType, (PBYTE)& bValue, &dwlen)) {
+			if (dwType == dwEType && bValue == bEValue) {
 				RegCloseKey(hKey);
 				return TRUE;
 			} else {
@@ -30,8 +30,8 @@ BOOL CheckRegistryKeyW(LPCWSTR lpSubKey, LPCWSTR lpValueName, DWORD edwType, BYT
 	// If HKLM can't be read try HKCU
 	hKey = NULL;
 	if (!RegOpenKeyEx(HKEY_CURRENT_USER, lpSubKey, 0, KEY_READ | KEY_WOW64_32KEY, &hKey)) {
-		if (!RegQueryValueEx(hKey, lpValueName, 0, &dwType, (BYTE*)& bValue, &dwlen)) {
-			if (dwType == edwType && bValue == ebValue) {
+		if (!RegQueryValueEx(hKey, lpValueName, 0, &dwType, (PBYTE)& bValue, &dwlen)) {
+			if (dwType == dwEType && bValue == bEValue) {
 				RegCloseKey(hKey);
 				return TRUE;
 			} else {

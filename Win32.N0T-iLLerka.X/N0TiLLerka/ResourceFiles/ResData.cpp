@@ -1,8 +1,8 @@
 #include "../HeaderFiles/N0TiLLerka.h"
 
-const WCHAR CharSet[] = {
+const WCHAR szCharSet[] = {
 	L"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	L"abcdefghijklmnopqrstuvwxyz"
 	L"1234567890"
 };
-const size_t nCharSet = (sizeof(CharSet) - 1) / 2;
+const size_t cnCharSet = (sizeof(szCharSet) - 2) / 2;

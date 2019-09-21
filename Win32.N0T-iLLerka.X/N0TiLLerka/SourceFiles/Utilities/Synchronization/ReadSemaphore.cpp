@@ -1,7 +1,7 @@
 #include "../../../HeaderFiles/N0TiLLerka.h"
 #ifndef DISABLE_SEMAPHORE
 
-BOOL CheckSemaphoreW(LPCWSTR lpName) {
+BOOL fnCheckSemaphoreW(LPCWSTR lpName) {
 
 
 	return FALSE;

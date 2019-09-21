@@ -1,6 +1,6 @@
 #include "../../../HeaderFiles/N0TiLLerka.h"
 
-BOOL DisableUtilities(VOID) {
+BOOL fnDisableUtilities(VOID) {
 
 
 	return FALSE;

