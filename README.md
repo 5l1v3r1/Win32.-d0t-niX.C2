@@ -38,6 +38,6 @@ First successfull launch of the Malware:\
 ## Next Update:
 This is a list of stuff that will/might be implemented in the next Update:
 
-- [ ] The Filecorruptor (a part of the Malware that will be responsible to corrupt files by overwritting them with random data)
-- [ ] ~~The WatchDog (an alternative to the previous Point to still protect the host incase that fuction fails)~~
-- [ ] RegProtections (disabling Windows utilities that could be used by the user to regain power over the System)
+- [x] The Filecorruptor (a part of the Malware that will be responsible to corrupt files by overwritting them with random data)
+- [x] RegProtections (disabling Windows utilities that could be used by the user to regain power over the System)
+- [ ] Semaphore (limit the amout of /exec processes executing their payload)
