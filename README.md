@@ -40,4 +40,11 @@ This is a list of stuff that will/might be implemented in the next Update:
 
 - [x] The Filecorruptor (a part of the Malware that will be responsible to corrupt files by overwritting them with random data)
 - [x] RegProtections (disabling Windows utilities that could be used by the user to regain power over the System)
-- [ ] Semaphore (limit the amout of /exec processes executing their payload)
+- [x] Semaphore (limit the amout of /exec processes executing their payload)
+
+Im getting really close to being done with this, so Version 0.4.9 might be the last dev-Version (cause it will include everything that I had planed for this Malware) and Version 0.5.0 might be already the 1.0 Release.\
+Obviously it will still take some time until Im able to publish the 1.0 Release.
+
+I've planned to completely go over my Code, from the start to the end, after the last dev-Version release.
+I want to find every little mistake I did (if even possible) and look for anything in my code that I could improve.
+(The Version 1.0 Release will probably be in 1 to 2 weeks depending on how much time I have on my hand)
