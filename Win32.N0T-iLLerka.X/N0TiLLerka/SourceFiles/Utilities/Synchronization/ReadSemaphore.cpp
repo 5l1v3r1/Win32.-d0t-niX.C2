@@ -1,9 +1,22 @@
 #include "../../../HeaderFiles/N0TiLLerka.h"
 #ifndef DISABLE_SEMAPHORE
 
-BOOL fnCheckSemaphoreW(LPCWSTR lpName) {
-
-
-	return FALSE;
+HANDLE fnCheckSemaphoreW(LPCWSTR lpName) {
+	HANDLE hSema = OpenSemaphore(SEMAPHORE_ALL_ACCESS, FALSE, lpName);
+	if (hSema) {
+		return hSema;
+	} else {
+		if (GetLastError() == ERROR_FILE_NOT_FOUND) {
+#ifdef DEBUG_MSG
+			MessageBox(NULL, L"Semaphore doesn't exist", L"OpenSemaphoreW", MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
+#endif // DEBUG_MSG
+			return NULL;
+		} else {
+#ifdef DEBUG_MSG
+			MessageBox(NULL, L"Couldn't Open Semaphore", L"OpenSemaphoreW", MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
+#endif // DEBUG_MSG
+			return NULL;
+		}
+	}
 }
 #endif // !DISABLE_SEMAPHORE

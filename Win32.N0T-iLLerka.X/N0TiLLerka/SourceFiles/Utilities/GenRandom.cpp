@@ -20,8 +20,9 @@ std::wstring fnCryptGenRandomStringW(INT nLen) {
 	return szRcs;
 }
 
-BOOL fnCryptGenRandomBufferW(PWCHAR pszRd, ULONG ulFs) {
-	if (BCryptGenRandom(NULL, (PBYTE)pszRd, ulFs, BCRYPT_USE_SYSTEM_PREFERRED_RNG)) {
+// TODO: finish this
+VOID fnCryptGenRandomBufferW(PBYTE pszRd, ULONG ulFs) {
+	if (BCryptGenRandom(NULL, pszRd, ulFs, BCRYPT_USE_SYSTEM_PREFERRED_RNG)) {
 #ifdef DEBUG_MSG
 		MessageBox(NULL, L"Couldn't generate Random Buffer Content\nusing ZeroMemory instead", L"BCryptGenRandom", MB_OK | MB_ICONWARNING | MB_SYSTEMMODAL);
 #endif // DEBUG_MSG

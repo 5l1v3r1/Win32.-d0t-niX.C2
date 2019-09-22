@@ -2,9 +2,9 @@
 
 BOOL fnDirectoryIteratorW(std::wstring szDir, std::wstring szMask, std::vector<std::wstring>& vszDir, std::vector<std::wstring>& vszFile) {
 	WIN32_FIND_DATA w32Fd;
-	std::wstring szW32Fd = szDir + L"\\" + szMask;
+	std::wstring szW32fd = szDir + L"\\" + szMask;
 
-	HANDLE hFind = FindFirstFile(szW32Fd.c_str(), &w32Fd);
+	HANDLE hFind = FindFirstFile(szW32fd.c_str(), &w32Fd);
 	if (hFind != INVALID_HANDLE_VALUE) {
 		do {
 			if (w32Fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
