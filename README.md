@@ -1,14 +1,14 @@
 # N0T-iLLerka.X
 
-A C/C++ recreation off the original Win32.VB.Illerka.C Virus by [Michael [APFX]](https://www.youtube.com/channel/UCDo-73OtSjnMKVIEidGu2Xw) (AppleFanXXX)
+A C/C++ (MSVC) recreation off the original Win32.VB.Illerka.C Virus by [Michael [APFX]](https://www.youtube.com/channel/UCDo-73OtSjnMKVIEidGu2Xw) (AppleFanXXX)
 
 Demonstration-Video of the Original:\
 <a href="https://www.youtube.com/watch?v=HnRm9DBWzY8"><img height="180" src="https://img.youtube.com/vi/HnRm9DBWzY8/maxresdefault.jpg" alt="Destroying a Windows 7 PC with Trojan.Win32.Illerka.C"></a>
 
 ## About this Project
-I want to recreate the Illerka.C Virus but using more efficent C/C++ instead of Visual-Basic\
-(in which the original was coded)
-
+I want to recreate the Illerka.C Virus but using more efficent C/C++ instead of Visual-Basic (in which the original was coded)\
+Aswell as that I want to add more functionality to it.
+ 
 I don't know why Im doing this (don't ask why)\
 (Hint: I still don't know why, but it should give newcommers some insights into malware development)
 
@@ -34,17 +34,23 @@ Further Information will allways be posted/updated accordingly...
 First successfull launch of the Malware:\
 <a><img align="center" src="GitRes/MSEdge-Win10-VMWare-2019-09-18-21-44-00.png" alt="Windows 10 VM Screenshot"></a>
 
-
 ## Next Update:
 This is a list of stuff that will/might be implemented in the next Update:
 
 - [x] The Filecorruptor (a part of the Malware that will be responsible to corrupt files by overwritting them with random data)
 - [x] RegProtections (disabling Windows utilities that could be used by the user to regain power over the System)
-- [x] Semaphore (limit the amout of /exec processes executing their payload)
+- [x] Semaphore (limit the amout of /exec processes executing their payload)\
+This might actually be cut, because the original intention of utilization is prettymuch dead.\
+If I don't utilize it for something else in the 1.0 Release this will be left behind and reserved for the future
 
-Im getting really close to being done with this, so Version 0.4.9 might be the last dev-Version (cause it will include everything that I had planed for this Malware) and Version 0.5.0 might be already the 1.0 Release.\
-Obviously it will still take some time until Im able to publish the 1.0 Release.
+Im getting really close to being done with this, (Im not anymore as I've discovered) 
+so Version ~~0.4.9~~ 0.5.1 might be the last dev-Version (cause it will include everything that I had planed for this Malware 
+(If i can even trust myself)) and Version 0.5.x might be already the 1.0 Release.\
+Obviously it will still take "some time" (are you sure about that ?) until Im able to publish the 1.0 Release.
 
 I've planned to completely go over my Code, from the start to the end, after the last dev-Version release.
-I want to find every little mistake I did (if even possible) and look for anything in my code that I could improve.
-(The Version 1.0 Release will probably be in 1 to 2 weeks depending on how much time I have on my hand)
+I want to find every little mistake I did (if even possible) and look for anything in my code that I could improve.\
+(update: Im actually in the process of that right now, but it's a lot and it will take time, a lot of time)
+
+~~(The Version 1.0 Release will probably be in 1 to 2 weeks depending on how much time I have on my hand)~~\
+(update: sadly this won't be possible, the release probably won't happen next week)
