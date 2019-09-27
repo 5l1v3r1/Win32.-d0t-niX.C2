@@ -1,9 +1,13 @@
 #include "../../../HeaderFiles/N0TiLLerka.h"
 
-BOOL fnDirectoryIteratorW(std::wstring szDir, std::wstring szMask, std::vector<std::wstring>& vszDir, std::vector<std::wstring>& vszFile) {
+BOOL fnDirectoryIteratorW(
+	_In_ std::wstring szDir,
+	_In_ std::wstring szMask,
+	_Inout_ std::vector<std::wstring>& vszDir,
+	_Inout_ std::vector<std::wstring>& vszFile
+) {
 	WIN32_FIND_DATA w32Fd;
 	std::wstring szW32fd = szDir + L"\\" + szMask;
-
 	HANDLE hFind = FindFirstFile(szW32fd.c_str(), &w32Fd);
 	if (hFind != INVALID_HANDLE_VALUE) {
 		do {
@@ -20,7 +24,7 @@ BOOL fnDirectoryIteratorW(std::wstring szDir, std::wstring szMask, std::vector<s
 		return TRUE;
 	} else {
 #ifdef DEBUG_MSG
-		MessageBox(NULL, L"Handle to FindFirstFile is invalid", MALWR_NAME, MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
+		fnErrorHandlerW(L"Couldn't open Handle \"hFind\" to FirstFile", NULL, L"FindFirstFileW", MB_OK | MB_ICONERROR);
 #endif // DEBUG_MSG
 		return FALSE;
 	}

