@@ -8,6 +8,7 @@ BOOL fnDirectoryIteratorW(
 ) {
 	WIN32_FIND_DATA w32Fd;
 	std::wstring szW32fd = szDir + L"\\" + szMask;
+
 	HANDLE hFind = FindFirstFile(szW32fd.c_str(), &w32Fd);
 	if (hFind != INVALID_HANDLE_VALUE) {
 		do {

