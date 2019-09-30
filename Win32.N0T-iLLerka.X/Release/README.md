@@ -1,5 +1,5 @@
-# Release (dev-VER 0.4.8 BETA)
-The "N0T-iLLerka.3X3" File is the Binary (.exe)
+# Release (dev-VER 0.5.1 BETA-1)
+The "N0T-iLLerka.X" File is the Binary (.exe)
 
 This File is here so you don't have to go through the trouble to compile it yourself\
 (Because opening the .sln File and pressing CTRL+B is really hard :D)
