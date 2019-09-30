@@ -28,6 +28,13 @@ Atleast I now know that I should avoid this fuction under any circumstances :D
 (I forgot that the `CopyFile` function is unable to create a Directory in the first place so the function would always fail, NICE.\
 Even better was that I hadn't implemented proper Error Handling then, which made it even harder to even find what was causing the Issue. (spend 2 hours basically doing nothing, a moment I always **ALWAYS** hate, and so does everybody else do.))
 
+- I have now implemented a precompiled header file wanting to find out how much and if it even would improve compile time (which was about 10 - 12 sec before) and holyshit it does.\
+This precompiled header shortens the compiletime down to about 2 sec which is extremly nice for a project like this that needs to be debugged alot.\
+(Though working with a PCH in VS with multiple directories is horrible sadly, but atleast you can get used to it.)
+
+- Once again im moving/renaming directories/files which wouldn't be that bad but working with directories on GitHub well...\
+For now just see the `N0TiLLerka` as deprecated and refer to the new directory `N0T-iLLerka`
+
 Further Information will allways be posted/updated accordingly...
 
 ## Screenshots:
