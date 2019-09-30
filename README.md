@@ -13,6 +13,12 @@ I don't know why Im doing this (don't ask why)\
 (Hint: I still don't know why, but it should give newcommers some insights into malware development)
 
 ## This Project is under Development
+- **I've decided to create a BETA branch, this is where I will be uploading the current state of the code\
+(meaning that this will include unfinished / untested / temporery / buggy or even non working code)**\
+I've decided to do this because before, the sub-beta Versions were commited to the master branch.\
+Now the master will only include tested and working code/samples.\
+(Starting off with dev-VER 0.5.1 as soon as that version gets uploaded/made.)
+
 - MessageBox Fuctions are for Debuging purposes and will be removed later on\
 (~~Update: might be excluded with a #ifdef flag, but im not sure~~)\
 (they're now excluded by undefining DEBUG in der Headerfile, so they wont need to be removed)
