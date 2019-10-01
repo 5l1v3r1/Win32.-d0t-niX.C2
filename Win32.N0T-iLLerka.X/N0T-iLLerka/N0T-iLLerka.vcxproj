@@ -130,6 +130,10 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../../Header-Files/pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../../Header-Files/pch.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="Source-Files\Utilities\LeakMemory.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../../Header-Files/pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../../Header-Files/pch.h</PrecompiledHeaderFile>
+    </ClCompile>
     <ClCompile Include="Source-Files\Utilities\NTUtilities.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../../Header-Files/pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../../Header-Files/pch.h</PrecompiledHeaderFile>
