@@ -1,5 +1,6 @@
-# Release (dev-VER 0.5.1 BETA-1)
-The "N0T-iLLerka.X" File is the Binary (.exe)
+# R-Release (dev-VER 0.5.1 BETA-2)
+The "N0T-iLLerka.XR" File is the Binary (.exe)\
+(This is the Binary from The VSBuild Release-Configuration)
 
 This File is here so you don't have to go through the trouble to compile it yourself\
 (Because opening the .sln File and pressing CTRL+B is really hard :D)
