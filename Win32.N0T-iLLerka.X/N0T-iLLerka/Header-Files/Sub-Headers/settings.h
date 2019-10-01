@@ -12,11 +12,7 @@
 	//			   (Optional) ((I might write my own MBR displaying a Message))
 
 //// Debug-Mode: ////
-<<<<<<< Updated upstream
-//#define DEBUG
-=======
 /* #define DEBUG */
->>>>>>> Stashed changes
 	// If defined: Allows you to disables security features, used by the Malware to prevent the user from tampering with it.
 	//			   Also allows you to enable certain debugging features.
 	//			   This will also be automatically definded if you set the VSBuild-Configuration to "Debug",
