@@ -12,7 +12,5 @@ del "Win32.N0T-iLLerka.X\N0T-iLLerka\N0T-iLLerka.vcxproj.user" /f
 del "Win32.N0T-iLLerka.X\Release\N0T-iLLerka.iobj" /f
 del "Win32.N0T-iLLerka.X\Release\N0T-iLLerka.ipdb" /f
 del "Win32.N0T-iLLerka.X\Release\N0T-iLLerka.pdb" /f
-del "Win32.N0T-iLLerka.X\Debug\N0T-iLLerka.iobj" /f
-del "Win32.N0T-iLLerka.X\Debug\N0T-iLLerka.ipdb" /f
 del "Win32.N0T-iLLerka.X\Debug\N0T-iLLerka.pdb" /f
 del "Win32.N0T-iLLerka.X\Debug\N0T-iLLerka.ilk" /f
