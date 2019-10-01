@@ -1,7 +1,7 @@
 @echo off
 rd "Win32.N0T-iLLerka.X" /s /q
 
-xcopy "F:\Visual Studio\source\repos\Win32.N0T-iLLerka.X" "F:\GitHub\N0T-iLLerka.X\Win32.N0T-iLLerka.X\" /E /V /Y
+xcopy "F:\Visual Studio Data\source\repos\Win32.N0T-iLLerka.X" "F:\GitHub Data\N0T-iLLerka.X\Win32.N0T-iLLerka.X\" /E /V /Y
 
 rd "Win32.N0T-iLLerka.X\N0T-iLLerka\Release" /s /q
 rd "Win32.N0T-iLLerka.X\N0T-iLLerka\Debug" /s /q
