@@ -64,3 +64,11 @@ I want to find every little mistake I did (if even possible) and look for anythi
 
 ~~(The Version 1.0 Release will probably be in 1 to 2 weeks depending on how much time I have on my hand)~~\
 (update: sadly this won't be possible, the release probably won't happen next week)
+
+## ToDo list:
+- Improve `fnErrorHandlerW`
+- Improve FileCorrupt0r
+- Improve Protections (- add threads that activly monitor programms like `taskmgr.exe`)
+- If UAC is required launch with CMD (Stealth)
+- Cut Semaphore utilization
+- start to implement dropper functionality
