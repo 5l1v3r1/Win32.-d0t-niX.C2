@@ -1,49 +1,45 @@
 #include "../../Header-Files/pch.h"
 #include "../../Header-Files/N0T-iLLerka.h"
 
-BOOL fnLoadResourceW(
+LPVOID fnLoadResourceW(
 	_In_ WORD resID,
-	_Out_ LPVOID lpBuffer,
 	_Out_ LPDWORD dwBufferSize
 ) {
-	lpBuffer = NULL;
-	dwBufferSize = NULL;
+	*dwBufferSize = 0;
 
 	HRSRC hResFind = FindResource(NULL, MAKEINTRESOURCE(resID), RT_RCDATA);
 	if (hResFind) {
 		HGLOBAL hResLoad = LoadResource(NULL, hResFind);
 		if (hResLoad) {
-			LPVOID lpResLock = LockResource(hResLoad);
-			if (!lpResLock) {
+			LPVOID lpBuffer = LockResource(hResLoad);
+			if (!lpBuffer) {
 #ifdef DEBUG_MSG
 				fnErrorHandlerW(L"Couldn't lock Resource", NULL, L"LockResource", MB_OK | MB_ICONERROR);
 #endif // DEBUG_MSG
-				return FALSE;
+				return NULL;
 			}
 
-			DWORD dwResSize = SizeofResource(NULL, hResFind);
-			if (!dwResSize) {
+			*dwBufferSize = SizeofResource(NULL, hResFind);
+			if (!*dwBufferSize) {
 #ifdef DEBUG_MSG
 				fnErrorHandlerW(L"Couldn't get size of Resource", NULL, L"SizeOfResource", MB_OK | MB_ICONERROR);
 #endif // DEBUG_MSG
-				return FALSE;
+				return NULL;
 			}
 
-			lpBuffer = lpResLock;
-			dwBufferSize = &dwResSize;
-			return TRUE;
+			return lpBuffer;
 		} else {
 #ifdef DEBUG_MSG
 			fnErrorHandlerW(L"Couldn't load Resource", NULL, L"LoadResource", MB_OK | MB_ICONERROR);
 #endif // DEBUG_MSG
-			return FALSE;
 		}
 	} else {
 #ifdef DEBUG_MSG
 		fnErrorHandlerW(L"Couldn't find Resource\nResourceID: %d\nResourceTYPE: %s", NULL, L"FindResourceW", MB_OK | MB_ICONERROR, resID, RT_RCDATA);
 #endif // DEBUG_MSG
-		return FALSE;
 	}
+
+	return NULL;
 }
 
 BOOL fnSaveResourceW(
@@ -70,4 +66,15 @@ BOOL fnSaveResourceW(
 #endif // DEBUG_MSG
 		return FALSE;
 	}
+}
+
+BOOL fnExtractResourceW(
+	_In_ LPCWSTR lpResID,
+	_In_ LPCWSTR lpResType,
+	_In_ LPCWSTR lpFileName
+) {
+	LPVOID lpBuffer = NULL;
+	DWORD dwBuffersize = NULL;
+
+	return FALSE;
 }
