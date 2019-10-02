@@ -19,7 +19,7 @@ BOOL fnCreateRegistryKeyW(
 	HKEY hKey;
 	if (!RegCreateKeyEx(HKEY_LOCAL_MACHINE, lpSubKey, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS | _wow32, NULL, &hKey, NULL)) {
 		if (lpValueName) {
-			if (!RegSetValueEx(hKey, lpValueName, 0, dwType, (PBYTE)&dwValue, sizeof(DWORD))) {
+			if (!RegSetValueEx(hKey, lpValueName, 0, dwType, (LPBYTE)&dwValue, sizeof(DWORD))) {
 				RegCloseKey(hKey);
 				return TRUE;
 			} else {

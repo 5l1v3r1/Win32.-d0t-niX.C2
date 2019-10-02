@@ -63,7 +63,7 @@ END
 // RT_RCDATA
 //
 
-IDR_RCDATA_0x00         RT_RCDATA               "PEdelete.bat"
+IDR_RCDATA_0x01         RT_RCDATA               "PEdelete.bat"
 
 #endif    // English resources
 /////////////////////////////////////////////////////////////////////////////

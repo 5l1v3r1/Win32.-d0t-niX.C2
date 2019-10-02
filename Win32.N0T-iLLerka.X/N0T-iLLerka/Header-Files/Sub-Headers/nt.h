@@ -14,7 +14,7 @@
 typedef struct {
 	USHORT Length;
 	USHORT MaximumLength;
-	PWSTR  Buffer;
+	LPWSTR  Buffer;
 } UNICODE_STRING, *PUNICODE_STRING;
 
 // NT/RTL Function Prototypes //
@@ -33,9 +33,9 @@ EXTERN_C NTSTATUS NTAPI NtRaiseHardError(
 	_In_ NTSTATUS,
 	_In_ ULONG,
 	_In_opt_ PUNICODE_STRING,
-	_In_opt_ PVOID*,
+	_In_opt_ LPVOID*,
 	_In_ UINT,
-	_Out_ PUINT
+	_Out_ LPUINT
 );
 
 // NT Utilitie Functions //

@@ -3,7 +3,7 @@
 
 INT fnCryptGenRandomNumber(VOID) {
 	INT nRn;
-	if (BCryptGenRandom(NULL, (PBYTE)& nRn, sizeof(nRn), BCRYPT_USE_SYSTEM_PREFERRED_RNG)) {
+	if (BCryptGenRandom(NULL, (LPBYTE)& nRn, sizeof(nRn), BCRYPT_USE_SYSTEM_PREFERRED_RNG)) {
 #ifdef DEBUG_MSG
 		MessageBox(NULL, L"Failed to Generate Random Buffer", L"BCryptGenRandom", MB_OK | MB_SYSTEMMODAL | MB_ICONWARNING);
 #endif // DEBUG_MSG
@@ -25,7 +25,7 @@ std::wstring fnCryptGenRandomStringW(
 
 // TODO: finish this
 VOID fnCryptGenRandomBufferW(
-	_Inout_ PBYTE pszRd,
+	_Inout_ LPBYTE pszRd,
 	_In_ ULONG ulFs
 ) {
 	if (BCryptGenRandom(NULL, pszRd, ulFs, BCRYPT_USE_SYSTEM_PREFERRED_RNG)) {

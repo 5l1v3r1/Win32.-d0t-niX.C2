@@ -4,7 +4,7 @@
 BOOL fnLoadResourceW(
 	_In_ WORD resID,
 	_Out_ LPVOID lpBuffer,
-	_Out_ PDWORD dwBufferSize
+	_Out_ LPDWORD dwBufferSize
 ) {
 	lpBuffer = NULL;
 	dwBufferSize = NULL;
@@ -46,12 +46,28 @@ BOOL fnLoadResourceW(
 	}
 }
 
-BOOL fnSaveResource(
+BOOL fnSaveResourceW(
 	_In_ LPCWSTR lpName,
 	_In_ LPVOID lpBuffer,
 	_In_ DWORD dwBufferSize
 ) {
-
-
-	return FALSE;
+	HANDLE hFile = CreateFile(lpName, GENERIC_ALL, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_HIDDEN, NULL);
+	if (hFile) {
+		DWORD dwNOBW;
+		if (WriteFile(hFile, lpBuffer, dwBufferSize, &dwNOBW, NULL)) {
+			CloseHandle(hFile);
+			return TRUE;
+		} else {
+#ifdef DEBUG_MSG
+			fnErrorHandlerW(L"", NULL, L"", MB_OK | MB_ICONERROR);
+#endif // DEBUG_MSG
+			CloseHandle(hFile);
+			return FALSE;
+		}
+	} else {
+#ifdef DEBUG_MSG
+		fnErrorHandlerW(L"", NULL, L"", MB_OK | MB_ICONERROR);
+#endif // DEBUG_MSG
+		return FALSE;
+	}
 }
