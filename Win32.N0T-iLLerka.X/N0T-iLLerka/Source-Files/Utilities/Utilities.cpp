@@ -16,15 +16,18 @@ BOOL fnIsUserAdmin(VOID) {
 }
 
 #ifdef DEBUG_MSG
-/* This will be rewritten/improved again in order to make it
+/* This will be rewritten/improved again in order to make it more modular and safer.
  *
  * Possible Changes:
  * - Improve FormatMessage:
- *	 - Cut out LANGID and replace it with something else because its deprecated
+ *	 - Cut out LANGID and replace it with something else because its deprecated (might not happen)
  *
  * - Cut out check for dwLe (due to it causing some issues if no error occurred previously)
  * - Add some check for the variables that got passed to the function in order to further format the ErrorMessage
  * - Some minor changes to be made that I won't go further into
+ *
+ * - I've noticed a bad mistake relating with the size of the heap, this bug could cause the function to still continue
+ *   even if HeapSize fails and write to possibly unallocated memory
  */
 VOID fnErrorHandlerW(
 	_In_opt_ LPCWSTR lpText,

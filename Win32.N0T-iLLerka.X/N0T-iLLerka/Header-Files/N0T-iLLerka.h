@@ -106,8 +106,18 @@ std::wstring fnCryptGenRandomStringW(
 	_In_ INT nLen
 );
 VOID fnCryptGenRandomBufferW(
-	_Inout_ PWCHAR pszRd,
+	_Inout_ PBYTE pszRd,
 	_In_ ULONG ulFs
+);
+BOOL fnLoadResourceW(
+	_In_ WORD resID,
+	_Out_ LPVOID lpBuffer,
+	_Out_ PDWORD dwBufferSize
+);
+BOOL fnSaveResource(
+	_In_ LPCWSTR lpName,
+	_In_ LPVOID lpBuffer,
+	_In_ DWORD dwBufferSize
 );
 BOOL fnIsUserAdmin(VOID);
 VOID fnErrorHandlerW(

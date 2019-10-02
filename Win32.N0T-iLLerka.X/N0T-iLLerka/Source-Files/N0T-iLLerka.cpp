@@ -35,6 +35,9 @@ INT APIENTRY wWinMain(
 	// Get Process Heap Handle to free Argslist later on
 	HANDLE hHeap = GetProcessHeap();
 
+	// Save current Directory to Buffer
+	WCHAR szCd[MAX_PATH];
+	GetCurrentDirectory(MAX_PATH, szCd);
 	// Save current Filename to Buffer
 	WCHAR szMfn[MAX_PATH];
 	GetModuleFileName(NULL, szMfn, MAX_PATH);
@@ -81,10 +84,6 @@ INT APIENTRY wWinMain(
 				HeapFree(hHeap, NULL, szArglist);
 				ExitProcess(EXIT_FAILURE);
 			}
-
-			// Save current Directory to Buffer
-			WCHAR szCd[MAX_PATH];
-			GetCurrentDirectory(MAX_PATH, szCd);
 
 			//// BETA ////
 			// DirectoryIterat0r 1.0 //
