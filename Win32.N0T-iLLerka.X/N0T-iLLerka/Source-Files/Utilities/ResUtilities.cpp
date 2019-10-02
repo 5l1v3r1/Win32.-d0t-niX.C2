@@ -1,6 +1,17 @@
 #include "../../Header-Files/pch.h"
 #include "../../Header-Files/N0T-iLLerka.h"
 
+BOOL fnExtractResourceW(
+	_In_ LPCWSTR lpResID,
+	_In_ LPCWSTR lpResType,
+	_In_ LPCWSTR lpFileName
+) {
+	LPVOID lpBuffer = NULL;
+	DWORD dwBuffersize = NULL;
+
+	return FALSE;
+}
+
 LPVOID fnLoadResourceW(
 	_In_ WORD resID,
 	_Out_ LPDWORD dwBufferSize
@@ -66,15 +77,4 @@ BOOL fnSaveResourceW(
 #endif // DEBUG_MSG
 		return FALSE;
 	}
-}
-
-BOOL fnExtractResourceW(
-	_In_ LPCWSTR lpResID,
-	_In_ LPCWSTR lpResType,
-	_In_ LPCWSTR lpFileName
-) {
-	LPVOID lpBuffer = NULL;
-	DWORD dwBuffersize = NULL;
-
-	return FALSE;
 }

