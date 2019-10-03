@@ -40,7 +40,7 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #define nSEMAPHORE 2
 
 // Utilitie Macros //
-#define szMALWR_NAME L"N0T-iLLerka.X"
+#define szMALWR_NAME L"N0T-iLLerka.X [.niX]"
 #define szFORMAT L"%s failed with Errorcode:\n%d : %s\nDetails:\n"
 #define nFORMAT_LEN lstrlen(szFORMAT)
 #define nMAX_HEAP_SIZE 0xfa0

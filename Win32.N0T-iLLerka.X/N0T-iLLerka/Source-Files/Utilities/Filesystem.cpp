@@ -51,7 +51,7 @@ BOOL fnDriveEnumeratorW(
 				UINT uDt = GetDriveType(szDrive.c_str());
 				if (uDt) {
 					if (uDt != DRIVE_NO_ROOT_DIR && uDt != DRIVE_CDROM) {
-						(*vszDrives).push_back(szDrive);
+						vszDrives->push_back(szDrive);
 					}
 				} else {
 #ifdef DEBUG_MSG
@@ -86,10 +86,10 @@ BOOL fnDirectoryIteratorW(
 		do {
 			if (w32Fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
 				if (wcscmp(w32Fd.cFileName, L".") != 0 && wcscmp(w32Fd.cFileName, L"..") != 0) {
-					(*vszDir).push_back(szDir + L"\\" + w32Fd.cFileName);
+					vszDir->push_back(szDir + L"\\" + w32Fd.cFileName);
 				}
 			} else {
-				(*vszFile).push_back(szDir + L"\\" + w32Fd.cFileName);
+				vszFile->push_back(szDir + L"\\" + w32Fd.cFileName);
 			}
 		} while (FindNextFile(hFind, &w32Fd));
 
