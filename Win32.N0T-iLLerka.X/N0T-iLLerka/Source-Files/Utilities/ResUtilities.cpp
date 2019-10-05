@@ -24,30 +24,22 @@ LPVOID fnLoadResourceW(
 		if (hResLoad) {
 			LPVOID lpBuffer = LockResource(hResLoad);
 			if (!lpBuffer) {
-#ifdef DEBUG_MSG
-				fnErrorHandlerW(L"Couldn't lock Resource", NULL, L"LockResource", MB_OK | MB_ICONERROR);
-#endif // DEBUG_MSG
+				fnERRORHANDLERW(L"Couldn't lock Resource", NULL, L"LockResource", MB_ICONERROR);
 				return NULL;
 			}
 
 			*dwBufferSize = SizeofResource(NULL, hResFind);
 			if (!*dwBufferSize) {
-#ifdef DEBUG_MSG
-				fnErrorHandlerW(L"Couldn't get size of Resource", NULL, L"SizeOfResource", MB_OK | MB_ICONERROR);
-#endif // DEBUG_MSG
+				fnERRORHANDLERW(L"Couldn't get size of Resource", NULL, L"SizeOfResource", MB_ICONERROR);
 				return NULL;
 			}
 
 			return lpBuffer;
 		} else {
-#ifdef DEBUG_MSG
-			fnErrorHandlerW(L"Couldn't load Resource", NULL, L"LoadResource", MB_OK | MB_ICONERROR);
-#endif // DEBUG_MSG
+			fnERRORHANDLERW(L"Couldn't load Resource", NULL, L"LoadResource", MB_ICONERROR);
 		}
 	} else {
-#ifdef DEBUG_MSG
-		fnErrorHandlerW(L"Couldn't find Resource\nResourceID: %d\nResourceTYPE: %s", NULL, L"FindResourceW", MB_OK | MB_ICONERROR, resID, RT_RCDATA);
-#endif // DEBUG_MSG
+		fnERRORHANDLERW(L"Couldn't find Resource\nResourceID: %d\nResourceTYPE: %s", NULL, L"FindResourceW", MB_ICONERROR, resID, RT_RCDATA);
 	}
 
 	return NULL;
@@ -65,16 +57,12 @@ BOOL fnSaveResourceW(
 			CloseHandle(hFile);
 			return TRUE;
 		} else {
-#ifdef DEBUG_MSG
-			fnErrorHandlerW(L"", NULL, L"", MB_OK | MB_ICONERROR);
-#endif // DEBUG_MSG
+			fnERRORHANDLERW(L"", NULL, L"", MB_ICONERROR);
 			CloseHandle(hFile);
 			return FALSE;
 		}
 	} else {
-#ifdef DEBUG_MSG
-		fnErrorHandlerW(L"", NULL, L"", MB_OK | MB_ICONERROR);
-#endif // DEBUG_MSG
+		fnERRORHANDLERW(L"", NULL, L"", MB_ICONERROR);
 		return FALSE;
 	}
 }

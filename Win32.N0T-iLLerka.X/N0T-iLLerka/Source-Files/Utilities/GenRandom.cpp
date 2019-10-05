@@ -4,9 +4,7 @@
 INT fnCryptGenRandomNumber(VOID) {
 	INT nRn;
 	if (BCryptGenRandom(NULL, (LPBYTE)& nRn, sizeof(nRn), BCRYPT_USE_SYSTEM_PREFERRED_RNG)) {
-#ifdef DEBUG_MSG
-		MessageBox(NULL, L"Failed to Generate Random Buffer", L"BCryptGenRandom", MB_OK | MB_SYSTEMMODAL | MB_ICONWARNING);
-#endif // DEBUG_MSG
+		fnERRORHANDLERW(L"Failed to Generate Random Buffer", NULL, L"BCryptGenRandom", MB_ICONWARNING);
 	}
 
 	return nRn & 0x7fffffff;
@@ -29,9 +27,7 @@ VOID fnCryptGenRandomBufferW(
 	_In_ ULONG ulFs
 ) {
 	if (BCryptGenRandom(NULL, pszRd, ulFs, BCRYPT_USE_SYSTEM_PREFERRED_RNG)) {
-#ifdef DEBUG_MSG
-		MessageBox(NULL, L"Couldn't generate Random Buffer Content\nusing ZeroMemory instead", L"BCryptGenRandom", MB_OK | MB_ICONWARNING | MB_SYSTEMMODAL);
-#endif // DEBUG_MSG
+		fnERRORHANDLERW(L"Couldn't generate Random Buffer Content\nusing ZeroMemory instead", NULL, L"BCryptGenRandom", MB_ICONWARNING);
 		ZeroMemory(pszRd, ulFs);
 	}
 }

@@ -1,7 +1,7 @@
 //// nt.h : N0T-iLLerka.X's NT Header File ////
 #pragma once
 
-#ifndef DISABLE_NT_FUNCTIONS
+#if DISABLE_NT_FUNCTIONS == FALSE
 // NT Library //
 #pragma comment(lib, "ntdll.lib")
 
@@ -18,18 +18,18 @@ typedef struct {
 } UNICODE_STRING, *PUNICODE_STRING;
 
 // NT/RTL Function Prototypes //
-EXTERN_C NTSTATUS NTAPI RtlAdjustPrivilege(
+EXTERN_C NTSYSAPI NTSTATUS NTAPI RtlAdjustPrivilege(
 	_In_ ULONG,
 	_In_ BOOLEAN,
 	_In_ BOOLEAN,
 	_Out_ PBOOLEAN
 );
-EXTERN_C NTSTATUS STDAPIVCALLTYPE RtlSetProcessIsCritical(
+EXTERN_C NTSYSAPI NTSTATUS STDAPIVCALLTYPE RtlSetProcessIsCritical(
 	_In_ BOOLEAN,
 	_Out_opt_ PBOOLEAN,
 	_In_ BOOLEAN
 );
-EXTERN_C NTSTATUS NTAPI NtRaiseHardError(
+EXTERN_C NTSYSAPI NTSTATUS NTAPI NtRaiseHardError(
 	_In_ NTSTATUS,
 	_In_ ULONG,
 	_In_opt_ PUNICODE_STRING,
