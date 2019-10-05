@@ -80,7 +80,7 @@ BOOL fnOverwriteMBR(VOID);
 BOOL fnCreateRegistryKeyW(
 	_In_ HKEY hKeyHK,
 	_In_ LPCWSTR lpSubKey,
-	_In_ BOOL wow32,
+	_In_ BOOL bWow32,
 	_In_opt_ LPCWSTR lpValueName,
 	_In_opt_ DWORD dwType,
 	_In_opt_ DWORD dwValue
@@ -106,10 +106,6 @@ HANDLE fnCheckSemaphoreW(
 INT fnCryptGenRandomNumber(VOID);
 std::wstring fnCryptGenRandomStringW(
 	_In_ INT nLen
-);
-VOID fnCryptGenRandomBufferW(
-	_Inout_ LPBYTE pszRd,
-	_In_ ULONG ulFs
 );
 LPVOID fnLoadResourceW(
 	_In_ WORD resID,

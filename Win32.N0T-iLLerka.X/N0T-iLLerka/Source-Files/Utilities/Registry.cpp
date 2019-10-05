@@ -33,13 +33,13 @@ BOOL fnCheckRegistryKeyW(
 BOOL fnCreateRegistryKeyW(
 	_In_ HKEY hKeyHK,
 	_In_ LPCWSTR lpSubKey,
-	_In_ BOOL wow32,
+	_In_ BOOL bWow32,
 	_In_opt_ LPCWSTR lpValueName,
 	_In_opt_ DWORD dwType,
 	_In_opt_ DWORD dwValue
 ) {
 	REGSAM _wow32;
-	if (wow32) {
+	if (bWow32) {
 		_wow32 = KEY_WOW64_32KEY;
 	} else {
 		_wow32 = NULL;

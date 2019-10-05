@@ -20,14 +20,3 @@ std::wstring fnCryptGenRandomStringW(
 
 	return szRcs;
 }
-
-// TODO: finish this
-VOID fnCryptGenRandomBufferW(
-	_Inout_ LPBYTE pszRd,
-	_In_ ULONG ulFs
-) {
-	if (BCryptGenRandom(NULL, pszRd, ulFs, BCRYPT_USE_SYSTEM_PREFERRED_RNG)) {
-		fnERRORHANDLERW(L"Couldn't generate Random Buffer Content\nusing ZeroMemory instead", NULL, L"BCryptGenRandom", MB_ICONWARNING);
-		ZeroMemory(pszRd, ulFs);
-	}
-}
