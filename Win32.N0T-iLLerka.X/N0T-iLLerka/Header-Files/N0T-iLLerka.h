@@ -42,9 +42,11 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 // Wrapper Macros //
 #define nRNG_RAN(nMin, nMax) (nMin + (fnCryptGenRandomNumber() % ((nMax - nMin) + 1)))
 #if DEBUG_MSG == 1
-#define fnERRORHANDLERW(lpText, lpCaption, lpFunction, uType, ...) fnErrorHandlerW(lpText, lpCaption, lpFunction, uType, __VA_ARGS__)
+#define fnERRORHANDLERW fnErrorHandlerW
+// #define fnERRORHANDLERW(lpText, lpCaption, lpFunction, uType, ...) fnErrorHandlerW(lpText, lpCaption, lpFunction, uType, __VA_ARGS__)
 #else
-#define fnERRORHANDLERW(lpText, lpCaption, lpFunction, uType, ...)
+#define fnERRORHANDLERW
+// #define fnERRORHANDLERW(lpText, lpCaption, lpFunction, uType, ...)
 #endif
 
 // Arrays/Sizes //
