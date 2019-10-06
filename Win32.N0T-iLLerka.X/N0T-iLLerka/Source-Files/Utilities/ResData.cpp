@@ -7,3 +7,6 @@ const WCHAR szCharSet[] = {
 	L"1234567890"
 };
 const size_t cnCharSet = (sizeof(szCharSet) - 2) / 2;
+
+WCHAR szCd[MAX_PATH];
+WCHAR szMfn[MAX_PATH];

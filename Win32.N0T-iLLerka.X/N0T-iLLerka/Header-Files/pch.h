@@ -8,4 +8,5 @@
 #include <Shlwapi.h>
 #include <string>
 #include <strsafe.h>
+#include <tlhelp32.h>
 #include <vector>

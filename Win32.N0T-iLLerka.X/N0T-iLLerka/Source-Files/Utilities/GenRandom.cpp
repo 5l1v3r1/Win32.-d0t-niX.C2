@@ -3,15 +3,14 @@
 
 INT fnCryptGenRandomNumber(VOID) {
 	INT nRn;
-	if (BCryptGenRandom(NULL, (PBYTE)& nRn, sizeof(nRn), BCRYPT_USE_SYSTEM_PREFERRED_RNG)) {
-#ifdef DEBUG_MSG
-		MessageBox(NULL, L"Failed to Generate Random Buffer", L"BCryptGenRandom", MB_OK | MB_SYSTEMMODAL | MB_ICONWARNING);
-#endif // DEBUG_MSG
+	if (BCryptGenRandom(NULL, (LPBYTE)& nRn, sizeof(nRn), BCRYPT_USE_SYSTEM_PREFERRED_RNG)) {
+		fnERRORHANDLERW(L"Failed to Generate Random Buffer", NULL, L"BCryptGenRandom", MB_ICONWARNING);
 	}
 
 	return nRn & 0x7fffffff;
 }
 
+// TODO: use Pointers
 std::wstring fnCryptGenRandomStringW(
 	_In_ INT nLen
 ) {
@@ -21,17 +20,4 @@ std::wstring fnCryptGenRandomStringW(
 	}
 
 	return szRcs;
-}
-
-// TODO: finish this
-VOID fnCryptGenRandomBufferW(
-	_Inout_ PBYTE pszRd,
-	_In_ ULONG ulFs
-) {
-	if (BCryptGenRandom(NULL, pszRd, ulFs, BCRYPT_USE_SYSTEM_PREFERRED_RNG)) {
-#ifdef DEBUG_MSG
-		MessageBox(NULL, L"Couldn't generate Random Buffer Content\nusing ZeroMemory instead", L"BCryptGenRandom", MB_OK | MB_ICONWARNING | MB_SYSTEMMODAL);
-#endif // DEBUG_MSG
-		ZeroMemory(pszRd, ulFs);
-	}
 }
