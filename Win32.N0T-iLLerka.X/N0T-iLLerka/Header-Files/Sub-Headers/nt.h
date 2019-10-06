@@ -1,7 +1,7 @@
 //// nt.h : N0T-iLLerka.X's NT Header File ////
 #pragma once
 
-#if DISABLE_NT_FUNCTIONS == FALSE
+#if NT_FUNCTIONS == TRUE
 // NT Library //
 #pragma comment(lib, "ntdll.lib")
 
@@ -43,4 +43,4 @@ BOOL fnNTSetProcessIsCritical(
 	_In_ BOOLEAN blIsCritical
 );
 BOOL fnNTRaiseHardError(VOID);
-#endif // !DISABLE_NT_FUNCTIONS
+#endif // NT_FUNCTIONS

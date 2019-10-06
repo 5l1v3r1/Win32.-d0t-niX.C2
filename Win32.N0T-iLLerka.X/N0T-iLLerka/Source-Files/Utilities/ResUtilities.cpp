@@ -13,7 +13,7 @@ BOOL fnExtractResourceW(
 }
 
 LPVOID fnLoadResourceW(
-	_In_ WORD resID,
+	_In_  WORD    resID,
 	_Out_ LPDWORD dwBufferSize
 ) {
 	*dwBufferSize = 0;
@@ -47,8 +47,8 @@ LPVOID fnLoadResourceW(
 
 BOOL fnSaveResourceW(
 	_In_ LPCWSTR lpName,
-	_In_ LPVOID lpBuffer,
-	_In_ DWORD dwBufferSize
+	_In_ LPVOID  lpBuffer,
+	_In_ DWORD   dwBufferSize
 ) {
 	HANDLE hFile = CreateFile(lpName, GENERIC_ALL, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_HIDDEN, NULL);
 	if (hFile) {

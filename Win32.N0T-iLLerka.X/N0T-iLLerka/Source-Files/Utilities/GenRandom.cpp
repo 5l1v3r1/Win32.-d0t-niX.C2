@@ -10,6 +10,7 @@ INT fnCryptGenRandomNumber(VOID) {
 	return nRn & 0x7fffffff;
 }
 
+// TODO: use Pointers
 std::wstring fnCryptGenRandomStringW(
 	_In_ INT nLen
 ) {

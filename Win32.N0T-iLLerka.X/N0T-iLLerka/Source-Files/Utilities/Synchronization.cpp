@@ -1,7 +1,7 @@
 #include "../../Header-Files/pch.h"
 #include "../../Header-Files/N0T-iLLerka.h"
 
-#if DISABLE_SYNCHRONIZATION == FALSE
+#if SYNCHRONIZATION == TRUE
 BOOL fnCheckMutexW(
 	_In_ LPCWSTR lpName
 ) {
