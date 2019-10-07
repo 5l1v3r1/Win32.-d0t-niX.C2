@@ -61,8 +61,8 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 86,0,5,1
- PRODUCTVERSION 86,0,5,1
+ FILEVERSION 86,0,5,2
+ PRODUCTVERSION 86,0,5,2
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -77,13 +77,13 @@ BEGIN
     BEGIN
         BLOCK "040904b0"
         BEGIN
-            VALUE "FileDescription", "N0T-iLLerka.X [your File Killa] - (dev-VER)"
-            VALUE "FileVersion", "0.5.1 _d-Release.3"
+            VALUE "FileDescription", "N0T-iLLerka.X [.niX] your File Killa] - (dev-VER)"
+            VALUE "FileVersion", "0.5.2 _b-Release.1"
             VALUE "InternalName", ".niX"
             VALUE "LegalCopyright", "Lima X [L4X] / [G-C-E-R] © 2kl9"
             VALUE "OriginalFilename", "N0T-iLLerka.X"
             VALUE "ProductName", "Win32.N0T-iLLerka.X [.niX]"
-            VALUE "ProductVersion", "0.5.1 _d-Release.3"
+            VALUE "ProductVersion", "0.5.2 _b-Release.1"
         END
     END
     BLOCK "VarFileInfo"

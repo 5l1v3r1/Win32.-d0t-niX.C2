@@ -25,7 +25,7 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 // ErrorHandler Macros //
 #if DEBUG_MSG == TRUE
-#define szFORMAT L"%s failed with Errorcode:\n%d : %s"
+#define szFORMAT L"%s returned with Errorcode:\n%d : %s"
 #define nFORMAT_LEN lstrlen(szFORMAT)
 #define cbMAX_HEAP_SIZE 0xfa0
 #endif // DEBUG_MSG
@@ -92,8 +92,8 @@ BOOL fnDriveEnumeratorW(
 	_Inout_ std::vector<std::wstring>* vszDrive
 );
 BOOL fnDirectoryIteratorW(
-	_In_    std::wstring               szDir,
-	_In_    std::wstring               szMask,
+	_In_    LPCWSTR                    szDir,
+	_In_    LPCWSTR                    szMask,
 	_Inout_ std::vector<std::wstring>* vszDir,
 	_Inout_ std::vector<std::wstring>* vszFile
 );

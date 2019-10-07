@@ -15,10 +15,6 @@ VOID fnErrorHandlerW(
 	if (!lpCaption) {
 		lpCaption = szMALWR_NAME;
 	}
-	if (!lpFunction) {
-		MessageBox(NULL, L"lpFunction didn't get passed", L"fnErrorHandlerW", MB_ICONERROR | MB_SYSTEMMODAL);
-		return;
-	}
 
 	HANDLE hHeap = GetProcessHeap();
 	if (!hHeap) {
@@ -41,7 +37,7 @@ VOID fnErrorHandlerW(
 		if (nHeap != (SIZE_T)-1) {
 			if (SUCCEEDED(StringCbPrintf((LPWSTR)lpDest, nHeap, szFORMAT, lpFunction, dwLe, (LPWSTR)lpMsgBuf))) {
 				if (lpText) {
-					std::wstring szFormat = (std::wstring)lpText + L"\nErrordetails:\n\n" + ((std::wstring)((LPWSTR)lpDest));
+					std::wstring szFormat = (std::wstring)lpText + L"\n\nErrordetails:\n" + ((std::wstring)((LPWSTR)lpDest));
 					LPVOID lpDest_t = HeapReAlloc(hHeap, HEAP_ZERO_MEMORY, lpDest, ((lstrlen(szFormat.c_str()) * 2) + cbMAX_HEAP_SIZE));
 					if (lpDest_t) {
 						lpDest = lpDest_t;
@@ -84,6 +80,7 @@ VOID fnErrorHandlerW(
 	if (lpDest) { HeapFree(hHeap, NULL, lpDest); }
 	if (lpMsgBuf) { HeapFree(hHeap, NULL, lpMsgBuf); }
 
+	SetLastError(ERROR_SUCCESS);
 	va_end(va_l);
 }
 #endif // DEBUG_MSG
