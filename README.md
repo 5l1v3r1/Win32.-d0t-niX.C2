@@ -85,10 +85,11 @@ I want to find every little mistake I did (if even possible) and look for anythi
 - [ ] Improve Protections ( - add threads that activly monitor programms like `taskmgr.exe`)
 - [ ] If UAC is required launch with CMD (Stealth)
 - [ ] Cut Semaphore utilization (this will happen to 100%)
-- [ ] start to implement dropper functionality\
+- [ ] Start to implement dropper functionality\
   (I've started to play around with DLL's and well it seems like that I'll have to explicitly link them,
   if I want to do it like I've planned/intended it to do it (if I even do it))
-- [ ] implement Process monitor/iterator
-- [ ] implement Registry monitor/iterator
-- [ ] implement /exec-Watchdog
-- [ ] implement protection-Watchdog (task-3)
+- [ ] Implement Process -monitor/-iterator
+- [ ] Implement Registry -monitor/-iterator
+- [ ] Implement /exec-Watchdog
+- [ ] Implement protection-Watchdog (task-3)
+- [ ] Implement Console-Debug version (needing to add stuff to `fnErrorHandlerW` to print to Console)
