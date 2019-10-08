@@ -1,9 +1,10 @@
 # DR-Releases (dev-VER 0.5.1 BETA-2)
-The "N0T-iLLerka.XR" File is the Release Binary (.exe)\
+The "N0T-iLLerka.XRW" File is the Release-Windows Binary (.exe)\
 (This is the Binary from the MSBuild Release-Configuration.)
 
-The "N0T-iLLerka.XD" File is the Debug Binary (.exe)\
-(This is from The MSBuild Debug-Configuration, this will likely not run on your system but I've included it anyways.)
+The "N0T-iLLerka.XDW" File is the Debug-Windows Binary (.exe)\
+The "N0T-iLLerka.XDC" File is the Debug-Console Binary (.exe)\
+(These are from the MSBuild Debug-Configurations, they likely won't run on your system but I've included them anyways.)
 
 These Files are here so you don't have to go through the trouble to compile them yourself
 

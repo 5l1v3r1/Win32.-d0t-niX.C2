@@ -62,12 +62,12 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Windows|Win32'">
     <TargetExt>.XDW</TargetExt>
-    <OutDir>$(SolutionDir)BIN\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)BIN\Debug\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir).in\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Console|Win32'">
     <TargetExt>.XDC</TargetExt>
-    <OutDir>$(SolutionDir)BIN\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)BIN\Debug\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir).in\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

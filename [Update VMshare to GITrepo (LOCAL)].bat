@@ -13,6 +13,11 @@ rem Move Binaries to BIN folder in local Git-repo
 xcopy "F:\GitHub Data\N0T-iLLerka.X\Win32.N0T-iLLerka.X\BIN" "F:\GitHub Data\N0T-iLLerka.X\BIN\" /i /s /v /y
 rd "F:\GitHub Data\N0T-iLLerka.X\Win32.N0T-iLLerka.X\BIN" /s /q
 
+xcopy "F:\GitHub Data\N0T-iLLerka.X\BIN\Debug\Debug Console" "F:\GitHub Data\N0T-iLLerka.X\BIN\Debug\" /i /s /v /y
+rd "F:\GitHub Data\N0T-iLLerka.X\BIN\Debug\Debug Console" /s /q
+xcopy "F:\GitHub Data\N0T-iLLerka.X\BIN\Debug\Debug Windows" "F:\GitHub Data\N0T-iLLerka.X\BIN\Debug\" /i /s /v /y
+rd "F:\GitHub Data\N0T-iLLerka.X\BIN\Debug\Debug Windows" /s /q
+
 rem remove files of type: [.ilk] [.pdb] [.ipdb] [.iobj] 
 del "F:\GitHub Data\N0T-iLLerka.X\BIN\Debug\*.ilk" /f
 del "F:\GitHub Data\N0T-iLLerka.X\BIN\Debug\*.pdb" /f
