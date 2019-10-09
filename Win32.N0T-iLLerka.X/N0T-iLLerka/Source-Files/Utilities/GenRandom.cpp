@@ -16,7 +16,7 @@ std::wstring fnCryptGenRandomStringW(
 ) {
 	std::wstring szRcs;
 	for (INT i = 0; i < nLen; i++) {
-		szRcs += szCharSet[fnCryptGenRandomNumber() % cnCharSet];
+		szRcs += szCharSet[fnCryptGenRandomNumber() % clCharSet];
 	}
 
 	return szRcs;

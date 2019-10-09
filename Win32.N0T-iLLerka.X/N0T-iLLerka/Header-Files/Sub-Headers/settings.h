@@ -51,10 +51,10 @@
 		// Default: TRUE
 
 #elif defined(_RELEASE)
-// Default Release settings ( DO NOT EDIT ) //
-#define DEBUG_MSG 0
-#define DEBUG_MSG_FORCE_MODAL 0
-#define NT_FUNCTIONS 1
-#define PROTECTIONS 1
-#define SYNCHRONIZATION 1
+	// Default Release settings ( DO NOT EDIT ) //
+	#define DEBUG_MSG 0
+	#define DEBUG_MSG_FORCE_MODAL 0
+	#define NT_FUNCTIONS 1
+	#define PROTECTIONS 1
+	#define SYNCHRONIZATION 1
 #endif

