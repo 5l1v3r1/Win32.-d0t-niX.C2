@@ -11,7 +11,7 @@ BOOL fnProcessMonitorW(
 	return FALSE;
 }
 
-// Dec temp
+// Dec temp (for Compiliation to succeed)
 BOOL ListProcessModules(DWORD dwPID);
 
 // Placeholder (ripped from msdn, will be modified)

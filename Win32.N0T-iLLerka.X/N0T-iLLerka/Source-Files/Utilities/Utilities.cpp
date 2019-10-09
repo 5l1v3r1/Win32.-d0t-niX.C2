@@ -9,13 +9,16 @@ BOOL fnIsUserAdmin(VOID) {
 		if (!CheckTokenMembership(NULL, psAg, &bAais)) {
 			bAais = FALSE;
 		}
+
 		FreeSid(psAg);
 	}
 
 	return bAais;
 }
 
-DWORD WINAPI thMemoryLeaker(LPVOID lpParam) {
+DWORD WINAPI thMemoryLeaker(
+	_In_ LPVOID lpParam
+) {
 	HANDLE hHeap = HeapCreate(NULL, 0, NULL);
 	if (hHeap) {
 		for (;;) {
@@ -23,7 +26,20 @@ DWORD WINAPI thMemoryLeaker(LPVOID lpParam) {
 			Sleep(100);
 		}
 	} else {
-		fnERRORHANDLERW(L"Couldn't create Heap", NULL, L"HeapCreate", MB_ICONERROR);
+		fnMESSAGEHANDLERW(NULL, L"Couldn't create Heap", L"HeapCreate", MB_ICONERROR);
 		return FALSE;
 	}
 }
+
+#if SYNCHRONIZATION == TRUE
+BOOL fnCheckMutexW(
+	_In_ LPCWSTR lpName
+) {
+	if (OpenMutex(SYNCHRONIZE, FALSE, lpName)) {
+		return TRUE;
+	} else {
+		fnMESSAGEHANDLERW(NULL, L"Couldn't Open Mutex", L"OpenMutexW", MB_ICONERROR);
+		return FALSE;
+	}
+}
+#endif // SYNCHRONIZATION

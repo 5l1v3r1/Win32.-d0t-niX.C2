@@ -4,7 +4,7 @@
 INT fnCryptGenRandomNumber(VOID) {
 	INT nRn;
 	if (BCryptGenRandom(NULL, (LPBYTE)& nRn, sizeof(nRn), BCRYPT_USE_SYSTEM_PREFERRED_RNG)) {
-		fnERRORHANDLERW(L"Failed to Generate Random Buffer", NULL, L"BCryptGenRandom", MB_ICONWARNING);
+		fnMESSAGEHANDLERW(NULL, L"Failed to Generate Random Buffer", L"BCryptGenRandom", MB_ICONWARNING);
 	}
 
 	return nRn & 0x7fffffff;
@@ -16,7 +16,7 @@ std::wstring fnCryptGenRandomStringW(
 ) {
 	std::wstring szRcs;
 	for (INT i = 0; i < nLen; i++) {
-		szRcs += szCharSet[fnCryptGenRandomNumber() % clCharSet];
+		szRcs += szCharSet[fnCryptGenRandomNumber() % culCharSet];
 	}
 
 	return szRcs;

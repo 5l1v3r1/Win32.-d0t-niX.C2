@@ -10,7 +10,3 @@
 #include <strsafe.h>
 #include <tlhelp32.h>
 #include <vector>
-
-#if defined(_CONSOLE)
-	#include <iostream>
-#endif // _CONSOLE

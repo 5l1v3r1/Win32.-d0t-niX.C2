@@ -30,7 +30,7 @@
 
 	// Debug MessageBoxes Modal: //
 	#define DEBUG_MSG_FORCE_MODAL 0
-		// If TRUE: Forces the Errormessages to be Systemmodal
+		// If TRUE: Forces the MessagesBoxes to be Systemmodal
 		// Default: FALSE
 
 	// NT Process Persistency: //

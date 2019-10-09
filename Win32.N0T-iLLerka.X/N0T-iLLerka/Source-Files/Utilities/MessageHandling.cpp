@@ -2,23 +2,23 @@
 #include "../../Header-Files/N0T-iLLerka.h"
 
 #if DEBUG_MSG == TRUE
-	VOID fnErrorHandlerW(
-		_In_opt_ LPCWSTR lpText,
+	// TODO: improve/modify this again
+	VOID fnMessageHandlerW(
 		_In_opt_ LPCWSTR lpCaption,
-		_In_     LPCWSTR lpFunction,
+		_In_opt_ LPCWSTR lpText,
+		_In_opt_ LPCWSTR lpFunction,
 		_In_opt_ UINT    uType,
 		_In_opt_         ...
 	) {
 		va_list va_l;
 		va_start(va_l, uType);
 
-		if (!lpCaption) {
-			lpCaption = szMALWR_NAME;
-		}
+		if (!lpCaption) { lpCaption = szMALWR_NAME; }
+		if (!uType) { uType = MB_ICONWARNING; }
 
 		HANDLE hHeap = GetProcessHeap();
 		if (!hHeap) {
-			MessageBox(NULL, L"Couldn't get Handle to Process Heap", L"fnErrorHandlerW (GetProcessHeap)", MB_ICONERROR | MB_SYSTEMMODAL);
+			MessageBox(NULL, L"Couldn't get Handle to Process Heap", L"fnMessageHandlerW (GetProcessHeap)", MB_ICONERROR | MB_SYSTEMMODAL);
 			return;
 		}
 
@@ -27,7 +27,7 @@
 		DWORD dwMsgSize = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
 			NULL, dwLe, 0x409, (LPWSTR)&lpMsgBuf, 0, NULL);
 		if (!dwMsgSize) {
-			MessageBox(NULL, L"Couldn't format Message", L"fnErrorHandlerW (FormatMessageW)", MB_ICONINFORMATION | MB_SYSTEMMODAL);
+			MessageBox(NULL, L"Couldn't format Message", L"fnMessageHandlerW (FormatMessageW)", MB_ICONINFORMATION | MB_SYSTEMMODAL);
 			return;
 		}
 
@@ -51,13 +51,13 @@
 									MessageBox(NULL, (LPCWSTR)lpDest, lpCaption, uType);
 	#endif // !DEBUG_MSG_FORCE_MODAL
 								} else {
-									MessageBox(NULL, L"Couldn't format Text Message", L"fnErrorHandlerW", MB_ICONERROR | MB_SYSTEMMODAL);
+									MessageBox(NULL, L"Couldn't format Text Message", L"fnMessageHandlerW", MB_ICONERROR | MB_SYSTEMMODAL);
 								}
 							} else {
-								MessageBox(NULL, L"Couldn't get reallocated Heap size", L"fnErrorHandlerW", MB_ICONERROR | MB_SYSTEMMODAL);
+								MessageBox(NULL, L"Couldn't get reallocated Heap size", L"fnMessageHandlerW", MB_ICONERROR | MB_SYSTEMMODAL);
 							}
 						} else {
-							MessageBox(NULL, L"Couldn't reallocate Message Heap\nPointer to Message Heap is invalid", L"fnErrorHandlerW",
+							MessageBox(NULL, L"Couldn't reallocate Message Heap\nPointer to Message Heap is invalid", L"fnMessageHandlerW",
 								MB_ICONERROR | MB_SYSTEMMODAL);
 						}
 					} else {
@@ -68,13 +68,13 @@
 	#endif // !DEBUG_MSG_FORCE_MODAL
 					}
 				} else {
-					MessageBox(NULL, L"Couldn't format Error Message", L"fnErrorHandlerW", MB_ICONERROR | MB_SYSTEMMODAL);
+					MessageBox(NULL, L"Couldn't format Error Message", L"fnMessageHandlerW", MB_ICONERROR | MB_SYSTEMMODAL);
 				}
 			} else {
-				MessageBox(NULL, L"Couldn't get reallocated Heap size", L"fnErrorHandlerW", MB_ICONERROR | MB_SYSTEMMODAL);
+				MessageBox(NULL, L"Couldn't get reallocated Heap size", L"fnMessageHandlerW", MB_ICONERROR | MB_SYSTEMMODAL);
 			}
 		} else {
-			MessageBox(NULL, L"Couldn't allocate Message Heap\nPointer to Message Heap is invalid", L"fnErrorHandlerW", MB_ICONERROR | MB_SYSTEMMODAL);
+			MessageBox(NULL, L"Couldn't allocate Message Heap\nPointer to Message Heap is invalid", L"fnMessageHandlerW", MB_ICONERROR | MB_SYSTEMMODAL);
 		}
 
 		if (lpDest) { HeapFree(hHeap, NULL, lpDest); }

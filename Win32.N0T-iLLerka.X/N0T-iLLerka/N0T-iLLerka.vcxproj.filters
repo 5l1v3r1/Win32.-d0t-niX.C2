@@ -30,9 +30,6 @@
     <ClCompile Include="Source-Files\Utilities\ResData.cpp">
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
-    <ClCompile Include="Source-Files\Utilities\ResUtilities.cpp">
-      <Filter>Source Files\Utilities</Filter>
-    </ClCompile>
     <ClCompile Include="Source-Files\Utilities\Utilities.cpp">
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
@@ -48,16 +45,13 @@
     <ClCompile Include="Source-Files\Utilities\Registry.cpp">
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
-    <ClCompile Include="Source-Files\Utilities\ErrorHandling.cpp">
-      <Filter>Source Files\Utilities</Filter>
-    </ClCompile>
-    <ClCompile Include="Source-Files\Utilities\Synchronization.cpp">
-      <Filter>Source Files\Utilities</Filter>
-    </ClCompile>
     <ClCompile Include="Source-Files\Utilities\Protections.cpp">
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
-    <ClCompile Include="Source-Files\Utilities\DebugConsole.cpp">
+    <ClCompile Include="Source-Files\Utilities\ResourceUtilities.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Source-Files\Utilities\MessageHandling.cpp">
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
   </ItemGroup>
