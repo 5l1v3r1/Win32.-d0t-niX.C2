@@ -23,8 +23,7 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 // ErrorHandler Macros //
 #if DEBUG_MSG == TRUE
 	#define szFORMAT L"%s returned with Errorcode:\n%d : %s"
-	#define nFORMAT_LEN lstrlen(szFORMAT)
-	#define cbMAX_HEAP_SIZE 0xfa0
+	#define cbMAX_HEAP_SIZE 0x7d0
 #endif // DEBUG_MSG
 
 // FileSystem Macros //
@@ -45,7 +44,8 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 //// Wrapper Macros /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #define nRNG_RAN(nMin, nMax) (nMin + (fnCryptGenRandomNumber() % ((nMax - nMin) + 1)))
 #if DEBUG_MSG == TRUE
-	#define fnMESSAGEHANDLERW(lpCaption, lpText, lpFunction, uType, ...) fnMessageHandlerW(lpCaption, lpText, lpFunction, uType, __VA_ARGS__)
+	#define fnMESSAGEHANDLERW(lpCaption, lpText, lpFunction, uType, ...) fnMessageHandlerW(lpCaption, lpText, NULL, lpFunction, uType, __VA_ARGS__)
+//	#define fnMESSAGEHANDLERW(lpCaption, wTextID, lpFunction, uType, ...) fnMessageHandlerW(lpCaption, wTextID, lpFunction, uType, __VA_ARGS__)
 #else
 	#define fnMESSAGEHANDLERW(lpCaption, lpText, lpFunction, uType, ...)
 #endif // DEBUG_MSG
@@ -61,7 +61,7 @@ typedef struct _REGLOAD {
 } REGLOAD;
 
 //// Arrays/Sizes ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-extern const LPCWSTR szWarningMSG;
+extern LPCWSTR szWarningMSG;
 
 extern WCHAR szCd[MAX_PATH];
 extern WCHAR szMfn[MAX_PATH];
@@ -82,6 +82,7 @@ extern const SIZE_T culDisableKeys;
 	VOID fnMessageHandlerW(
 		_In_opt_ LPCWSTR lpCaption,
 		_In_opt_ LPCWSTR lpText,
+		_In_opt_ WORD    wTextID,
 		_In_opt_ LPCWSTR lpFunction,
 		_In_opt_ UINT    uType,
 		_In_opt_         ...

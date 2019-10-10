@@ -1,9 +1,9 @@
 @echo off
 
-ifEx:
+IfEx:
 	del "%s" /f
 	if exist "%s" (
-		goto ifEx
+		goto IfEx
 	)
 
 	del "%s" /f

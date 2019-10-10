@@ -154,7 +154,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource-Files\PEdelete.bat">
-      <FileType>RC</FileType>
+      <FileType>Text</FileType>
     </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
