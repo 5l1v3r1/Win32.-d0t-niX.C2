@@ -1,9 +1,8 @@
-# DR-Releases (dev-VER 0.5.1 BETA-2)
+# DR-Releases (dev-VER 0.5.2 BETA-1)
 The "N0T-iLLerka.XRW" File is the Release-Windows Binary (.exe)\
 (This is the Binary from the MSBuild Release-Configuration.)
 
 The "N0T-iLLerka.XDW" File is the Debug-Windows Binary (.exe)\
-The "N0T-iLLerka.XDC" File is the Debug-Console Binary (.exe)\
 (These are from the MSBuild Debug-Configurations, they likely won't run on your system but I've included them anyways.)
 
 These Files are here so you don't have to go through the trouble to compile them yourself
@@ -23,4 +22,4 @@ The Version Number that is standing next to the Maintitle is probably the Versio
   (Trust me they won't like you anymore and I won't either.)\
   Spreading Malware is a Crime. (atleast in most Countries)
   
-## **Try at your own risk !**
+## **! Try at your own risk !**
