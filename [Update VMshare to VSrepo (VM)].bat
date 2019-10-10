@@ -1,5 +1,5 @@
 @echo off
 
 rem Copy VMware Share to Visual Studio Repository
-rd "D:\Visual Studio Data\source\repos\N0T-iLLerka.X-beta\Win32.N0T-iLLerka.X\N0T-iLLerka" /s /q
-xcopy "Z:\VMware Shared Folder UpDown\N0T-iLLerka.X-beta" "D:\Visual Studio Data\source\repos\N0T-iLLerka.X-beta\" /i /s /v /y
+rd "D:\Visual Studio Data\source\repos\(d0t)niX-repo\Win32.(d0t)niX.C2\(d0t)niX" /s /q
+xcopy "Z:\VMware Shared Folder UpDown\(d0t)niX-repo" "D:\Visual Studio Data\source\repos\(d0t)niX-repo\" /i /s /v /y
