@@ -8,7 +8,7 @@
 |        \/          \/       \/         \/ \/  \__\    \/        \/     /__/      \/         \_/ \/        \/         \/ |
 +-----------------------------------------------------+------------+------------------------------------------------------/
 | (d0t)niX [.niX] your File Killa]       [Virus.Win32.VC Type: C2] |
-| by Lima X [L4X] / [G-C-E-R] © 2kl9     [dev-VER: 0.5.2 BETA-2.0] |
+| by Lima X [L4X] / [G-C-E-R] Â© 2kl9     [dev-VER: 0.5.2 BETA-2.0] |
 \------------------------------------------------------------------/
 ```
 
@@ -44,10 +44,9 @@ First successfull launch of the Malware:\
 
 ## ToDo-List:
 Things listed here are possible Improvements/Changes/Additions that are likely going to be made.\
-If marked they're in WIP (Work in Progress)
+If marked they're WIP (Work in Progress)
 
 - [x] Improve `fnMessageHandlerW`
-- [x] If UAC is required launch with CMD (Stealth)
 - [x] Implement Process -monitor/-iterator
 - [x] Implement Registry -monitor/-iterator
 - [x] Implement /exec-Watchdog
@@ -55,3 +54,14 @@ If marked they're in WIP (Work in Progress)
 - [ ] Start to implement dropper functionality\
   (I've started to play around with DLL's and well it seems like that I'll have to explicitly link them,
   if I want to do it like I've planned/intended it to do it (if I even do it))
+- [ ] Add a WindowClass and WindowProc (this will be important for some new functionality I've planned to implement)
+- [ ] More persistence (prevent Systemshudowns using the WindowProc and the ShudownAPI)
+
+### Release-List:
+Things listed here are from the ToDo-List but implemented in the Source-Code.\
+(which doesn't mean that they work properly, they're just implemented and don't have to be tested/debugged yet (kinda similar to WIP but already working, sort of))\
+If marked they're fully functional and tested/debugged and ready for Release\
+(which also doesn't mean that they can't be improved)
+
+- [x] Improve User-Warning
+- [ ] If UAC is required launch with CMD (Stealth)
