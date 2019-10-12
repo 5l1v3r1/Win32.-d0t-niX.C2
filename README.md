@@ -56,6 +56,7 @@ If marked they're WIP (Work in Progress)
   if I want to do it like I've planned/intended it to do it (if I even do it))
 - [ ] Add a WindowClass and WindowProc (this will be important for some new functionality I've planned to implement)
 - [ ] More persistence (prevent Systemshudowns using the WindowProc and the ShudownAPI)
+- [x] Better Fileexecution (Wrapper using CreateProcess rather than relying on ShellExecute)
 
 ### Release-List:
 Things listed here are from the ToDo-List but implemented in the Source-Code.\
