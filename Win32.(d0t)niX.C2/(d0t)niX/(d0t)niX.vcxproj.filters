@@ -21,13 +21,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source-Files\Utilities\GenRandom.cpp">
-      <Filter>Source Files\Utilities</Filter>
-    </ClCompile>
     <ClCompile Include="Source-Files\Utilities\NTUtilities.cpp">
-      <Filter>Source Files\Utilities</Filter>
-    </ClCompile>
-    <ClCompile Include="Source-Files\Utilities\ResData.cpp">
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
     <ClCompile Include="Source-Files\Utilities\Utilities.cpp">
@@ -42,17 +36,23 @@
     <ClCompile Include="Source-Files\Utilities\Registry.cpp">
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
-    <ClCompile Include="Source-Files\Utilities\Protections.cpp">
-      <Filter>Source Files\Utilities</Filter>
-    </ClCompile>
     <ClCompile Include="Source-Files\Utilities\MessageHandling.cpp">
-      <Filter>Source Files\Utilities</Filter>
-    </ClCompile>
-    <ClCompile Include="Source-Files\Utilities\ResUtilities.cpp">
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
     <ClCompile Include="Source-Files\%28d0t%29niX.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source-Files\Utilities\ProcessPersistence.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Source-Files\Utilities\CryptGenRandom.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Source-Files\Utilities\ResourceData.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Source-Files\Utilities\ResourceUtilities.cpp">
+      <Filter>Source Files\Utilities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -60,9 +60,6 @@
       <Filter>Header Files\Sub Headers</Filter>
     </ClInclude>
     <ClInclude Include="Header-Files\Sub-Headers\settings.h">
-      <Filter>Header Files\Sub Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Header-Files\Sub-Headers\nt.h">
       <Filter>Header Files\Sub Headers</Filter>
     </ClInclude>
     <ClInclude Include="Header-Files\pch.h">

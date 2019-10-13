@@ -21,14 +21,27 @@ INT fnCryptGenRandomNumber(VOID) {
 	return nRn & 0x7fffffff;
 }
 
-// TODO: use Pointers
-std::wstring fnCryptGenRandomStringW(
-	_In_ INT nLen
+LPCWSTR fnCryptGenRandomStringW(
+	_In_opt_ LPWSTR  lpBuffer,
+	_In_     INT     nBufferSize,
+	_In_     LPCWSTR lpCharSet
 ) {
-	std::wstring szRcs;
-	for (INT i = 0; i < nLen; i++) {
-		szRcs += szCharSet[fnCryptGenRandomNumber() % cculCharSet];
+	if (!lpBuffer) { lpBuffer = new WCHAR[nBufferSize + 1]; }
+	ZeroMemory(lpBuffer, (nBufferSize + 1) * 2);
+
+	for (INT i = 0; i < nBufferSize; i++) {
+		lpBuffer[i] += lpCharSet[fnCryptGenRandomNumber() % cculCharSet];
 	}
 
-	return szRcs;
+	return lpBuffer;
+}
+
+LPCWSTR fnCryptGenUUIDW(
+	_In_ LPCWSTR lpCharSet,
+	_In_ INT nIdLen,
+	_In_ INT nIds
+) {
+
+
+	return NULL;
 }

@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by F:\VMware Data\VMware Shared Folder UpDown\N0T-iLLerka.X-beta\Win32.(d0t)niX.C2\(d0t)niX\Resource-Files\(dot)niX.rc
+// Used by F:\VMware Data\VMware Shared Folder UpDown\(d0t)niX-repo\Win32.(d0t)niX.C2\(d0t)niX\Resource-Files\(dot)niX.rc
 //
 #define IDS_STRING101                   101
 #define IDR_RCDATA101                   101

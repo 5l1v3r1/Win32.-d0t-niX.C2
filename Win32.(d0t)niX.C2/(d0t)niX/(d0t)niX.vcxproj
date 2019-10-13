@@ -71,6 +71,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
     </Link>
     <ResourceCompile>
       <Culture>0x0409</Culture>
@@ -96,7 +97,7 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Source-Files\Utilities\Protections.cpp">
+    <ClCompile Include="Source-Files\Utilities\ProcessPersistence.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../../Header-Files/pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../../Header-Files/pch.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -112,7 +113,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../../Header-Files/pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../../Header-Files/pch.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Source-Files\Utilities\GenRandom.cpp">
+    <ClCompile Include="Source-Files\Utilities\CryptGenRandom.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../../Header-Files/pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../../Header-Files/pch.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -120,11 +121,11 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../../Header-Files/pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../../Header-Files/pch.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Source-Files\Utilities\ResData.cpp">
+    <ClCompile Include="Source-Files\Utilities\ResourceData.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../../Header-Files/pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../../Header-Files/pch.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Source-Files\Utilities\ResUtilities.cpp">
+    <ClCompile Include="Source-Files\Utilities\ResourceUtilities.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../../Header-Files/pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../../Header-Files/pch.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -148,7 +149,6 @@
     <ClInclude Include="Header-Files\pch.h" />
     <ClInclude Include="Header-Files\Sub-Headers\settings.h" />
     <ClInclude Include="Header-Files\Sub-Headers\resource.h" />
-    <ClInclude Include="Header-Files\Sub-Headers\nt.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource-Files\%28dot%29niX.rc" />

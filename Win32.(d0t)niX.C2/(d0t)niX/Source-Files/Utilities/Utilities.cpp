@@ -54,3 +54,31 @@ BOOL fnCheckMutexW(
 	}
 }
 #endif // SYNCHRONIZATION
+
+BOOL fnCreateProcessW(
+	_In_ LPCWSTR lpFileName,
+	_In_ LPCWSTR lpCommandLine,
+	_In_ DWORD   dwCreationFlags,
+	_In_ LPCWSTR lpCurrentDirectory
+) {
+	STARTUPINFO si;
+	PROCESS_INFORMATION pi;
+	ZeroMemory(&si, sizeof(si));
+	si.cb = sizeof(si);
+	ZeroMemory(&pi, sizeof(pi));
+
+	rsize_t ulCommandLine = lstrlen(lpCommandLine) + 1;
+	LPWSTR lpCommandLineC = new WCHAR[ulCommandLine * 2];
+	wcscpy_s(lpCommandLineC, ulCommandLine, lpCommandLine);
+
+	if (CreateProcess(lpFileName, lpCommandLineC, NULL, NULL, FALSE, dwCreationFlags, NULL, lpCurrentDirectory, &si, &pi)) {
+		CloseHandle(pi.hProcess);
+		CloseHandle(pi.hThread);
+		delete[] lpCommandLineC;
+		return TRUE;
+	} else {
+		fnMESSAGEHANDLERW(NULL, L"Couldn't launch Process\nFile: %s\nCommandLine: %s", L"CreateProcessW", MB_ICONERROR, lpFileName, lpCommandLine);
+		delete[] lpCommandLineC;
+		return FALSE;
+	}
+}
