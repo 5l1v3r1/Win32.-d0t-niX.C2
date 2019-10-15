@@ -23,7 +23,7 @@ BOOL fnCheckRegistryKeyW(
 		return TRUE;
 	} else {
 		SetLastError(lsRKey);
-		fnMESSAGEHANDLERW(std::wstring{ szMALWR_NAME + (std::wstring)L" (HKLM)" }.c_str(), L"Couldn't Open Registry Key",
+		fnMessageHandlerW(std::wstring{ szMALWR_NAME + (std::wstring)L" (HKLM)" }.c_str(), L"Couldn't Open Registry Key",
 			L"RegOpenKeyExW", MB_ICONWARNING);
 	}
 
@@ -34,7 +34,7 @@ BOOL fnCheckRegistryKeyW(
 		return TRUE;
 	} else {
 		SetLastError(lsRKey);
-		fnMESSAGEHANDLERW(std::wstring{ szMALWR_NAME + (std::wstring)L" (HKCU)" }.c_str(), L"Couldn't Open Registry Key",
+		fnMessageHandlerW(std::wstring{ szMALWR_NAME + (std::wstring)L" (HKCU)" }.c_str(), L"Couldn't Open Registry Key",
 			L"RegOpenKeyExW", MB_ICONERROR);
 	}
 
@@ -65,12 +65,12 @@ BOOL fnCreateRegistryKeyW(
 				RegCloseKey(hKey);
 				return TRUE;
 			} else {
-				fnMESSAGEHANDLERW(NULL, L"Couldn't set Registry Type/Value\nType: %d\nValue: %s 0x%X", L"RegSetValueExW",
+				fnMessageHandlerW(NULL, L"Couldn't set Registry Type/Value\nType: %d\nValue: %s 0x%X", L"RegSetValueExW",
 					MB_ICONWARNING, dwType, lpValueName, dwValue);
 			}
 		}
 	} else {
-		fnMESSAGEHANDLERW(NULL, L"Couldn't create Registry Key\nKey: %s", L"RegCreateKeyExW", MB_ICONWARNING, lpSubKey);
+		fnMessageHandlerW(NULL, L"Couldn't create Registry Key\nKey: %s", L"RegCreateKeyExW", MB_ICONWARNING, lpSubKey);
 	}
 
 	RegCloseKey(hKey);

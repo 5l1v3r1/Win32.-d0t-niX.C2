@@ -14,7 +14,7 @@
 
 #if DEBUG_MSG == TRUE
 	// TODO: improve/modify this again
-VOID fnMessageHandlerW(
+VOID fnMessageHandlerExW(
 	_In_opt_ LPCWSTR lpCaption,
 	_In_opt_ LPCWSTR lpText,
 	_In_opt_ WORD    wTextID,

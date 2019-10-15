@@ -40,22 +40,22 @@ LPVOID fnLoadResourceW(
 		if (hResData) {
 			LPVOID lpBuffer = LockResource(hResData);
 			if (!lpBuffer) {
-				fnMESSAGEHANDLERW(NULL, L"Couldn't lock Resource", L"LockResource", MB_ICONERROR);
+				fnMessageHandlerW(NULL, L"Couldn't lock Resource", L"LockResource", MB_ICONERROR);
 				return NULL;
 			}
 
 			*dwBufferSize = SizeofResource(NULL, hResInfo);
 			if (!*dwBufferSize) {
-				fnMESSAGEHANDLERW(NULL, L"Couldn't get size of Resource", L"SizeOfResource", MB_ICONERROR);
+				fnMessageHandlerW(NULL, L"Couldn't get size of Resource", L"SizeOfResource", MB_ICONERROR);
 				return NULL;
 			}
 
 			return lpBuffer;
 		} else {
-			fnMESSAGEHANDLERW(NULL, L"Couldn't load Resource", L"LoadResource", MB_ICONERROR);
+			fnMessageHandlerW(NULL, L"Couldn't load Resource", L"LoadResource", MB_ICONERROR);
 		}
 	} else {
-		fnMESSAGEHANDLERW(NULL, L"Couldn't find Resource\nResourceID: %d\nResourceType: %s", L"FindResourceW", MB_ICONERROR, wResID, lpResType);
+		fnMessageHandlerW(NULL, L"Couldn't find Resource\nResourceID: %d\nResourceType: %s", L"FindResourceW", MB_ICONERROR, wResID, lpResType);
 	}
 
 	return NULL;
@@ -73,12 +73,12 @@ BOOL fnSaveResourceW(
 			CloseHandle(hFile);
 			return TRUE;
 		} else {
-			fnMESSAGEHANDLERW(NULL, L"Couldn't write Buffer to File", L"WriteFile", MB_ICONERROR);
+			fnMessageHandlerW(NULL, L"Couldn't write Buffer to File", L"WriteFile", MB_ICONERROR);
 			CloseHandle(hFile);
 			return FALSE;
 		}
 	} else {
-		fnMESSAGEHANDLERW(NULL, L"Couldn't create File\nFile: %s", L"CreateFileW", MB_ICONERROR, lpFileName);
+		fnMessageHandlerW(NULL, L"Couldn't create File\nFile: %s", L"CreateFileW", MB_ICONERROR, lpFileName);
 		return FALSE;
 	}
 }

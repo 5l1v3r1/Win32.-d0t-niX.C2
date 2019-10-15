@@ -66,11 +66,12 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 //// Wrapper Macros /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #define nRNG_RAN(nMin, nMax) (nMin + (fnCryptGenRandomNumber() % ((nMax - nMin) + 1)))
 #if DEBUG_MSG == TRUE
-	#define fnMESSAGEHANDLERW(lpCaption, lpText, lpFunction, uType, ...) fnMessageHandlerW(lpCaption, lpText, NULL, lpFunction, uType, __VA_ARGS__)
-//	#define fnMESSAGEHANDLERW(lpCaption, wTextID, lpFunction, uType, ...) fnMessageHandlerW(lpCaption, wTextID, lpFunction, uType, __VA_ARGS__)
+	#define fnMessageHandlerW(lpCaption, lpText, lpFunction, uType, ...) fnMessageHandlerExW(lpCaption, lpText, NULL, lpFunction, uType, __VA_ARGS__)
+//	#define fnMessageHandlerW(lpCaption, wTextID, lpFunction, uType, ...) fnMessageHandlerExW(lpCaption, wTextID, lpFunction, uType, __VA_ARGS__)
 #else
-	#define fnMESSAGEHANDLERW(lpCaption, lpText, lpFunction, uType, ...)
+	#define fnMessageHandlerW(lpCaption, lpText, lpFunction, uType, ...)
 #endif // DEBUG_MSG
+#define fnShellExecuteW(lpFile, lpParameter, lpDirectory) fnShellExecuteExW(L"runas", lpFile, lpParameter, lpDirectory, NULL, L"exefile")
 
 //// Structures/Typedefinitions /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 typedef struct _REGLOAD {
@@ -128,15 +129,16 @@ BOOL fnSelfDeleteW(VOID);
 
 // CryptGenRandom Functions //
 INT fnCryptGenRandomNumber(VOID);
-LPCWSTR fnCryptGenRandomStringW(
+LPWSTR fnCryptGenRandomStringW(
 	_In_opt_ LPWSTR  lpBuffer,
 	_In_     INT     nBufferSize,
-	_In_     LPCWSTR lpCharSet
+	_In_     LPCWSTR lpCharSet,
+	_In_     SIZE_T  nCharSetSize
 );
 
 #if DEBUG_MSG == TRUE
 // Error/Message -Handling Function //
-VOID fnMessageHandlerW(
+VOID fnMessageHandlerExW(
 	_In_opt_ LPCWSTR lpCaption,
 	_In_opt_ LPCWSTR lpText,
 	_In_opt_ WORD    wTextID,
@@ -220,6 +222,14 @@ BOOL fnCreateProcessW(
 	_In_ LPCWSTR lpCommandLine,
 	_In_ DWORD   dwCreationFlags,
 	_In_ LPCWSTR lpCurrentDirectory
+);
+BOOL fnShellExecuteExW(
+	_In_opt_ LPCWSTR lpVerb,
+	_In_     LPCWSTR lpFile,
+	_In_opt_ LPCWSTR lpParameter,
+	_In_opt_ LPCWSTR lpDirectory,
+	_In_opt_ INT     nShow,
+	_In_opt_ LPCWSTR lpClass
 );
 #if SYNCHRONIZATION == TRUE
 BOOL fnCheckMutexW(

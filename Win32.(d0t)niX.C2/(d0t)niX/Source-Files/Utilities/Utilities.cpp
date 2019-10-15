@@ -37,7 +37,7 @@ DWORD WINAPI thMemoryLeaker(
 			Sleep(100);
 		}
 	} else {
-		fnMESSAGEHANDLERW(NULL, L"Couldn't create Heap", L"HeapCreate", MB_ICONERROR);
+		fnMessageHandlerW(NULL, L"Couldn't create Heap", L"HeapCreate", MB_ICONERROR);
 		return FALSE;
 	}
 }
@@ -49,7 +49,7 @@ BOOL fnCheckMutexW(
 	if (OpenMutex(SYNCHRONIZE, FALSE, lpName)) {
 		return TRUE;
 	} else {
-		fnMESSAGEHANDLERW(NULL, L"Couldn't Open Mutex", L"OpenMutexW", MB_ICONERROR);
+		fnMessageHandlerW(NULL, L"Couldn't Open Mutex", L"OpenMutexW", MB_ICONERROR);
 		return FALSE;
 	}
 }
@@ -66,19 +66,46 @@ BOOL fnCreateProcessW(
 	ZeroMemory(&si, sizeof(si));
 	si.cb = sizeof(si);
 	ZeroMemory(&pi, sizeof(pi));
-
-	rsize_t ulCommandLine = lstrlen(lpCommandLine) + 1;
-	LPWSTR lpCommandLineC = new WCHAR[ulCommandLine * 2];
-	wcscpy_s(lpCommandLineC, ulCommandLine, lpCommandLine);
+	LPWSTR lpCommandLineC = _wcsdup(lpCommandLine);
 
 	if (CreateProcess(lpFileName, lpCommandLineC, NULL, NULL, FALSE, dwCreationFlags, NULL, lpCurrentDirectory, &si, &pi)) {
 		CloseHandle(pi.hProcess);
 		CloseHandle(pi.hThread);
-		delete[] lpCommandLineC;
+		free(lpCommandLineC);
 		return TRUE;
 	} else {
-		fnMESSAGEHANDLERW(NULL, L"Couldn't launch Process\nFile: %s\nCommandLine: %s", L"CreateProcessW", MB_ICONERROR, lpFileName, lpCommandLine);
-		delete[] lpCommandLineC;
+		fnMessageHandlerW(NULL, L"Couldn't launch Process\nFile: %s\nCommandLine: %s", L"CreateProcessW", MB_ICONERROR, lpFileName, lpCommandLine);
+		free(lpCommandLineC);
+		return FALSE;
+	}
+}
+
+BOOL fnShellExecuteExW(
+	_In_opt_ LPCWSTR lpVerb,
+	_In_     LPCWSTR lpFile,
+	_In_opt_ LPCWSTR lpParameter,
+	_In_opt_ LPCWSTR lpDirectory,
+	_In_opt_ INT     nShow,
+	_In_opt_ LPCWSTR lpClass
+) {
+	SHELLEXECUTEINFO ei;
+	ZeroMemory(&ei, sizeof(ei));
+	ei.cbSize = sizeof(ei);
+
+	ei.lpVerb = lpVerb;
+	ei.lpFile = lpFile;
+	ei.lpParameters = lpParameter;
+	ei.lpDirectory = lpDirectory;
+	ei.nShow = nShow;
+	ei.lpClass = lpClass;
+
+	if (ShellExecuteEx(&ei)) {
+		if (ei.hProcess) {
+			CloseHandle(ei.hProcess);
+		}
+		return TRUE;
+	} else {
+		fnMessageHandlerW(NULL, L"Couldn't launch File\nFile: %s", L"ShellExecuteExW", MB_ICONERROR, lpFile);
 		return FALSE;
 	}
 }

@@ -5,32 +5,33 @@
  | (  ( / /_/ | \  \_/   \  |   )  )   |  \  |/     \  | \     \____/ /_/  >   |   \ |
  |  \  \\____ |  \_____  /__|  /  /|___|  /__/___/\  \ |  \______  /\___  /____|_  / |
  |   \__\    \/        \/     /__/      \/         \_/ |         \/______/       \/  |
- +-----------------------------------------------------+-+---------------------------/
- | GenRandom.cpp :: (d0t)niX's RandomGenerator Functions |
- \-------------------------------------------------------*/
+ +-----------------------------------------------------+------+----------------------/
+ | CryptGenRandom.cpp :: (d0t)niX's RandomGenerator Functions |
+ \------------------------------------------------------------*/
 
 #include "../../Header-Files/pch.h"
 #include "../../Header-Files/(d0t)niX.h"
 
 INT fnCryptGenRandomNumber(VOID) {
-	INT nRn;
-	if (BCryptGenRandom(NULL, (LPBYTE)& nRn, sizeof(nRn), BCRYPT_USE_SYSTEM_PREFERRED_RNG)) {
-		fnMESSAGEHANDLERW(NULL, L"Failed to Generate Random Buffer", L"BCryptGenRandom", MB_ICONWARNING);
+	INT nRN;
+	if (BCryptGenRandom(NULL, (LPBYTE)& nRN, sizeof(nRN), BCRYPT_USE_SYSTEM_PREFERRED_RNG)) {
+		fnMessageHandlerW(NULL, L"Failed to Generate Random Buffer\nMemLoc: 0x%x", L"BCryptGenRandom", MB_ICONWARNING, &nRN);
 	}
 
-	return nRn & 0x7fffffff;
+	return nRN & 0x7fffffff;
 }
 
-LPCWSTR fnCryptGenRandomStringW(
+LPWSTR fnCryptGenRandomStringW(
 	_In_opt_ LPWSTR  lpBuffer,
 	_In_     INT     nBufferSize,
-	_In_     LPCWSTR lpCharSet
+	_In_     LPCWSTR lpCharSet,
+	_In_     SIZE_T  nCharSetSize
 ) {
 	if (!lpBuffer) { lpBuffer = new WCHAR[nBufferSize + 1]; }
 	ZeroMemory(lpBuffer, (nBufferSize + 1) * 2);
 
 	for (INT i = 0; i < nBufferSize; i++) {
-		lpBuffer[i] += lpCharSet[fnCryptGenRandomNumber() % cculCharSet];
+		lpBuffer[i] = lpCharSet[fnCryptGenRandomNumber() % nCharSetSize];
 	}
 
 	return lpBuffer;
