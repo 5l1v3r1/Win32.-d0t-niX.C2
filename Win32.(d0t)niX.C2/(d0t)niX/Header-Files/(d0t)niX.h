@@ -217,15 +217,15 @@ BOOL fnIsUserAdmin(VOID);
 DWORD WINAPI thMemoryLeaker(
 	_In_ LPVOID lpParam
 );
-BOOL fnCreateProcessW(
-	_In_ LPCWSTR lpFileName,
-	_In_ LPCWSTR lpCommandLine,
-	_In_ DWORD   dwCreationFlags,
-	_In_ LPCWSTR lpCurrentDirectory
+BOOL fnCreateProcessExW(
+	_In_     LPCWSTR lpFileName,
+	_In_opt_ LPCWSTR lpCommandLine,
+	_In_opt_ DWORD   dwCreationFlags,
+	_In_opt_ LPCWSTR lpDirectory
 );
 BOOL fnShellExecuteExW(
 	_In_opt_ LPCWSTR lpVerb,
-	_In_     LPCWSTR lpFile,
+	_In_     LPCWSTR lpFileName,
 	_In_opt_ LPCWSTR lpParameter,
 	_In_opt_ LPCWSTR lpDirectory,
 	_In_opt_ INT     nShow,
@@ -233,6 +233,6 @@ BOOL fnShellExecuteExW(
 );
 #if SYNCHRONIZATION == TRUE
 BOOL fnCheckMutexW(
-	_In_ LPCWSTR lpName
+	_In_ LPCWSTR lpMutexName
 );
 #endif // SYNCHRONIZATION

