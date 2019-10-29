@@ -22,19 +22,28 @@ INT fnCryptGenRandomNumber(VOID) {
 }
 
 LPWSTR fnCryptGenRandomStringW(
+	_In_opt_ HANDLE  hHeap,
 	_In_opt_ LPWSTR  lpBuffer,
 	_In_     INT     nBufferSize,
 	_In_     LPCWSTR lpCharSet,
 	_In_     SIZE_T  nCharSetSize
 ) {
-	if (!lpBuffer) { lpBuffer = new WCHAR[nBufferSize + 1]; }
-	ZeroMemory(lpBuffer, (nBufferSize + 1) * 2);
+	if (!lpBuffer) {
+		if (hHeap) {
+			lpBuffer = (LPWSTR)HeapAlloc(hHeap, HEAP_ZERO_MEMORY, nBufferSize + 1);
+		}
+	} if (lpBuffer) {
+		ZeroMemory(lpBuffer, (nBufferSize + 1) * sizeof(WCHAR));
 
-	for (INT i = 0; i < nBufferSize; i++) {
-		lpBuffer[i] = lpCharSet[fnCryptGenRandomNumber() % nCharSetSize];
+		for (INT i = 0; i < nBufferSize; i++) {
+			lpBuffer[i] = lpCharSet[fnCryptGenRandomNumber() % nCharSetSize];
+		}
+
+		return lpBuffer;
+	} else {
+		fnMessageHandlerW(NULL, L"Pointer to Buffer is invalid", L"Stack / HeapAlloc", MB_ICONERROR);
+		return nullptr;
 	}
-
-	return lpBuffer;
 }
 
 LPCWSTR fnCryptGenUUIDW(

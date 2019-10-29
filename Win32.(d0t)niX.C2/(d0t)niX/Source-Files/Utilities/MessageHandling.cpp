@@ -34,7 +34,7 @@ VOID fnMessageHandlerExW(
 
 	HANDLE hHeap = GetProcessHeap();
 	if (!hHeap) {
-		MessageBox(NULL, L"Couldn't get Handle to Process Heap", L"fnMessageHandlerW (GetProcessHeap)", MB_ICONERROR | MB_SYSTEMMODAL);
+		MessageBoxW(NULL, L"Couldn't get Handle to Process Heap", L"fnMessageHandlerW (GetProcessHeap)", MB_ICONERROR | MB_SYSTEMMODAL);
 		return;
 	}
 
@@ -42,55 +42,55 @@ VOID fnMessageHandlerExW(
 	// TODO: Improve this / embed it in the code
 	LPVOID lpStringBuf = NULL;
 	if (wTextID) {
-		lpStringBuf = HeapAlloc(hHeap, HEAP_ZERO_MEMORY, (0x3e8 * 2));
+		lpStringBuf = HeapAlloc(hHeap, HEAP_ZERO_MEMORY, (0x3e8 * sizeof(WCHAR)));
 		if (lpStringBuf) {
-			if (LoadString(GetModuleHandle(NULL), IDS_STRING101, (LPWSTR)lpStringBuf, 0x3e8)) {
+			if (LoadStringW(GetModuleHandleW(NULL), IDS_STRING101, (LPWSTR)lpStringBuf, 0x3e8)) {
 				lpText = (LPCWSTR)lpStringBuf;
 			} else {
-				MessageBox(NULL, L"Couldn't load String", L"fnMessageHandlerW (LoadStringW)", MB_ICONERROR | MB_SYSTEMMODAL);
+				MessageBoxW(NULL, L"Couldn't load String", L"fnMessageHandlerW (LoadStringW)", MB_ICONERROR | MB_SYSTEMMODAL);
 			}
 		} else {
-			MessageBox(NULL, L"Couldn't allocate String Heap", L"fnMessageHandlerW (HeapAlloc)", MB_ICONERROR | MB_SYSTEMMODAL);
+			MessageBoxW(NULL, L"Couldn't allocate String Heap", L"fnMessageHandlerW (HeapAlloc)", MB_ICONERROR | MB_SYSTEMMODAL);
 			return;
 		}
 	}
 
 	DWORD dwLE = GetLastError();
 	LPVOID lpMsgBuf;
-	DWORD dwMsgSize = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+	DWORD dwMsgSize = FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
 		NULL, dwLE, 0x409, (LPWSTR)&lpMsgBuf, 0, NULL);
 	if (!dwMsgSize) {
-		MessageBox(NULL, L"Couldn't format Message", L"fnMessageHandlerW (FormatMessageW)", MB_ICONINFORMATION | MB_SYSTEMMODAL);
+		MessageBoxW(NULL, L"Couldn't format Message", L"fnMessageHandlerW (FormatMessageW)", MB_ICONINFORMATION | MB_SYSTEMMODAL);
 		return;
 	}
 
-	SIZE_T cbHeapSize = ((lstrlen(lpFunction) + lstrlen(szFORMAT) + 0xa + dwMsgSize) * 2);
+	SIZE_T cbHeapSize = ((lstrlenW(lpFunction) + lstrlenW(szFORMAT) + 0xa + dwMsgSize) * sizeof(WCHAR));
 	LPVOID lpDest = HeapAlloc(hHeap, HEAP_ZERO_MEMORY, cbHeapSize);
 	if (lpDest) {
-		if (SUCCEEDED(StringCbPrintf((LPWSTR)lpDest, cbHeapSize, szFORMAT, lpFunction, dwLE, (LPWSTR)lpMsgBuf))) {
+		if (SUCCEEDED(StringCbPrintfW((LPWSTR)lpDest, cbHeapSize, szFORMAT, lpFunction, dwLE, (LPWSTR)lpMsgBuf))) {
 			if (lpText) {
 				std::wstring szFormat = (std::wstring)lpText + L"\n\nErrordetails:\n" + ((std::wstring)((LPWSTR)lpDest));
-				cbHeapSize = ((lstrlen(szFormat.c_str()) * 2) + cbMAX_HEAP_SIZE);
+				cbHeapSize = ((lstrlenW(szFormat.c_str()) * sizeof(WCHAR)) + cbMAX_HEAP_SIZE);
 				LPVOID lpDest_t = HeapReAlloc(hHeap, HEAP_ZERO_MEMORY, lpDest, cbHeapSize);
 				if (lpDest_t) {
 					lpDest = lpDest_t;
 
-					if (SUCCEEDED(StringCbVPrintf((LPWSTR)lpDest, cbHeapSize, szFormat.c_str(), va_l))) {
-						MessageBox(NULL, (LPCWSTR)lpDest, lpCaption, uType);
+					if (SUCCEEDED(StringCbVPrintfW((LPWSTR)lpDest, cbHeapSize, szFormat.c_str(), va_l))) {
+						MessageBoxW(NULL, (LPCWSTR)lpDest, lpCaption, uType);
 					} else {
-						MessageBox(NULL, L"Couldn't format Text Message", L"fnMessageHandlerW (StringCbVPrintf)", MB_ICONERROR | MB_SYSTEMMODAL);
+						MessageBoxW(NULL, L"Couldn't format Text Message", L"fnMessageHandlerW (StringCbVPrintf)", MB_ICONERROR | MB_SYSTEMMODAL);
 					}
 				} else {
-					MessageBox(NULL, L"Couldn't reallocate Message Heap", L"fnMessageHandlerW (HeapReAlloc)", MB_ICONERROR | MB_SYSTEMMODAL);
+					MessageBoxW(NULL, L"Couldn't reallocate Message Heap", L"fnMessageHandlerW (HeapReAlloc)", MB_ICONERROR | MB_SYSTEMMODAL);
 				}
 			} else {
-				MessageBox(NULL, (LPCWSTR)lpDest, lpCaption, uType);
+				MessageBoxW(NULL, (LPCWSTR)lpDest, lpCaption, uType);
 			}
 		} else {
-			MessageBox(NULL, L"Couldn't format Error Message", L"fnMessageHandlerW (StringcbPrintfW)", MB_ICONERROR | MB_SYSTEMMODAL);
+			MessageBoxW(NULL, L"Couldn't format Error Message", L"fnMessageHandlerW (StringcbPrintfW)", MB_ICONERROR | MB_SYSTEMMODAL);
 		}
 	} else {
-		MessageBox(NULL, L"Couldn't allocate Message Heap", L"fnMessageHandlerW (HeapAlloc)", MB_ICONERROR | MB_SYSTEMMODAL);
+		MessageBoxW(NULL, L"Couldn't allocate Message Heap", L"fnMessageHandlerW (HeapAlloc)", MB_ICONERROR | MB_SYSTEMMODAL);
 	}
 
 	if (lpDest) { HeapFree(hHeap, NULL, lpDest); }

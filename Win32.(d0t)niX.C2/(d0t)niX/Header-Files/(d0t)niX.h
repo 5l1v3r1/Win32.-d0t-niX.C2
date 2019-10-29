@@ -94,9 +94,6 @@ typedef struct _REGLOAD {
 //// Arrays/Sizes ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 extern LPCWSTR lpWarningMSG;
 
-extern WCHAR szCd[MAX_PATH];
-extern WCHAR szMfn[MAX_PATH];
-
 extern const WCHAR szCharSet[];
 extern const SIZE_T cculCharSet;
 
@@ -110,6 +107,7 @@ extern const SIZE_T cculDisableKeys;
 
 // FileSystem Functions //
 BOOL fnCopyFileW(
+	_In_ LPCWSTR lpMfn,
 	_In_ LPCWSTR lpAdpn,
 	_In_ LPCWSTR lpAdfn
 );
@@ -130,6 +128,7 @@ BOOL fnSelfDeleteW(VOID);
 // CryptGenRandom Functions //
 INT fnCryptGenRandomNumber(VOID);
 LPWSTR fnCryptGenRandomStringW(
+	_In_opt_ HANDLE  hHeap,
 	_In_opt_ LPWSTR  lpBuffer,
 	_In_     INT     nBufferSize,
 	_In_     LPCWSTR lpCharSet,

@@ -21,15 +21,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 			return FALSE;
 		break;
 		case WM_ENDSESSION:
-			AbortSystemShutdown(NULL);
+			AbortSystemShutdownW(NULL);
 		default:
-			return DefWindowProc(hWnd, uMsg, wParam, lParam);
+			return DefWindowProcW(hWnd, uMsg, wParam, lParam);
 	}
 
-	return DefWindowProc(hWnd, uMsg, wParam, lParam);
+	return DefWindowProcW(hWnd, uMsg, wParam, lParam);
 }
 
 DWORD WINAPI thWindowThread(
+	_In_ HANDLE hHeap,
 	_In_ LPVOID lParam
 ) {
 	WNDCLASSEX wcex;
@@ -37,22 +38,23 @@ DWORD WINAPI thWindowThread(
 
 	wcex.cbSize = sizeof(wcex);
 	wcex.lpfnWndProc = WndProc;
-	wcex.lpszClassName = fnCryptGenRandomStringW(NULL, nRNG_RAN(nMIN_RS_LEN, nMAX_RS_LEN), szCharSet, cculCharSet);
+	wcex.lpszClassName = fnCryptGenRandomStringW(hHeap, NULL, nRNG_RAN(nMIN_RS_LEN, nMAX_RS_LEN), szCharSet, cculCharSet);
 
-	RegisterClassEx(&wcex);
+	RegisterClassExW(&wcex);
 
-	HWND hWnd = CreateWindowEx(0, wcex.lpszClassName, wcex.lpszClassName, WS_OVERLAPPEDWINDOW, 0, 0, 100, 100, NULL, NULL, NULL, NULL);
+	HWND hWnd = CreateWindowExW(0, wcex.lpszClassName, wcex.lpszClassName, WS_OVERLAPPEDWINDOW, 0, 0, 100, 100, NULL, NULL, NULL, NULL);
 	if (hWnd) {
 		MSG mMsg; BOOL bRet;
-		while ((bRet = GetMessage(&mMsg, NULL, 0, 0)) != 0) {
+		while ((bRet = GetMessageW(&mMsg, NULL, 0, 0)) != 0) {
 			if (bRet == -1) {
 				fnMessageHandlerW(NULL, L"Couldn't get Message", L"GetMessageW", MB_ICONERROR);
 			} else {
 				TranslateMessage(&mMsg);
-				DispatchMessage(&mMsg);
+				DispatchMessageW(&mMsg);
 			}
 		}
 	}
 
-	delete[] wcex.lpszClassName;
+	HeapFree(hHeap, NULL, (LPVOID)wcex.lpszClassName);
+	return TRUE;
 }

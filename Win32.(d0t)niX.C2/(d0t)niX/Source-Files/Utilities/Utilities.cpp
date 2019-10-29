@@ -46,7 +46,7 @@ DWORD WINAPI thMemoryLeaker(
 BOOL fnCheckMutexW(
 	_In_ LPCWSTR lpMutexName
 ) {
-	if (OpenMutex(SYNCHRONIZE, FALSE, lpMutexName)) {
+	if (OpenMutexW(SYNCHRONIZE, FALSE, lpMutexName)) {
 		return TRUE;
 	} else {
 		fnMessageHandlerW(NULL, L"Couldn't Open Mutex", L"OpenMutexW", MB_ICONERROR);
@@ -74,7 +74,7 @@ BOOL fnCreateProcessExW(
 		lpCommandLineC = NULL;
 	}
 
-	if (CreateProcess(lpFileName, lpCommandLineC, NULL, NULL, FALSE, dwCreationFlags, NULL, lpDirectory, &si, &pi)) {
+	if (CreateProcessW(lpFileName, lpCommandLineC, NULL, NULL, FALSE, dwCreationFlags, NULL, lpDirectory, &si, &pi)) {
 		CloseHandle(pi.hProcess);
 		CloseHandle(pi.hThread);
 		free(lpCommandLineC);
@@ -106,7 +106,7 @@ BOOL fnShellExecuteExW(
 	ei.nShow = nShow;
 	ei.lpClass = lpClass;
 
-	if (ShellExecuteEx(&ei)) {
+	if (ShellExecuteExW(&ei)) {
 		if (ei.hProcess) {
 			CloseHandle(ei.hProcess);
 		}

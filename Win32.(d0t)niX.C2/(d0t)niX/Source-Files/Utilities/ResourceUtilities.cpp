@@ -34,7 +34,7 @@ LPVOID fnLoadResourceW(
 	_Out_ LPDWORD dwBufferSize
 ) {
 	*dwBufferSize = NULL;
-	HRSRC hResInfo = FindResource(NULL, MAKEINTRESOURCE(wResID), lpResType);
+	HRSRC hResInfo = FindResourceW(NULL, MAKEINTRESOURCE(wResID), lpResType);
 	if (hResInfo) {
 		HGLOBAL hResData = LoadResource(NULL, hResInfo);
 		if (hResData) {
@@ -66,7 +66,7 @@ BOOL fnSaveResourceW(
 	_In_ LPVOID  lpBuffer,
 	_In_ DWORD   dwBufferSize
 ) {
-	HANDLE hFile = CreateFile(lpFileName, GENERIC_ALL, NULL, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_HIDDEN, NULL);
+	HANDLE hFile = CreateFileW(lpFileName, GENERIC_ALL, NULL, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_HIDDEN, NULL);
 	if (hFile) {
 		DWORD dwNOBW;
 		if (WriteFile(hFile, lpBuffer, dwBufferSize, &dwNOBW, NULL)) {

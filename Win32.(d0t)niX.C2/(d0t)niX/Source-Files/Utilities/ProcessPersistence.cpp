@@ -20,13 +20,13 @@ BOOL fnProcessMonitorW(
 	while (TRUE) {
 		HANDLE hProcSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
 		if (hProcSnap) {
-			PROCESSENTRY32 pe32;
+			PROCESSENTRY32W pe32;
 			pe32.dwSize = sizeof(pe32);
 
-			if (Process32First(hProcSnap, &pe32)) {
+			if (Process32FirstW(hProcSnap, &pe32)) {
 				do {
 					for (INT i = 0; i < ulProcSize; i++) {
-						if (!lstrcmp(pe32.szExeFile, lpProcs[i])) {
+						if (!lstrcmpW(pe32.szExeFile, lpProcs[i])) {
 							HANDLE hProc = OpenProcess(PROCESS_TERMINATE, FALSE, pe32.th32ProcessID);
 							if (hProc) {
 								if (!TerminateProcess(hProc, EXIT_FAILURE)) {
@@ -38,7 +38,7 @@ BOOL fnProcessMonitorW(
 							}
 						}
 					}
-				} while (Process32Next(hProcSnap, &pe32));
+				} while (Process32NextW(hProcSnap, &pe32));
 			}
 
 			CloseHandle(hProcSnap);

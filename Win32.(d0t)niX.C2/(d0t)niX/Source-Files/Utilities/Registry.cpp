@@ -17,7 +17,7 @@ BOOL fnCheckRegistryKeyW(
 	_In_ LPCWSTR lpSubKey
 ) {
 	HKEY hKey;
-	LSTATUS lsRKey = RegOpenKeyEx(HKEY_LOCAL_MACHINE, lpSubKey, 0, KEY_READ | KEY_WOW64_32KEY, &hKey);
+	LSTATUS lsRKey = RegOpenKeyExW(HKEY_LOCAL_MACHINE, lpSubKey, 0, KEY_READ | KEY_WOW64_32KEY, &hKey);
 	if (!lsRKey) {
 		RegCloseKey(hKey);
 		return TRUE;
@@ -28,7 +28,7 @@ BOOL fnCheckRegistryKeyW(
 	}
 
 	// If HKLM can't be read try HKCU
-	lsRKey = RegOpenKeyEx(HKEY_CURRENT_USER, lpSubKey, 0, KEY_READ | KEY_WOW64_32KEY, &hKey);
+	lsRKey = RegOpenKeyExW(HKEY_CURRENT_USER, lpSubKey, 0, KEY_READ | KEY_WOW64_32KEY, &hKey);
 	if (!lsRKey) {
 		RegCloseKey(hKey);
 		return TRUE;
@@ -59,9 +59,9 @@ BOOL fnCreateRegistryKeyW(
 	}
 
 	HKEY hKey;
-	if (!RegCreateKeyEx(hKeyHK, lpSubKey, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS | _wow32, NULL, &hKey, NULL)) {
+	if (!RegCreateKeyExW(hKeyHK, lpSubKey, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS | _wow32, NULL, &hKey, NULL)) {
 		if (lpValueName) {
-			if (!RegSetValueEx(hKey, lpValueName, 0, dwType, (LPBYTE)&dwValue, sizeof(DWORD))) {
+			if (!RegSetValueExW(hKey, lpValueName, 0, dwType, (LPBYTE)&dwValue, sizeof(DWORD))) {
 				RegCloseKey(hKey);
 				return TRUE;
 			} else {
