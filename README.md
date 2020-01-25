@@ -1,5 +1,10 @@
 # N0T-iLLerka.X [.niX]
 
+# This Project is DEAD
+The idea itself was "DOA" and thats for reasons..\
+The Malware itself doesn't make any sense, it's simply not what it should have been.
+
+
 A C/C++ (MSVC) recreation off the original Win32.VB.Illerka.C Virus by [Michael [APFX]](https://www.youtube.com/channel/UCDo-73OtSjnMKVIEidGu2Xw) (AppleFanXXX)
 
 Demonstration-Video of the Original:\
